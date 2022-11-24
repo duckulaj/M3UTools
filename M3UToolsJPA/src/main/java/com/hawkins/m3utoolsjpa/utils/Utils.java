@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -172,5 +173,40 @@ public class Utils {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Date date = new Date();
 		return formatter.format(date);
+	}
+	
+	public static String replaceForwardSlashWithSpace (String stringToReplace) {
+
+
+		if (stringToReplace != null) {
+			if (stringToReplace.contains("/")) {
+				stringToReplace = stringToReplace.replace("/", " ");
+			}
+		}
+
+		return stringToReplace;
+	}
+	
+	public static String normaliseName(String filmName) {
+
+		int startIndex = 0;
+
+		int endIndex = StringUtils.indexOfAny(filmName, new String[]{"SD", "FHD", "UHD", "HD"});
+
+		if (endIndex != -1) {
+			filmName = filmName.substring(startIndex, endIndex);
+		}
+
+		startIndex = filmName.indexOf(':');
+		if (startIndex != -1) {
+			filmName = filmName.substring(startIndex + 1).trim();
+		}
+
+		if (filmName.contains("(MULTISUB)")) {
+			return filmName.replace("(MULTISUB)", "").trim();
+		} else {
+			return filmName.trim();
+		}
+		
 	}
 }

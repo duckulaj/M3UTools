@@ -86,6 +86,11 @@ public class M3UService {
 
 	}
 
+	public static List<M3UItem> getM3UItemsByType(M3UItemRepository itemRepository, String type) {
+
+		return IteratorUtils.toList(itemRepository.findByType(type).iterator());
+
+	}
 	public static Page<M3UItem> getM3UItemsByGroupTitle(M3UItemRepository itemRepository, String groupTitle, Pageable pageable) {
 
 		return itemRepository.findByGroupTitle(groupTitle, pageable);
