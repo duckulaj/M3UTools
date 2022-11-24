@@ -33,8 +33,8 @@ public class Parser {
 	private static final Pattern GROUP_TITLE_REGEX = Pattern.compile(".*group-title=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
 	private static final Pattern RADIO_REGEX = Pattern.compile(".*radio=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
 	private static final Pattern CHANNEL_NAME_REGEX = Pattern.compile(".*,(.+?)$", Pattern.CASE_INSENSITIVE);
-	private static final Pattern SQUARE_BRACKET_REGEX = Pattern.compile(".*\\[*\\]", Pattern.CASE_INSENSITIVE);
-	private static final Pattern PIPE_REGEX = Pattern.compile(".*\\|*\\|", Pattern.CASE_INSENSITIVE);
+	// private static final Pattern SQUARE_BRACKET_REGEX = Pattern.compile(".*\\[*\\]", Pattern.CASE_INSENSITIVE);
+	// private static final Pattern PIPE_REGEX = Pattern.compile(".*\\|*\\|", Pattern.CASE_INSENSITIVE);
 	
 	
 	/**

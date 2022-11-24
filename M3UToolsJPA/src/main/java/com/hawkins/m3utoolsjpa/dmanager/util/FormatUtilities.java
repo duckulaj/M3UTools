@@ -27,30 +27,7 @@ public class FormatUtilities {
 		}
 	}
 
-	/*
-	 * public static String getFormattedStatus(DownloadEntry ent) { String statStr =
-	 * ""; if (ent.getQueueId() != null) { DownloadQueue q =
-	 * QueueManager.getInstance().getQueueById(ent.getQueueId()); String qname = "";
-	 * if (q != null && q.getQueueId() != null) { qname = q.getQueueId().length() >
-	 * 0 ? "[ " + q.getName() + " ] " : ""; } statStr += qname; }
-	 * 
-	 * if (ent.getState() == DManagerConstants.FINISHED) { statStr +=
-	 * Constants.STAT_FINISHED; } else if (ent.getState() ==
-	 * DManagerConstants.PAUSED || ent.getState() == DManagerConstants.FAILED) {
-	 * statStr += Constants.STAT_PAUSED; } else if (ent.getState() ==
-	 * DManagerConstants.ASSEMBLING) { statStr += Constants.STAT_ASSEMBLING; } else
-	 * { statStr += Constants.STAT_DOWNLOADING; } String sizeStr =
-	 * formatSize(ent.getSize()); if (ent.getState() == DManagerConstants.FINISHED)
-	 * { return statStr + " " + sizeStr; } else { if (ent.getSize() > 0) { String
-	 * downloadedStr = formatSize(ent.getDownloaded()); // String progressStr =
-	 * ent.getProgress() + "%"; String downloadSpeed =
-	 * Utils.format(ent.getDownloadSpeed(), 2); return statStr + " [ " +
-	 * downloadedStr + " / " + sizeStr + " ] " + downloadSpeed + "/s : ETA " +
-	 * ent.getEta(); } else { return statStr + (ent.getProgress() > 0 ? (" " +
-	 * ent.getProgress() + "%") : "") + (ent.getDownloaded() > 0 ? " " +
-	 * formatSize(ent.getDownloaded()) : (ent.getState() == DManagerConstants.PAUSED
-	 * || ent.getState() == DManagerConstants.FAILED ? "" : " ...")); } } }
-	 */
+	
 	public static String getETA(double length, float rate) {
 		if (length == 0)
 			return "00:00:00";

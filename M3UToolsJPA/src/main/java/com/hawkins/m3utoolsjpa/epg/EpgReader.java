@@ -55,23 +55,6 @@ public class EpgReader {
 			Element rootElement = document.getRootElement();
 
 			/*
-			 * For each channel element let's normalise the display-name
-			 */
-			/*
-			 * Iterator<Element> itChannel = rootElement.elementIterator("channel");
-			 * 
-			 * while (itChannel.hasNext()) { Element chnElement = (Element)
-			 * itChannel.next(); Element dElement = chnElement.element(DISPLAY_NAME);
-			 * 
-			 * szDisplayName = dElement.getStringValue();
-			 * 
-			 * String szNewDisplayName = formatStr(szDisplayName);
-			 * dElement.setText(szNewDisplayName);
-			 * 
-			 * }
-			 */
-			
-			/*
 			 *  Now we need to make any adjustments to the programme start and end dates
 			 */
 			
