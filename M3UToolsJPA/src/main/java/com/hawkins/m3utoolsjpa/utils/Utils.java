@@ -36,10 +36,10 @@ public class Utils {
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Utils.readProperties :: Looking for {}videoDownloader/.dmanager/{}", userHome, propertyType);
+			log.debug("Utils.readProperties :: Looking for {}M3UToolsJPA/{}", userHome, propertyType);
 		}
 
-		File configFile = new File(userHome, "videoDownloader/.dmanager/" + propertyType);
+		File configFile = new File(userHome, "M3UToolsJPA/" + propertyType);
 
 		if (!configFile.exists() && log.isDebugEnabled()) {
 			log.debug("{} does not exist", propertyType);
@@ -86,7 +86,7 @@ public class Utils {
 				}
 			});
 
-			props.store(output, "store to properties file");
+			props.store(output, "");
 
 		} catch (IOException io) {
 			if (log.isDebugEnabled()) {

@@ -2,13 +2,9 @@ package com.hawkins.m3utoolsjpa.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -19,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
@@ -60,34 +55,17 @@ public class M3UController {
 	}
 
 	@GetMapping("/")
-	public String getAll(Model model, @RequestParam(required = false) Long groupId,
+	public String getAll(Model model, @RequestParam(required = false, defaultValue = "-1") Long groupId,
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size,
 			@ModelAttribute(Constants.SELECTEDGROUP) M3UGroupSelected selectedGroup) {
 		try {
 			
-			Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
-
-			Page<M3UItem> pageItems;
-			if (groupId == null) {
-				pageItems = itemRepository.findAll(paging);
-			} else {
-				pageItems = itemRepository.findByGroupId(groupId, paging);
-				
-				Optional<M3UGroup> foundGroup = groupRepository.findById(groupId);
-				if (foundGroup.isPresent()) {
-					selectedGroup = new M3UGroupSelected(
-							foundGroup.get().getId(),
-							foundGroup.get().getName(),
-							foundGroup.get().getType());
-				}
-				
-		
-			}
-
-			model.addAttribute(Constants.SELECTEDGROUP, selectedGroup);
+			Page<M3UItem> pageItems = M3UService.getPageableItems(groupId, page, size, itemRepository);
+			
+			model.addAttribute(Constants.SELECTEDGROUP, M3UService.getSelectedGroup(groupId, groupRepository));
 			model.addAttribute("groupId", groupId);
 			model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));
-			model.addAttribute("items", pageItems.getContent());
+			model.addAttribute("items",  pageItems.getContent());
 			model.addAttribute("currentPage", pageItems.getNumber() + 1);
 			model.addAttribute("totalItems", pageItems.getTotalElements());
 			model.addAttribute("totalPages", pageItems.getTotalPages());

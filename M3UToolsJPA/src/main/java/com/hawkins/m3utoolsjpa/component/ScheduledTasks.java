@@ -49,9 +49,8 @@ public class ScheduledTasks {
 	@Scheduled(cron = "0 10 1 * * ?") // 1.10am
 	public void reloadEPG() {
 
-		DownloadProperties dp = DownloadProperties.getInstance();
-		String epgFile = dp.getEpgFileName();
-
+		String epgFile = DownloadProperties.getInstance().getEpgFileName();
+		
 		EpgReader.changeLocalTime(epgFile);
 		log.info("Scheduled Task reloadEPG completed at {}", Utils.printNow());
 	}

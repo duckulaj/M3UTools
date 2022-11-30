@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -132,4 +135,43 @@ public class M3UService {
 		log.info(configProperty.toString());
 		DownloadProperties.getInstance().updateProperty(configProperty);
 	}
+	
+	public static Page<M3UItem> getPageableItems(Long groupId,
+			int page, 
+			int size,
+			M3UItemRepository itemRepository) {
+		
+		Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
+
+		Page<M3UItem> pageItems;
+		if (groupId == null) {
+			pageItems = itemRepository.findAll(paging);
+		} else {
+			pageItems = itemRepository.findByGroupId(groupId, paging);
+		}
+		
+		return pageItems;
+	}
+	
+	public static M3UGroupSelected getSelectedGroup(Long groupId, M3UGroupRepository groupRepository) {
+
+		Optional<M3UGroup> foundGroup = groupRepository.findById(groupId);
+		if (foundGroup.isPresent()) {
+			M3UGroupSelected selectedGroup = new M3UGroupSelected(
+					foundGroup.get().getId(),
+					foundGroup.get().getName(),
+					foundGroup.get().getType());
+			
+			return selectedGroup;
+		}
+		
+		return new M3UGroupSelected();
+
+		
+	}
+	
 }
+
+
+
+
