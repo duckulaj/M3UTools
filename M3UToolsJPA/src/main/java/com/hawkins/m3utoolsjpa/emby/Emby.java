@@ -73,7 +73,32 @@ public class Emby {
 	
 	public static void refreshLibraries() {
 		
-		// TODO
+		DownloadProperties downloadProperties = DownloadProperties.getInstance();
+		
+		String embyApi = downloadProperties.getEmbyApi();
+		String embyUrl = downloadProperties.getEmbyUrl();
+		
+		String refreshGuideUrl = embyUrl + "Library/Refresh/?api_key=" + embyApi;
+		
+		RestTemplate restTemplate = new RestTemplate();
+		
+        try {
+			URI uri = new URI(refreshGuideUrl);
+			
+			HttpHeaders headers = new HttpHeaders();   
+	        headers.set("X-COM-LOCATION", "UK");     
+	        
+	        HttpEntity<String> request = new HttpEntity<>(headers);
+	        
+	        String result = restTemplate.postForObject(uri, request, String.class);
+	        
+	        log.info(result);
+	        
+	        		        
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 	}
