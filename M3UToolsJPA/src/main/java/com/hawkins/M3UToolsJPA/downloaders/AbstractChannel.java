@@ -3,8 +3,6 @@ package com.hawkins.M3UToolsJPA.downloaders;
 import java.io.EOFException;
 import java.io.InputStream;
 
-import com.hawkins.M3UToolsJPA.downloaders.http.HttpChannel;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

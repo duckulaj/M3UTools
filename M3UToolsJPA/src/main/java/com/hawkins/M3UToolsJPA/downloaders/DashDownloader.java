@@ -1,5 +1,5 @@
 
-package com.hawkins.M3UToolsJPA.downloaders.dash;
+package com.hawkins.M3UToolsJPA.downloaders;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,15 +14,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.hawkins.M3UToolsJPA.downloaders.AbstractChannel;
-import com.hawkins.M3UToolsJPA.downloaders.Downloader;
-import com.hawkins.M3UToolsJPA.downloaders.Segment;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentComparator;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentDetails;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentImpl;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentInfo;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentListener;
-import com.hawkins.M3UToolsJPA.downloaders.http.HttpChannel;
 import com.hawkins.M3UToolsJPA.downloaders.metadata.DashMetadata;
 import com.hawkins.M3UToolsJPA.downloaders.metadata.HttpMetadata;
 import com.hawkins.M3UToolsJPA.mediaconversion.FFmpeg;

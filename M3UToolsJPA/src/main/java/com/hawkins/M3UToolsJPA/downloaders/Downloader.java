@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.hawkins.M3UToolsJPA.downloaders.http.HttpChannel;
 import com.hawkins.M3UToolsJPA.downloaders.metadata.HttpMetadata;
 import com.hawkins.dmanager.DManagerApp;
 import com.hawkins.dmanager.DManagerConstants;

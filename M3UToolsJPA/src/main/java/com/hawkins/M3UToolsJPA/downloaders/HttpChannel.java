@@ -1,4 +1,4 @@
-package com.hawkins.M3UToolsJPA.downloaders.http;
+package com.hawkins.M3UToolsJPA.downloaders;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
-import com.hawkins.M3UToolsJPA.downloaders.AbstractChannel;
-import com.hawkins.M3UToolsJPA.downloaders.Segment;
 import com.hawkins.M3UToolsJPA.network.ProxyResolver;
 import com.hawkins.M3UToolsJPA.network.http.DManagerHttpClient;
 import com.hawkins.M3UToolsJPA.network.http.HeaderCollection;

@@ -1,8 +1,5 @@
-package com.hawkins.M3UToolsJPA.downloaders.http;
+package com.hawkins.M3UToolsJPA.downloaders;
 
-import com.hawkins.M3UToolsJPA.downloaders.AbstractChannel;
-import com.hawkins.M3UToolsJPA.downloaders.Segment;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentDownloader;
 import com.hawkins.M3UToolsJPA.downloaders.metadata.HttpMetadata;
 import com.hawkins.dmanager.DManagerConstants;
 import com.hawkins.dmanager.util.DManagerUtils;

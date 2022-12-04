@@ -1,29 +1,21 @@
-package com.hawkins.M3UToolsJPA.downloaders.hls;
+package com.hawkins.M3UToolsJPA.downloaders;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
-import com.hawkins.M3UToolsJPA.downloaders.AbstractChannel;
-import com.hawkins.M3UToolsJPA.downloaders.Downloader;
-import com.hawkins.M3UToolsJPA.downloaders.Segment;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentDetails;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentImpl;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentInfo;
-import com.hawkins.M3UToolsJPA.downloaders.SegmentListener;
-import com.hawkins.M3UToolsJPA.downloaders.http.HttpChannel;
-import com.hawkins.M3UToolsJPA.downloaders.metadata.HlsMetadata;
+import com.hawkins.M3UToolsJPA.downloaders.metadata.HdsMetadata;
 import com.hawkins.M3UToolsJPA.downloaders.metadata.HttpMetadata;
-import com.hawkins.M3UToolsJPA.downloaders.metadata.manifests.M3U8Manifest;
+import com.hawkins.M3UToolsJPA.downloaders.metadata.manifests.F4MManifest;
 import com.hawkins.M3UToolsJPA.mediaconversion.FFmpeg;
 import com.hawkins.M3UToolsJPA.mediaconversion.MediaConversionListener;
-import com.hawkins.M3UToolsJPA.mediaconversion.MediaFormats;
 import com.hawkins.dmanager.Config;
 import com.hawkins.dmanager.DManagerConstants;
 import com.hawkins.dmanager.util.DManagerUtils;
@@ -33,10 +25,10 @@ import com.hawkins.dmanager.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class HlsDownloader extends Downloader implements SegmentListener, MediaConversionListener {
+public class HdsDownloader extends Downloader implements SegmentListener, MediaConversionListener {
 	
 
-	private HlsMetadata metadata;
+	private HdsMetadata metadata;
 	private LinkedList<String> urlList;
 	private Segment manifestSegment;
 	private long totalAssembled;
@@ -46,7 +38,10 @@ public class HlsDownloader extends Downloader implements SegmentListener, MediaC
 	private int lastProgress;
 	private float totalDuration;
 
-	public HlsDownloader(String id, String folder, HlsMetadata metadata) {
+	private final byte[] flv_sig = { (byte) 'F', (byte) 'L', (byte) 'V', 0x01, 0x05, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00,
+			0x00, 0x00 };
+
+	public HdsDownloader(String id, String folder, HdsMetadata metadata) {
 		this.id = id;
 		this.folder = new File(folder, id).getAbsolutePath();
 		this.length = -1;
@@ -113,9 +108,20 @@ public class HlsDownloader extends Downloader implements SegmentListener, MediaC
 			}
 
 			if (allFinished()) {
-				saveState();
+
 				finished = true;
+				long len = 0L;
+				for (Segment ss : chunks) {
+					len += ss.getLength();
+				}
+				if (len > 0) {
+					this.length = len;
+				}
+
+				saveState();
+
 				updateStatus();
+
 				try {
 					assembleFinished = false;
 					assemble();
@@ -163,7 +169,7 @@ public class HlsDownloader extends Downloader implements SegmentListener, MediaC
 	public AbstractChannel createChannel(Segment segment) {
 		for (int i = 0; i < chunks.size(); i++) {
 			if (segment == chunks.get(i)) {
-				HlsMetadata md = new HlsMetadata();
+				HdsMetadata md = new HdsMetadata();
 				md.setUrl(urlList.get(i));
 				md.setHeaders(metadata.getHeaders());
 				return new HttpChannel(segment, md.getUrl(), md.getHeaders(), -1, isJavaClientRequired);
@@ -180,10 +186,11 @@ public class HlsDownloader extends Downloader implements SegmentListener, MediaC
 
 	private boolean initOrUpdateSegments() {
 		try {
-			M3U8Manifest mf = new M3U8Manifest(new File(folder, manifestSegment.getId()).getAbsolutePath(),
-					metadata.getUrl());
+			F4MManifest mf = new F4MManifest(metadata.getUrl(),
+					new File(folder, manifestSegment.getId()).getAbsolutePath());
+			mf.setSelectedBitRate(metadata.getBitRate());
 			this.totalDuration = mf.getDuration();
-			log.info("Total duration");
+			log.info("Total duration " + totalDuration);
 			ArrayList<String> urls = mf.getMediaUrls();
 			if (urls.size() < 1) {
 				log.info("Manifest contains no media");
@@ -204,17 +211,17 @@ public class HlsDownloader extends Downloader implements SegmentListener, MediaC
 				for (int i = 0; i < urlList.size(); i++) {
 					if (newExtension == null && outputFormat == 0) {
 						newExtension = findExtension(urlList.get(i));
-						log.info("HLS: found new extension: " + newExtension);
+						log.info("HDS: found new extension: " + newExtension);
 						if (newExtension != null) {
-							this.newFileName = getOutputFileName(true).replace(".ts", newExtension);
+							this.newFileName = getOutputFileName(false).replace(".flv", newExtension);
 
 						} else {
-							newExtension = ".ts";// just to skip the whole file
+							newExtension = ".flv";// just to skip the whole file
 													// ext extraction
 						}
 					}
 
-					log.info("HLS: Newfile name: " + this.newFileName);
+					log.info("HDS: Newfile name: " + this.newFileName);
 
 					Segment s2 = new SegmentImpl(this, folder);
 					s2.setTag("HLS");
@@ -508,43 +515,90 @@ public class HlsDownloader extends Downloader implements SegmentListener, MediaC
 	}
 
 	private void assemble() throws IOException {
-		StringBuffer sb = new StringBuffer();
-		for (Segment s : chunks) {
-			sb.append("file '" + new File(folder, s.getId()) + "'\r\n");
-		}
-		OutputStream outFile = null;
-		File hlsFile = new File(folder, id + "-hls.txt");
+		InputStream in = null;
+		OutputStream out = null;
+		totalAssembled = 0L;
+		assembling = true;
+		assembleFinished = false;
+
+		File outFile = new File(outputFormat == 0 ? getOutputFolder() : folder, getOutputFileName(true));
 
 		try {
-			outFile = new FileOutputStream(hlsFile);
-			outFile.write(sb.toString().getBytes());
-			outFile.close();
+			if (stopFlag)
+				return;
+			log.info("assembling... ");
+			out = new FileOutputStream(outFile);
+			out.write(flv_sig);
+			for (Segment s : chunks) {
+				File inFile = new File(folder, s.getId());
+				in = new FileInputStream(inFile);
+				long streamPos = 0, streamLen = inFile.length();
+				while (streamPos < streamLen) {
+					if (stopFlag) {
+						return;
+					}
+
+					long boxsize = readInt32(in);
+					streamPos += 4;
+					String box_type = readStringBytes(in, 4);
+					streamPos += 4;
+					if (boxsize == 1) {
+						boxsize = readInt64(in) - 16;
+						streamPos += 8;
+					} else {
+						boxsize -= 8;
+					}
+					if (box_type.equals("mdat")) {
+						long boxsz = boxsize;
+						while (boxsz > 0) {
+							if (stopFlag)
+								return;
+							int c = (int) (boxsz > b.length ? b.length : boxsz);
+							int x = in.read(b, 0, c);
+							if (x == -1)
+								throw new IOException("Unexpected EOF");
+							out.write(b, 0, x);
+							boxsz -= x;
+							totalAssembled += x;
+							long now = System.currentTimeMillis();
+							if (now - lastUpdated > 1000) {
+								updateStatus();
+								lastUpdated = now;
+							}
+						}
+					} else {
+						in.skip(boxsize);
+					}
+
+					streamPos += boxsize;
+				}
+				in.close();
+			}
+
+			log.info("Output format: " + outputFormat);
+			assembleFinished = true;
 		} catch (Exception e) {
+			log.info(e.getMessage());
+		} finally {
 			try {
-				outFile.close();
+				out.close();
+			} catch (Exception e2) {
+			}
+			try {
+				in.close();
 			} catch (Exception e2) {
 			}
 		}
-		this.converting = true;
-		List<String> inputFiles = new ArrayList<String>();
-		inputFiles.add(hlsFile.getAbsolutePath());
-		this.ffmpeg = new FFmpeg(inputFiles, new File(getOutputFolder(), getOutputFileName(true)).getAbsolutePath(),
-				this, MediaFormats.getSupportedFormats()[outputFormat], outputFormat == 0);
-		ffmpeg.setHls(true);
-		ffmpeg.setHLSDuration(totalDuration);
-		int ret = ffmpeg.convert();
-		log.info("FFmpeg exit code: " + ret);
-
-		if (ret != 0) {
-			throw new IOException("FFmpeg failed");
-		} else {
-			long length = new File(getOutputFolder(), getOutputFileName(false)).length();
-			if (length > 0) {
-				this.length = length;
-			}
-		}
-
 	}
+
+	byte[] b = new byte[8192];
+
+	/*
+	 * private void copyBytes(InputStream src, OutputStream dest, long len) throws
+	 * IOException { while (len > 0) { if (stopFlag) return; int c = (int) (len >
+	 * b.length ? b.length : len); int x = src.read(b, 0, c); if (x == -1) throw new
+	 * IOException("Unexpected EOF"); dest.write(b, 0, x); len -= x; } }
+	 */
 
 	@Override
 	public void progress(int progress) {
@@ -556,5 +610,46 @@ public class HlsDownloader extends Downloader implements SegmentListener, MediaC
 		}
 	}
 
-	
+	private long readInt32(InputStream s) throws IOException {
+		byte[] bytesData = new byte[4];
+		if (s.read(bytesData, 0, bytesData.length) != bytesData.length) {
+			throw new IOException("Invalid F4F box");
+		}
+		long iValLo = (long) ((bytesData[3] & 0xff) + ((long) (bytesData[2] & 0xff) * 256));
+		long iValHi = (long) ((bytesData[1] & 0xff) + ((long) (bytesData[0] & 0xff) * 256));
+		long iVal = iValLo + (iValHi * 65536);
+		return iVal;
+	}
+
+	private long readInt64(InputStream s) throws IOException {
+		long iValHi = readInt32(s);
+		long iValLo = readInt32(s);
+
+		long iVal = iValLo + (iValHi * 4294967296L);
+		return iVal;
+	}
+
+	private String readStringBytes(InputStream s, long len) throws IOException {
+		StringBuilder resultValue = new StringBuilder(4);
+		for (int i = 0; i < len; i++) {
+			resultValue.append((char) s.read());
+		}
+		return resultValue.toString();
+	}
+
+	// public static void main(String[] args) {
+	// try {
+	// Thread.sleep(5000);
+	// } catch (InterruptedException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	//
+	// HlsDownloader d2 = new HlsDownloader(UUID.randomUUID().toString(),
+	// "C:\\Users\\sd00109548\\Desktop\\temp");
+	// d2.metadata = new HlsMetadata();
+	// d2.metadata.setUrl("http://localhost:8080/test.m3u8");
+	// d2.start();
+	// }
+
 }
