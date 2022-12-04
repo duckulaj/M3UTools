@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.hawkins.dmanager.network.http.HttpHeader;
+import com.hawkins.M3UToolsJPA.network.http.HttpHeader;
 import com.hawkins.dmanager.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;

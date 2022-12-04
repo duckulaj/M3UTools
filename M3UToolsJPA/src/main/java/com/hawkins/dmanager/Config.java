@@ -55,7 +55,7 @@ public class Config {
 
 	void save() {
 		
-		File file = new File(System.getProperty("user.home"), "videoDownloader/.dmanager/dm.properties");
+		File file = new File(System.getProperty("user.home"), "M3UToolsJPA/dm.properties");
 		
 		try {
 			DmProperties.getInstance().store(new FileOutputStream(file), null);
@@ -74,7 +74,7 @@ public class Config {
 
 	private Config() {
 		
-		File f = new File(System.getProperty("user.home"), "videoDownloader/.dmanager");
+		File f = new File(System.getProperty("user.home"), "M3UToolsJPA");
 		if (!f.exists()) {
 			f.mkdirs();
 		}
@@ -95,7 +95,7 @@ public class Config {
 		this.temporaryFolder = f.getAbsolutePath();
 		this.downloadFolder = DManagerUtils.getDownloadsFolder();
 		if (!new File(this.downloadFolder).exists()) {
-			this.downloadFolder = System.getProperty("user.home") +  "videoDownloader/";
+			this.downloadFolder = System.getProperty("user.home") +  "M3UToolsJPA/";
 		}
 
 		DmProperties properties = DmProperties.getInstance();

@@ -3,7 +3,7 @@ package com.hawkins.dmanager;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.hawkins.dmanager.network.http.HeaderCollection;
+import com.hawkins.M3UToolsJPA.network.http.HeaderCollection;
 
 import lombok.extern.slf4j.Slf4j;
 

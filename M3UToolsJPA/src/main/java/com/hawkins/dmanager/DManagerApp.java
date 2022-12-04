@@ -3,7 +3,6 @@ package com.hawkins.dmanager;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,9 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,18 +18,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.hawkins.dmanager.downloaders.Downloader;
-import com.hawkins.dmanager.downloaders.dash.DashDownloader;
-import com.hawkins.dmanager.downloaders.hds.HdsDownloader;
-import com.hawkins.dmanager.downloaders.hls.HlsDownloader;
-import com.hawkins.dmanager.downloaders.http.HttpDownloader;
-import com.hawkins.dmanager.downloaders.metadata.DashMetadata;
-import com.hawkins.dmanager.downloaders.metadata.HdsMetadata;
-import com.hawkins.dmanager.downloaders.metadata.HlsMetadata;
-import com.hawkins.dmanager.downloaders.metadata.HttpMetadata;
-import com.hawkins.dmanager.monitoring.BrowserMonitor;
-import com.hawkins.dmanager.network.http.HttpContext;
-import com.hawkins.dmanager.ui.res.StringResource;
+import com.hawkins.M3UToolsJPA.downloaders.Downloader;
+import com.hawkins.M3UToolsJPA.downloaders.dash.DashDownloader;
+import com.hawkins.M3UToolsJPA.downloaders.hds.HdsDownloader;
+import com.hawkins.M3UToolsJPA.downloaders.hls.HlsDownloader;
+import com.hawkins.M3UToolsJPA.downloaders.http.HttpDownloader;
+import com.hawkins.M3UToolsJPA.downloaders.metadata.DashMetadata;
+import com.hawkins.M3UToolsJPA.downloaders.metadata.HdsMetadata;
+import com.hawkins.M3UToolsJPA.downloaders.metadata.HlsMetadata;
+import com.hawkins.M3UToolsJPA.downloaders.metadata.HttpMetadata;
+import com.hawkins.M3UToolsJPA.monitoring.BrowserMonitor;
+import com.hawkins.M3UToolsJPA.network.http.HttpContext;
 import com.hawkins.dmanager.util.DManagerUtils;
 import com.hawkins.dmanager.util.LinuxUtils;
 import com.hawkins.dmanager.util.ParamUtils;
@@ -43,7 +38,7 @@ import com.hawkins.m3utoolsjpa.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DManagerApp implements DownloadListener, DownloadWindowListener, Comparator<String> {
+public class DManagerApp implements DownloadListener, Comparator<String> {
 
 	
 	public static final String APP_VERSION = "0.0.1";
@@ -725,92 +720,7 @@ public class DManagerApp implements DownloadListener, DownloadWindowListener, Co
 		}
 		log.info("Initiating shutdown");
 	}
-
-	/*
-	 * private int deleteDownloads(ArrayList<String> ids) { int c = 0; for (int i =
-	 * 0; i < ids.size(); i++) { String id = ids.get(i); DownloadEntry ent =
-	 * getEntry(id); if (ent != null) { if (ent.getState() == XDMConstants.FINISHED
-	 * || ent.getState() == XDMConstants.PAUSED || ent.getState() ==
-	 * XDMConstants.FAILED) { this.downloads.remove(id); if
-	 * (pendingDownloads.contains(id)) { pendingDownloads.remove(id); } String qId =
-	 * ent.getQueueId(); if (qId != null) { DownloadQueue q = getQueueById(qId); if
-	 * (q != null) { if (q.getQueueId().length() > 0) { q.removeFromQueue(id); } } }
-	 * deleteFiles(id); c++; } } } saveDownloadList(); notifyListeners(null); return
-	 * ids.size() - c; }
-	 */
-
-	/*
-	 * private void deleteFiles(String id) { log.info("Deleting metadata for " +
-	 * id); File mf = new File(Config.getInstance().getMetadataFolder(), id);
-	 * boolean deleted = mf.delete(); log.info("Deleted manifest " + id + " " +
-	 * deleted); File df = new File(Config.getInstance().getTemporaryFolder(), id);
-	 * File[] files = df.listFiles(); if (files != null && files.length > 0) { for
-	 * (File f : files) { deleted = f.delete(); log.info("Deleted tmp file " + id
-	 * + " " + deleted); } } deleted = df.delete();
-	 * log.info("Deleted tmp folder " + id + " " + deleted); }
-	 */
-
-	/*
-	 * public void registerRefreshCallback(LinkRefreshCallback callback) {
-	 * this.refreshCallback = callback; }
-	 */
-
-	/*
-	 * public void unregisterRefreshCallback() { this.refreshCallback = null; }
-	 */
-
-	/*
-	 * public void deleteCompleted() { Iterator<String> allIds =
-	 * downloads.keySet().iterator(); ArrayList<String> idList = new
-	 * ArrayList<String>(); while (allIds.hasNext()) { String id = allIds.next();
-	 * DownloadEntry ent = downloads.get(id); if (ent.getState() ==
-	 * XDMConstants.FINISHED) { idList.add(id); } } deleteDownloads(idList); }
-	 */
-
-	public boolean promptCredential(String id, String msg, boolean proxy) {
-		DownloadEntry ent = getEntry(id);
-		if (ent == null)
-			return false;
-		if (!ent.isStartedByUser())
-			return false;
-		PasswordAuthentication pauth = getCredential(msg, proxy);
-		if (pauth == null) {
-			return false;
-		}
-		if (proxy) {
-			Config.getInstance().setProxyUser(pauth.getUserName());
-			if (pauth.getPassword() != null) {
-				Config.getInstance().setProxyPass(new String(pauth.getPassword()));
-			}
-		} else {
-			log.info("saving password for: " + msg);
-			CredentialManager.getInstance().addCredentialForHost(msg, pauth);
-		}
-		return true;
-	}
-
-	private PasswordAuthentication getCredential(String msg, boolean proxy) {
-		JTextField user = new JTextField(30);
-		JPasswordField pass = new JPasswordField(30);
-
-		String prompt = proxy ? StringResource.get("PROMPT_PROXY")
-				: String.format(StringResource.get("PROMPT_SERVER"), msg);
-
-		Object[] obj = new Object[5];
-		obj[0] = prompt;
-		obj[1] = StringResource.get("DESC_USER");
-		obj[2] = user;
-		obj[3] = StringResource.get("DESC_PASS");
-		obj[4] = pass;
-
-		if (JOptionPane.showOptionDialog(null, obj, StringResource.get("PROMPT_CRED"), JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
-			PasswordAuthentication pauth = new PasswordAuthentication(user.getText(), pass.getPassword());
-			return pauth;
-		}
-		return null;
-	}
-
+		
 	private void execCmd() {
 		if (!StringUtils.isNullOrEmptyOrBlank(Config.getInstance().getCustomCmd())) {
 			DManagerUtils.exec(Config.getInstance().getCustomCmd());

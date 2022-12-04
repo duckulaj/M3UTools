@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
 
-import com.hawkins.dmanager.ui.res.StringResource;
+import com.hawkins.M3UToolsJPA.ui.res.StringResource;
 
 import lombok.extern.slf4j.Slf4j;
 

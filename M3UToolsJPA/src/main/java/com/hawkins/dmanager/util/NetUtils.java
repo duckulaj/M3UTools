@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
-import com.hawkins.dmanager.network.http.*;
+import com.hawkins.M3UToolsJPA.network.http.*;
 
 public class NetUtils {
 	public static byte[] getBytes(String str) {

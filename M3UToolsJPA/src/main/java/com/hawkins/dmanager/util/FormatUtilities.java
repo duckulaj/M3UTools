@@ -3,11 +3,11 @@ package com.hawkins.dmanager.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.hawkins.M3UToolsJPA.ui.res.StringResource;
 import com.hawkins.dmanager.DManagerConstants;
 import com.hawkins.dmanager.DownloadEntry;
 import com.hawkins.dmanager.DownloadQueue;
 import com.hawkins.dmanager.QueueManager;
-import com.hawkins.dmanager.ui.res.StringResource;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 public class FormatUtilities {

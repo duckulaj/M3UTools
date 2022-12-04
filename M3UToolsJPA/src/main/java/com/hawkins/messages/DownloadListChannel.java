@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hawkins.M3UToolsJPA.downloaders.metadata.HttpMetadata;
 import com.hawkins.dmanager.Config;
 import com.hawkins.dmanager.DownloadEntry;
-import com.hawkins.dmanager.downloaders.metadata.HttpMetadata;
 import com.hawkins.m3utoolsjpa.job.DownloadJob;
 
 public class DownloadListChannel{
