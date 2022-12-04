@@ -9,6 +9,7 @@ import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
 import com.hawkins.m3utoolsjpa.m3u.M3UtoStrm;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,20 +23,14 @@ public class ScheduledTasks {
 
 	@Autowired 
 	M3UGroupRepository groupRepository;
+	
+	@Autowired
+	M3UService m3uService;
 
 	@Scheduled(cron = "0 1 1 * * ?") // 1.01am
 	public void resetM3UFile() {
 
-		if (log.isDebugEnabled()) {
-			log.debug("The time is now {}", Utils.printNow());
-		}
-
-		DownloadProperties downloadProperties = DownloadProperties.getInstance();
-
-		Utils.copyUrlToFile(downloadProperties.getChannels(), downloadProperties.getFullM3U());
-		if (log.isDebugEnabled()) {
-			log.debug("Reloaded m3u file at {}", Utils.printNow());
-		}
+		m3uService.resetM3UFile();
 	}
 
 

@@ -170,6 +170,20 @@ public class M3UService {
 		
 	}
 	
+	public void resetM3UFile() {
+
+		if (log.isDebugEnabled()) {
+			log.debug("The time is now {}", Utils.printNow());
+		}
+
+		DownloadProperties downloadProperties = DownloadProperties.getInstance();
+
+		Utils.copyUrlToFile(downloadProperties.getChannels(), downloadProperties.getFullM3U());
+		if (log.isDebugEnabled()) {
+			log.debug("Reloaded m3u file at {}", Utils.printNow());
+		}
+	}
+	
 }
 
 
