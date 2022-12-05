@@ -14,8 +14,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -207,6 +209,12 @@ public class Utils {
 		} else {
 			return filmName.trim();
 		}
+		
+	}
+	
+	public static String removeFromString(String originalString, Pattern pattern) {
+		
+		return RegExUtils.removeAll(originalString, pattern);
 		
 	}
 }

@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.hawkins.M3UToolsJPA.downloaders.metadata.HttpMetadata;
 import com.hawkins.dmanager.DManagerApp;
+import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 
 import lombok.extern.slf4j.Slf4j;

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
@@ -178,6 +179,9 @@ public class M3UtoStrm {
 		tvshows.forEach(tvShow -> {
 			String tvShowName = tvShow.getChannelName();
 			tvShowName = Utils.replaceForwardSlashWithSpace(tvShowName);
+			tvShowName = Utils.removeFromString(tvShowName, Patterns.SQUARE_BRACKET_REGEX);
+			tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPE_REGEX);
+					
 			Pattern seasonPattern = Pattern.compile(seasonRegex, Pattern.CASE_INSENSITIVE);
 			Matcher seasonMatcher = seasonPattern.matcher(tvShowName);
 			boolean seasonMatchFound = seasonMatcher.find();
@@ -263,7 +267,11 @@ public class M3UtoStrm {
 		movies.forEach(movie -> {
 
 			String groupTitle = movie.getGroupTitle();
-			String folder = movie.getChannelName().trim();
+			
+			String folder = movie.getChannelName();
+			folder = Utils.replaceForwardSlashWithSpace(folder);
+			folder = Utils.removeFromString(folder, Patterns.SQUARE_BRACKET_REGEX);
+			folder = Utils.removeFromString(folder, Patterns.PIPE_REGEX);
 			folder = folder.replace("/", " ").trim();
 
 			String url = movie.getChannelUri();

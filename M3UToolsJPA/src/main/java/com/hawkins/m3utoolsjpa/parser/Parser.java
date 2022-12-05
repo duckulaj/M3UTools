@@ -13,7 +13,9 @@ import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,20 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Parser {
 
-	private static final String M3U_START_MARKER = "#EXTM3U";
-	private static final String M3U_INFO_MARKER = "#EXTINF:";
-	private static final Pattern DURATION_REGEX = Pattern.compile(".*#EXTINF:(.+?) .*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern TVG_ID_REGEX = Pattern.compile(".*tvg-id=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern TVG_NAME_REGEX = Pattern.compile(".*tvg-name=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern TVG_LOGO_REGEX = Pattern.compile(".*tvg-logo=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern TVG_SHIFT_REGEX = Pattern.compile(".*tvg-shift=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern GROUP_TITLE_REGEX = Pattern.compile(".*group-title=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern RADIO_REGEX = Pattern.compile(".*radio=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern CHANNEL_NAME_REGEX = Pattern.compile(".*,(.+?)$", Pattern.CASE_INSENSITIVE);
-	// private static final Pattern SQUARE_BRACKET_REGEX = Pattern.compile(".*\\[*\\]", Pattern.CASE_INSENSITIVE);
-	// private static final Pattern PIPE_REGEX = Pattern.compile(".*\\|*\\|", Pattern.CASE_INSENSITIVE);
-	
-	
 	/**
 	 * Parse the m3u file
 	 *
@@ -68,7 +56,7 @@ public class Parser {
 			
 			checkStart(line);
 			
-			String globalTvgShif = extract(line, TVG_SHIFT_REGEX);
+			String globalTvgShif = extract(line, Patterns.TVG_SHIFT_REGEX);
 
 			M3UItem entry = null;
 			while ((line = buffer.readLine()) != null) {
@@ -77,7 +65,7 @@ public class Parser {
 					entry = extractExtInfo(globalTvgShif, line);
 				} else {
 					if (entry == null) {
-						throw new ParsingException(lineNbr, "Missing " + M3U_INFO_MARKER);
+						throw new ParsingException(lineNbr, "Missing " + Patterns.M3U_INFO_MARKER);
 					}
 					String type = deriveGroupTypeByUrl(line);
 					entry.setType(type);
@@ -99,29 +87,29 @@ public class Parser {
 	 */
 	private static void checkStart(String line) {
 		if (line != null) {
-			if (!line.contains(M3U_START_MARKER)) {
-				throw new ParsingException(1, "First line of the file should be " + M3U_START_MARKER);
+			if (!line.contains(Patterns.M3U_START_MARKER)) {
+				throw new ParsingException(1, "First line of the file should be " + Patterns.M3U_START_MARKER);
 			}
 		}
 	}
 
 	private static boolean isExtInfo(String line) {
-		return line.contains(M3U_INFO_MARKER);
+		return line.contains(Patterns.M3U_INFO_MARKER);
 	}
 
 	private static M3UItem extractExtInfo(String globalTvgShift, String line) {
-		String duration = extract(line, DURATION_REGEX);
-		String tvgId = extract(line, TVG_ID_REGEX);
-		String tvgName = extract(line, TVG_NAME_REGEX);
-		String tvgShift = extract(line, TVG_SHIFT_REGEX);
+		String duration = extract(line, Patterns.DURATION_REGEX);
+		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
+		String tvgName = Utils.removeFromString((extract(line, Patterns.TVG_NAME_REGEX)), Patterns.SQUARE_BRACKET_REGEX);
+		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
 		if (tvgShift == null) {
 			tvgShift = globalTvgShift;
 		}
-		String radio = extract(line, RADIO_REGEX);
-		String tvgLogo = extract(line, TVG_LOGO_REGEX);
-		String groupTitle = extract(line, GROUP_TITLE_REGEX);
+		String radio = extract(line, Patterns.RADIO_REGEX);
+		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
+		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
-		String channelName = extract(line, CHANNEL_NAME_REGEX);
+		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.SQUARE_BRACKET_REGEX);
 
 		return new M3UItem(
 				duration,
