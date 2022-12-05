@@ -56,7 +56,7 @@ public class M3UController {
 
 	@GetMapping("/")
 	public String getAll(Model model, @RequestParam(required = false, defaultValue = "-1") Long groupId,
-			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size,
 			@ModelAttribute(Constants.SELECTEDGROUP) M3UGroupSelected selectedGroup) {
 		try {
 			

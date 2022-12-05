@@ -69,7 +69,7 @@
 								page:</label> <select form="searchForm" name="size"
 								th:value="${pageSize}" onchange="changePageSize()"
 								class="size-select" id="pageSize">
-								<option th:each="s : ${ {3, 6, 9} }" th:value="${s}"
+								<option th:each="s : ${ {5, 10, 15} }" th:value="${s}"
 									th:text="${s}" th:selected="${s == pageSize}"></option>
 							</select>
 						</div>
@@ -84,16 +84,13 @@
 				<thead class="thead-light">
 					<tr>
 						<th hidden="true" scope="col">Id</th>
-						<th scope="col">Logo</th>
 						<th scope="col">Title</th>
-						<th hidden="true">Download</th>
+						<th ></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="item : ${items}">
 						<th hidden="true" scope="row">[[${item.id}]]</th>
-						<td><img alt="Logo" th:src="${item.tvgLogo}" width="110"
-							height="67" src="" /></td>
 						<td>[[${item.tvgName}]]</td>
 						<form action="#" th:action="@{/download}" method="post">
 					<td><input type="hidden" th:value="${item.tvgName}"
