@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.springframework.util.FileSystemUtils;
+
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -48,40 +50,51 @@ public class M3UtoStrm {
 		
 		
 		List<M3UItem> movies = filterItems(playListItems, ofType(Constants.MOVIE));
-		log.info("{} Movies", movies.size());
-
+		if (log.isDebugEnabled()) {
+			log.debug("{} Movies", movies.size());
+		}
+		 
+		 
 		List<M3UItem> tvshows = filterItems(playListItems, ofType(Constants.SERIES));
-		log.info("{} TV Shows", tvshows.size());
-
-		List<M3UItem> HDMovies = filterItems(movies, ofTypeDefinition(Constants.HD));
-		log.info("{} HD Movies", HDMovies.size());
-
-		List<M3UItem> FHDMovies = filterItems(movies, ofTypeDefinition(Constants.FHD));
-		log.info("{} FHD Movies", FHDMovies.size());
-
-		List<M3UItem> UHDMovies = filterItems(movies, ofTypeDefinition(Constants.UHD));
-		log.info("{} UHD Movies", UHDMovies.size());
-
-		movies.removeAll(FHDMovies);
-		movies.removeAll(UHDMovies);
-
-		String movieFolder = createFolder(Constants.FOLDER_MOVIES) + File.separator;
-		log.info("Created {}", movieFolder);
-
-		createMovieFolders(movies, Constants.HD);
-		log.info("Created HD Movies folders");
-
-		createMovieFolders(movies, Constants.SD);
-		log.info("Created SD Movies folders");
-
-		createMovieFolders(FHDMovies, Constants.FHD);
-		log.info("Created FHD Movies folders");
-
-		createMovieFolders(UHDMovies, Constants.UHD);
-		log.info("Created UHD Movies folders");
-
+		if (log.isDebugEnabled()) {
+			log.debug("{} TV Shows", tvshows.size());
+		}
+		 
+		 /* 
+		 * List<M3UItem> HDMovies = filterItems(movies, ofTypeDefinition(Constants.HD));
+		 * log.info("{} HD Movies", HDMovies.size());
+		 * 
+		 * List<M3UItem> FHDMovies = filterItems(movies,
+		 * ofTypeDefinition(Constants.FHD)); log.info("{} FHD Movies",
+		 * FHDMovies.size());
+		 * 
+		 * List<M3UItem> UHDMovies = filterItems(movies,
+		 * ofTypeDefinition(Constants.UHD)); log.info("{} UHD Movies",
+		 * UHDMovies.size());
+		 * 
+		 * movies.removeAll(FHDMovies); movies.removeAll(UHDMovies);
+		 */
 		createTVshowFolders(tvshows);
-		log.info("Created TV Shows folders");
+		if (log.isDebugEnabled()) {
+			log.debug("Created TV Shows folders");
+		}
+		
+		createMovieFolders(movies, Constants.HD);
+		if (log.isDebugEnabled()) {
+			log.debug("Created HD Movies folders");
+		}
+
+		/*
+		 * createMovieFolders(movies, Constants.SD);
+		 * log.info("Created SD Movies folders");
+		 * 
+		 * createMovieFolders(FHDMovies, Constants.FHD);
+		 * log.info("Created FHD Movies folders");
+		 * 
+		 * createMovieFolders(UHDMovies, Constants.UHD);
+		 * log.info("Created UHD Movies folders");
+		 */ 
+		
 	}
 
 
@@ -150,13 +163,15 @@ public class M3UtoStrm {
 			log.debug("Starting createMovieFolders");
 		}
 
-		// deleteFolder(Constants.FOLDER_MOVIES);
+		deleteFolder(Constants.FOLDER_MOVIES);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Processing {} movies", movies.size());
 		}
 
-		log.info("Processing {} movies of type {}", movies.size(),type);
+		if (log.isDebugEnabled()) {
+			log.debug("Processing {} movies of type {}", movies.size(),type);
+		}
 		makeMovieFolders(movies, type);
 
 	}
@@ -174,12 +189,15 @@ public class M3UtoStrm {
 			log.debug("Processing {} TV Shows", tvshows.size());
 		}
 
-		log.info("Processing {} TV Shows", tvshows.size());
+		if (log.isDebugEnabled()) {
+			log.debug("Processing {} TV Shows", tvshows.size());
+		}
 
 		tvshows.forEach(tvShow -> {
 			String tvShowName = tvShow.getChannelName();
 			tvShowName = Utils.replaceForwardSlashWithSpace(tvShowName);
 			tvShowName = Utils.removeFromString(tvShowName, Patterns.SQUARE_BRACKET_REGEX);
+			tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPES_REGEX);
 			tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPE_REGEX);
 					
 			Pattern seasonPattern = Pattern.compile(seasonRegex, Pattern.CASE_INSENSITIVE);
@@ -216,13 +234,16 @@ public class M3UtoStrm {
 
 		Path pathToBeDeleted = new File(folder).toPath();
 
+		
 		try {
-			if (pathToBeDeleted.toFile().exists()) {
-				Files.walk(pathToBeDeleted)
-				.sorted(Comparator.reverseOrder())
-				.map(Path::toFile)
-				.forEach(File::delete);
-			}
+			
+			FileSystemUtils.deleteRecursively(pathToBeDeleted);
+			
+			/*
+			 * if (pathToBeDeleted.toFile().exists()) { Files.walk(pathToBeDeleted)
+			 * .sorted(Comparator.reverseOrder()) .map(Path::toFile) .forEach(File::delete);
+			 * }
+			 */
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -260,10 +281,18 @@ public class M3UtoStrm {
 		writer.write(content);
 
 		writer.close();
+		
+		
 	}
 
 	public static void makeMovieFolders(List<M3UItem> movies, String type) {
 
+		String movieFolder = createFolder(Constants.FOLDER_MOVIES) + File.separator;
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Created {}", movieFolder);
+		}
+		
 		movies.forEach(movie -> {
 
 			String groupTitle = movie.getGroupTitle();
@@ -271,23 +300,34 @@ public class M3UtoStrm {
 			String folder = movie.getChannelName();
 			folder = Utils.replaceForwardSlashWithSpace(folder);
 			folder = Utils.removeFromString(folder, Patterns.SQUARE_BRACKET_REGEX);
+			folder = Utils.removeFromString(folder, Patterns.PIPES_REGEX);
 			folder = Utils.removeFromString(folder, Patterns.PIPE_REGEX);
+			
 			folder = folder.replace("/", " ").trim();
 
 			String url = movie.getChannelUri();
 
-			if (type.equals(Constants.FHD)) {
-				folder = folder.replace(Constants.FHD, "").trim();
-			} else if (type.equals(Constants.UHD)) {
-				folder = folder.replace(Constants.UHD, "").trim();
-			}
+			/*
+			 * if (type.equals(Constants.FHD)) { folder = folder.replace(Constants.FHD,
+			 * "").trim(); } else if (type.equals(Constants.UHD)) { folder =
+			 * folder.replace(Constants.UHD, "").trim(); }
+			 */
 			try {
 				if (!groupTitle.contains(Constants.ADULT)) { // Exclude Adult
 
 					String newFolder = Utils.normaliseName(folder);
 					String newFolderPath = createFolder(Constants.FOLDER_MOVIES + File.separator + newFolder);
+					
+					if (log.isDebugEnabled()) {
+						log.debug("Created {}", newFolderPath);
+					}
+					
 					File thisFile = new File(newFolderPath + File.separator + folder + ".strm"); 
 					writeToFile(thisFile, url);
+					
+					if (log.isDebugEnabled()) {
+						log.debug("Written - {}", thisFile.getAbsolutePath());
+					}
 
 				}
 			} catch (IOException ioe) {

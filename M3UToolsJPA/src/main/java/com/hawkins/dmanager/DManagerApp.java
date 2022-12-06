@@ -33,7 +33,7 @@ import com.hawkins.m3Utoolsjpa.downloaders.metadata.HlsMetadata;
 import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
 import com.hawkins.m3Utoolsjpa.monitoring.BrowserMonitor;
 import com.hawkins.m3Utoolsjpa.network.http.HttpContext;
-import com.hawkins.m3utoolsjpa.utils.FileUtils;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -148,7 +148,7 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 			ent.setSize(downloader.getDownloaded());
 		}
 
-		FileUtils.copyToriginalFileName(ent);
+		FileUtilsForM3UToolsJPA.copyToriginalFileName(ent);
 
 		if (downloader != null) {
 			downloader.sendProgress(id, ent, template);

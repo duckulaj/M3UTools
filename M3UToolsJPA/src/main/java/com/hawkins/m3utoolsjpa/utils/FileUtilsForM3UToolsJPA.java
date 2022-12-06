@@ -20,9 +20,9 @@ import com.hawkins.dmanager.DownloadEntry;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class FileUtils {
+public class FileUtilsForM3UToolsJPA {
 
-	private FileUtils() {
+	private FileUtilsForM3UToolsJPA() {
 
 	}
 
@@ -108,5 +108,17 @@ public class FileUtils {
 
 	}
 
+	public static String getCurrentWorkingDirectory() {
+        
+		String userDirectory = Paths.get("")
+                .toAbsolutePath()
+                .toString();
+        
+        if (userDirectory.charAt(userDirectory.length() - 1) != File.separatorChar) {
+        	userDirectory += File.separator;
+		}
+
+        return userDirectory;
+    }
 	
-	}
+}

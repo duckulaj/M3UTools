@@ -15,6 +15,7 @@ public class Patterns {
 	public static final Pattern RADIO_REGEX = Pattern.compile(".*radio=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
 	public static final Pattern CHANNEL_NAME_REGEX = Pattern.compile(".*,(.+?)$", Pattern.CASE_INSENSITIVE);
 	public static final Pattern SQUARE_BRACKET_REGEX = Pattern.compile("\\[.*?\\]", Pattern.CASE_INSENSITIVE);
-	public static final Pattern PIPE_REGEX = Pattern.compile("([^|]*\\|){1}([^|]*\\|)", Pattern.CASE_INSENSITIVE);
-	
+	public static final Pattern PIPES_REGEX = Pattern.compile("([^|]*\\|){1}([^|]*\\|)", Pattern.CASE_INSENSITIVE);
+	public static final Pattern PIPE_REGEX = Pattern.compile("([^|]*\\|{1}[^|]{1}[^|])", Pattern.CASE_INSENSITIVE);
+
 }

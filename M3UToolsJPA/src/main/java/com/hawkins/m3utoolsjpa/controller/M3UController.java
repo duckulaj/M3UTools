@@ -22,7 +22,7 @@ import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.FileUtils;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 
 @Controller
 public class M3UController {
@@ -80,7 +80,7 @@ public class M3UController {
 	@GetMapping("/viewLog") 
 	public String viewLog(Model model) {
 		
-		model.addAttribute("logFile", FileUtils.fileTail("M3UToolsJPA.log", 100));
+		model.addAttribute("logFile", FileUtilsForM3UToolsJPA.fileTail("M3UToolsJPA.log", 100));
 		return Constants.VIEW_LOG;
 	}
 	

@@ -33,18 +33,25 @@ public class Utils {
 
 		String userHome = System.getProperty("user.home");
 
-		if (userHome.charAt(userHome.length() - 1) != File.separatorChar) {
-			userHome += File.separator;
-		}
-
+		/*
+		 * if (userHome.charAt(userHome.length() - 1) != File.separatorChar) { userHome
+		 * += File.separator; }
+		 * 
+		 * if (log.isDebugEnabled()) {
+		 * log.debug("Utils.readProperties :: Looking for {}M3UToolsJPA/{}", userHome,
+		 * propertyType); }
+		 * 
+		 * File configFile = new File(userHome, "M3UToolsJPA/" + propertyType);
+		 */
+		
+		File configFile = new File(FileUtilsForM3UToolsJPA.getCurrentWorkingDirectory() + propertyType);
+		
 		if (log.isDebugEnabled()) {
-			log.debug("Utils.readProperties :: Looking for {}M3UToolsJPA/{}", userHome, propertyType);
+			log.debug("Utils.readProperties :: Looking for " + configFile.getAbsolutePath());
 		}
-
-		File configFile = new File(userHome, "M3UToolsJPA/" + propertyType);
-
+		
 		if (!configFile.exists() && log.isDebugEnabled()) {
-			log.debug("{} does not exist", propertyType);
+			log.debug(configFile.getAbsolutePath() + " does not exist");
 		}
 
 		return configFile;
