@@ -42,6 +42,7 @@ public class DownloadProperties implements Runnable {
 	private boolean xteveInstalled = false;
 	private String xteveUser = null;
 	private String xteveUrl = null;
+	private String fileName = null;
 	
 	public DownloadProperties() {
 
@@ -74,6 +75,7 @@ public class DownloadProperties implements Runnable {
 		this.setXteveInstalled(Boolean.parseBoolean(props.getProperty("xteve.installed")));
 		this.setXteveUser(props.getProperty("xteve.user"));
 		this.setXteveUrl(props.getProperty("xteve.url"));
+		this.setFileName(props.getProperty("fileName"));
 		
 	}
 
@@ -290,6 +292,16 @@ public class DownloadProperties implements Runnable {
 		return this.props;
 
 	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	
 
 	
 }

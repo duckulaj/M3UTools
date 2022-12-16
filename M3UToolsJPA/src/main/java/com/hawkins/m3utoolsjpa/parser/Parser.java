@@ -70,6 +70,11 @@ public class Parser {
 					String type = deriveGroupTypeByUrl(line);
 					entry.setType(type);
 					entry.setChannelUri(line);
+					
+					if (entry.getType().equals(Constants.MOVIE)) {
+						entry.setSearch(Utils.normaliseName(entry.getChannelName()));
+					}
+					
 					entries.add(entry);
 				}
 			}
@@ -111,6 +116,10 @@ public class Parser {
 		Long groupId = -1L;
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.SQUARE_BRACKET_REGEX);
 
+		if (channelName.contains("|")) {
+			channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.PIPES_REGEX).trim();
+		}
+		// Remove |EN|
 		return new M3UItem(
 				duration,
 				groupTitle,

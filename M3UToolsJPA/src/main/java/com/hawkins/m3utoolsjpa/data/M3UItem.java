@@ -32,7 +32,7 @@ public class M3UItem {
 	private String tvgLogo;
 	private String tvgShift;
 	private String radio;
-	
+		
 	@Lob
 	private String channelUri;
 	
@@ -141,6 +141,10 @@ public class M3UItem {
 
 	public String getSearch() {
 		return search;
+	}
+	
+	public void setSearch(String search) {
+		this.search = search;
 	}
 
 	

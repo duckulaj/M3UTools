@@ -48,7 +48,6 @@ public class Constants {
 	
 	// Thymeleaf Pages
 	public static final String ITEMS = "items";
-	public static final String DOWNLOAD = "download";
 	public static final String VIEW_LOG = "viewLog";
 	public static final String PROPERTIES= "properties";
 	

@@ -23,6 +23,7 @@ import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
+import com.hawkins.m3utoolsjpa.utils.MovieDb;
 
 @Controller
 public class M3UController {
@@ -62,6 +63,7 @@ public class M3UController {
 			
 			Page<M3UItem> pageItems = M3UService.getPageableItems(groupId, page, size, itemRepository);
 			
+			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 			model.addAttribute(Constants.SELECTEDGROUP, M3UService.getSelectedGroup(groupId, groupRepository));
 			model.addAttribute("groupId", groupId);
 			model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));

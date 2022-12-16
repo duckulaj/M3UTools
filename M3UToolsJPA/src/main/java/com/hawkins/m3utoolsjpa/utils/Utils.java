@@ -31,19 +31,6 @@ public class Utils {
 
 	public static File getPropertyFile(String propertyType) {
 
-		String userHome = System.getProperty("user.home");
-
-		/*
-		 * if (userHome.charAt(userHome.length() - 1) != File.separatorChar) { userHome
-		 * += File.separator; }
-		 * 
-		 * if (log.isDebugEnabled()) {
-		 * log.debug("Utils.readProperties :: Looking for {}M3UToolsJPA/{}", userHome,
-		 * propertyType); }
-		 * 
-		 * File configFile = new File(userHome, "M3UToolsJPA/" + propertyType);
-		 */
-		
 		File configFile = new File(FileUtilsForM3UToolsJPA.getCurrentWorkingDirectory() + propertyType);
 		
 		if (log.isDebugEnabled()) {
@@ -70,6 +57,7 @@ public class Utils {
 			FileReader reader = new FileReader(configFile);
 			props.load(reader);
 			reader.close();
+			props.putIfAbsent("fileName", configFile.getPath());
 		} catch (FileNotFoundException fnfe) {
 			log.debug(fnfe.toString());
 		} catch (IOException ioe) {
@@ -200,7 +188,7 @@ public class Utils {
 
 		int startIndex = 0;
 
-		int endIndex = StringUtils.indexOfAny(filmName, new String[]{"SD", "FHD", "UHD", "HD"});
+		int endIndex = StringUtils.indexOfAny(filmName, new String[]{"SD", "FHD", "UHD", "HD", "4K"});
 
 		if (endIndex != -1) {
 			filmName = filmName.substring(startIndex, endIndex);
