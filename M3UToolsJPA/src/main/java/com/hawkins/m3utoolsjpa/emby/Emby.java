@@ -78,12 +78,12 @@ public class Emby {
 		String embyApi = downloadProperties.getEmbyApi();
 		String embyUrl = downloadProperties.getEmbyUrl();
 		
-		String refreshGuideUrl = embyUrl + "Library/Refresh/?api_key=" + embyApi;
+		String refreshLibraryUrl = embyUrl + "Library/Refresh/?api_key=" + embyApi;
 		
 		RestTemplate restTemplate = new RestTemplate();
 		
         try {
-			URI uri = new URI(refreshGuideUrl);
+			URI uri = new URI(refreshLibraryUrl);
 			
 			HttpHeaders headers = new HttpHeaders();   
 	        headers.set("X-COM-LOCATION", "UK");     

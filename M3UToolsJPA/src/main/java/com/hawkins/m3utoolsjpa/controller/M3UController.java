@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.job.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.service.M3UService;
@@ -104,5 +106,11 @@ public class M3UController {
 		return Constants.PROPERTIES;
 	}
 	
+	@GetMapping(value = "/showStatus")
+	public String showStatus(Model model) {
+		
+		model.addAttribute(Constants.JOBLIST, new LinkedList<DownloadJob>());
+		return Constants.STATUS;
+	}
 
 }

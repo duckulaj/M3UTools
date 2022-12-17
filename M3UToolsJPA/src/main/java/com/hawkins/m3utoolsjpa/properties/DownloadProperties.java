@@ -110,6 +110,9 @@ public class DownloadProperties implements Runnable {
 		}
 
 		Utils.saveProperties(configProperty);
+		
+		thisInstance = new DownloadProperties();
+		
 		return new DownloadProperties();
 
 	}

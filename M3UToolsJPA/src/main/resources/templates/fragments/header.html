@@ -1,24 +1,29 @@
 <header th:fragment="header">
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <a class="navbar-brand" th:href="@{/}">
-      M3UTools JPA
+      <i class="fa fa-home fa-lg" aria-hidden="true"></i> M3UTools JPA
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="topNavbar">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/resetDatabase}">Reload m3u</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/convertToStream}">m3u to Stream</a>
-        </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-tasks fa-lg"></i> Tasks
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" th:href="@{/resetDatabase}">Reset Database</a>
+          <a class="dropdown-item" th:href="@{/resetM3UFile}">Reset M3UFile</a>
+          <a class="dropdown-item" th:href="@{/convertToStream}">Convert M3U to strm</a>
+          <a class="dropdown-item" th:href="@{/properties}">Properties</a>
+        </div>
+      </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/viewLog}">View Log</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/properties}">Properties</a>
+          <a class="nav-link" th:href="@{/showStatus}">Status</a>
         </li>
       </ul>
     </div>
