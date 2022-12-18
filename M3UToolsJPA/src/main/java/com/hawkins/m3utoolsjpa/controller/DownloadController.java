@@ -20,18 +20,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.hawkins.dmanager.DManagerApp;
 import com.hawkins.dmanager.properties.DmProperties;
 import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.job.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UDownloadItem;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
+import com.hawkins.m3utoolsjpa.mediaSearch.MediaSearchHelper;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.DownloadService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.MovieDb;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -113,7 +112,7 @@ public class DownloadController {
 			
 			downloadService.doWork(downloadJob);
 			
-			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
+			model.addAttribute(Constants.MOVIEDB, MediaSearchHelper.getsearchHelper("MovieDB"));
 			model.addAttribute(Constants.SELECTEDGROUP, new M3UGroupSelected());
 
 		} catch (IOException ioe) {

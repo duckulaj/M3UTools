@@ -5,37 +5,28 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 // import org.apache.tomcat.util.http.fileupload.FileUtils;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.job.DownloadJob;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.MovieDb;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -273,86 +264,7 @@ public class Utils {
 
 	}
 
-	public static JsonObject searchplayListByActor(String filter) {
-
-		MovieDb movieDb = MovieDb.getInstance();
-		String searchPersonURL = movieDb.getPersonURL();
-		String api = movieDb.getApi();
-		JsonObject obj = new JsonObject();
-
-		try {
-
-			Map<String, String> parameters = new HashMap<>();
-			parameters.put("api_key", api);
-			parameters.put("query", filter);
-
-			URL url = new URL(searchPersonURL + "?" + getParamsString(parameters));
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.setRequestProperty("Content-Type", "application/json");
-
-			JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
-					new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
-
-			obj = jsonObject;
-
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
-
-		return obj;
-	}
-
-	public static JsonObject searchplayListByYear(String filter) {
-
-		MovieDb movieDb = MovieDb.getInstance();
-		String discoverURL = movieDb.getDiscoverURL();
-		String api = movieDb.getApi();
-		JsonObject obj = new JsonObject();
-
-		try {
-
-			Map<String, String> parameters = new HashMap<>();
-			parameters.put("api_key", api);
-			parameters.put("language", "en-GB");
-			parameters.put("region", "GB");
-			parameters.put("release_date.gte", filter + "-01-01");
-			parameters.put("release_date.lte", filter + "-12-31");
-
-			URL url = new URL(discoverURL + "?" + getParamsString(parameters));
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.setRequestProperty("Content-Type", "application/json");
-
-			JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
-					new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
-
-			obj = jsonObject;
-
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
-
-		return obj;
-	}
-
-	private static String getParamsString(Map<String, String> params) 
-			throws UnsupportedEncodingException{
-		StringBuilder result = new StringBuilder();
-
-		for (Map.Entry<String, String> entry : params.entrySet()) {
-			result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-			result.append("=");
-			result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-			result.append("&");
-		}
-
-		String resultString = result.toString();
-		return resultString.length() > 0
-				? resultString.substring(0, resultString.length() - 1)
-						: resultString;
-	}
-
+	
 	public static String replaceForwardSlashWithSpace (String stringToReplace) {
 
 
