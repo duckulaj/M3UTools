@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport"
+	content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+<title>M3UToolsJPA</title>
+
+<script th:src="@{webjars/jquery/jquery.min.js}"></script>
+<!-- <script th:src="@{webjars/bootstrap/js/bootstrap.min.js}"></script> -->
+<script th:src="@{webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{webjars/font-awesome/5.8.2/js/all.js}"></script>
+<link rel="stylesheet" th:href="@{webjars/font-awesome/5.8.2/css/all.css}"/>
+<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
+
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+
+</head>
+<body>
+
+	<div th:replace="fragments/header :: header"></div>
+	
+	<div class="container-fluid" style="max-width: 1024px; margin: 0 auto;">
+		<h2 class="text-center">Search</h2>
+		
+		<form th:action="@{/search}" id="searchForm">
+				<div class="row d-flex gap-3">
+					<div class="col-md-6 mt-2">
+						
+							<div class="input-group-prepend gap-3">
+								<label class="input-group-text gap-3">Search Type</label>
+								 <select form="searchForm" name="searchType">
+									<option>Title</option>
+									<option>Actor</option>
+									<option>Year</option>
+								</select>
+						
+								
+							</div>
+							
+						<input type="text" id="searchTerm" name="searchTerm" th:value="*{searchTermPlanted}" placeholder="Enter search criteria" />	
+						<button type="submit" class="btn btn-info" >Search</button>
+  						<button type="submit" class="btn btn-info" >Reset</button>
+						
+						
+					</div>
+				</div>
+		</form>
+	</div>
+</body>
+</html>
