@@ -118,8 +118,6 @@ public class FileUtilsForM3UToolsJPA {
         	userDirectory += File.separator;
 		}
 
-        log.info("Reading properties from {}", userDirectory);
-        
         return userDirectory;
     }
 	

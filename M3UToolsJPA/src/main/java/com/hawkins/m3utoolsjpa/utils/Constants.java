@@ -43,13 +43,14 @@ public class Constants {
 	public static final String SEARCHYEAR = "searchYear";
 	public static final String SETTINGS = "settings";
 	public static final String ROWS = "rows";
-	public static final String STATUS = "status";
 	public static final String EDITM3U = "editM3U";
 	
 	// Thymeleaf Pages
 	public static final String ITEMS = "items";
 	public static final String VIEW_LOG = "viewLog";
 	public static final String PROPERTIES= "properties";
+	public static final String STATUS = "status";
+	public static final String SEARCH = "search";
 	
 	public static final String FOLDER_MOVIES = "Movies";
 	public static final String FOLDER_TVSHOWS = "TVshows";

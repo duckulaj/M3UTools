@@ -93,6 +93,7 @@ public class M3UController {
 		
 		model.addAttribute("properties", M3UService.getOrderedPropertiesEntrySet());
 		model.addAttribute("configProperty", new ConfigProperty());
+		model.addAttribute("propertyFile", M3UService.getConfigFileName());
 		return Constants.PROPERTIES;
 	}
 	
@@ -102,6 +103,7 @@ public class M3UController {
 		M3UService.updateProperty(configProperty);
 		model.addAttribute("properties", M3UService.getOrderedPropertiesEntrySet());
 		model.addAttribute("configProperty", new ConfigProperty());
+		model.addAttribute("propertyFile", M3UService.getConfigFileName());
 		
 		return Constants.PROPERTIES;
 	}
@@ -111,6 +113,12 @@ public class M3UController {
 		
 		model.addAttribute(Constants.JOBLIST, new LinkedList<DownloadJob>());
 		return Constants.STATUS;
+	}
+
+	@GetMapping(value = "/search")
+	public String search(Model model) {
+		
+		return Constants.SEARCH;
 	}
 
 }

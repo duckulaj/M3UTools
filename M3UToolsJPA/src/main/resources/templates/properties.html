@@ -35,7 +35,7 @@
 	<div th:replace="fragments/header :: header"></div>
 
 	<div class="container-fluid" style="max-width: 1024px; margin: 0 auto;">
-		<h2 class="text-center">Properties</h2>
+		<h2 class="text-center">Properties - <p th:text="*{propertyFile}"></p></h2>
 
 		<div th:if="${message != null}"
 			class="alert alert-success alert-dismissible fade show text-center message"

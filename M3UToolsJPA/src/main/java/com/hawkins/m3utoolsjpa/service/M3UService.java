@@ -184,6 +184,11 @@ public class M3UService {
 		}
 	}
 	
+	public static String getConfigFileName() {
+		
+		return Utils.getPropertyFile(Constants.CONFIGPROPERTIES).getAbsolutePath();
+		
+	}
 }
 
 

@@ -33,9 +33,7 @@ public class Utils {
 
 		File configFile = new File(FileUtilsForM3UToolsJPA.getCurrentWorkingDirectory() + propertyType);
 		
-		if (log.isDebugEnabled()) {
-			log.debug("Utils.readProperties :: Looking for " + configFile.getAbsolutePath());
-		}
+		log.info("Reading properties from {}", configFile.getAbsolutePath());
 		
 		if (!configFile.exists() && log.isDebugEnabled()) {
 			log.debug(configFile.getAbsolutePath() + " does not exist");
