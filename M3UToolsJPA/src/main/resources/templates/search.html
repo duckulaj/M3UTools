@@ -16,6 +16,49 @@
 
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 
+<script>
+function openInformationModal(row) { // begin function
+
+	var val = row.getAttribute("value");
+	var api = document.getElementById("moviedbapi").value;
+	var url = document.getElementById("moviedbsearchURL").value;
+	var movieurl = document.getElementById("moviedbsearchMovieURL").value;
+	
+	$.ajax({ // begin ajax
+    	url: url,
+        data: {
+            api_key: api,
+            language: "en-GB",
+            query: val
+        },
+        dataType : 'json',
+        context : this,
+        success: function(data) {
+        	$.ajax({
+            	url: movieurl + "/" + data.results[0].id,
+	            data: {
+	                api_key: api,
+	                language: "en-GB"
+	            },
+	            dataType : 'json',
+	            context : this,
+	            error: function() {
+	            	alert("No information available");
+	            },
+                success: function(data) {
+                	console.log(data);
+                    console.log(data.overview);
+                    $("#modalTitleH4").html(data.title);
+                    $("#modalBodyDiv").html(data.overview);
+                    $("#informationModal").modal("show");
+                }
+        	})
+        }
+    }) //end ajax
+} // end function
+
+
+</script>
 </head>
 <body>
 
@@ -31,22 +74,85 @@
 							<div class="input-group-prepend gap-3">
 								<label class="input-group-text gap-3">Search Type</label>
 								 <select form="searchForm" name="searchType">
-									<option>Title</option>
-									<option>Actor</option>
-									<option>Year</option>
+									<option value="title">Title</option>
+									<option value="actor">Actor</option>
+									<option value="year">Year</option>
 								</select>
 						
 								
 							</div>
 							
-						<input type="text" id="searchTerm" name="searchTerm" th:value="*{searchTermPlanted}" placeholder="Enter search criteria" />	
+						<input type="text" id="criteria" name="criteria" th:value="*{criteria}" placeholder="Enter search criteria" />	
 						<button type="submit" class="btn btn-info" >Search</button>
-  						<button type="submit" class="btn btn-info" >Reset</button>
+  						<button type="reset" class="btn btn-info" >Reset</button>
 						
 						
 					</div>
 				</div>
 		</form>
 	</div>
+	
+	<div th:if="${items.size() > 0}">
+			<table class="table table-hover table-responsive-xl">
+				<thead class="thead-light">
+					<tr>
+						<th hidden="true" scope="col">Id</th>
+						<th scope="col">Title</th>
+						<th scope="col"></th>
+						<th scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${items}">
+						<th hidden="true" scope="row">[[${item.id}]]</th>
+						<td>[[${item.tvgName}]]</td>
+						<form action="#" th:action="@{/download}" method="post">
+					<td><input type="hidden" th:value="${item.tvgName}"
+						name="name" id="name" />
+						<button type="submit" class="btn btn-default btn-sm" name="action"
+							id="btndownload" value="download">
+							<i class="fa fa-download fa-lg"></i>
+						</button></td>
+				</form>
+				<td><input type="hidden" th:value="${item.search}"
+					name="searchInfo" id="searchInfo" />
+					<button type="submit" class="btn btn-default btn-sm"
+						name="btninformation" id="btninformation"
+						th:onclick="openInformationModal(this);" th:value="${item.search}">
+						<i class="fa fa-info-circle fa-lg"></i>
+					</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div th:unless="${items.size() > 0}">
+			<span>No Titles found!</span>
+		</div>
+		
+		<div id="informationModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+<!-- 					<button type="button" class="close" data-dismiss="modal">&times;</button> -->
+					<h4 class="modal-title" id="modalTitleH4"></h4>
+				</div>
+				<div class="modal-body" id="modalBodyDiv"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div>
+		<input type="hidden" name="moviedbapi" id="moviedbapi"
+			th:value="${movieDb.api}" /> <input type="hidden" name="moviedburl"
+			id="moviedbsearchURL" th:value="${movieDb.url}" /> <input
+			type="hidden" name="moviedbmovieURL" id="moviedbsearchMovieURL"
+			th:value="${movieDb.movieURL}" />
+	</div>
+	
 </body>
 </html>

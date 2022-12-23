@@ -2,6 +2,7 @@ package com.hawkins.m3utoolsjpa.service;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -25,6 +26,8 @@ import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.properties.OrderedProperties;
+import com.hawkins.m3utoolsjpa.search.Search;
+import com.hawkins.m3utoolsjpa.search.SearchFactory;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -188,6 +191,17 @@ public class M3UService {
 		
 		return Utils.getPropertyFile(Constants.CONFIGPROPERTIES).getAbsolutePath();
 		
+	}
+	
+	public static List<M3UItem> searchMedia(String searchType, String criteria, M3UItemRepository itemRepository) {
+		
+		List<M3UItem> searchResults = new ArrayList<M3UItem>();
+		
+		SearchFactory searchFactory = new SearchFactory();
+		Search search = searchFactory.createSearch(searchType);
+		searchResults = search.search(criteria, itemRepository);
+		
+		return searchResults;
 	}
 }
 

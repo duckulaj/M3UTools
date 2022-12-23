@@ -51,6 +51,7 @@ public class Constants {
 	public static final String PROPERTIES= "properties";
 	public static final String STATUS = "status";
 	public static final String SEARCH = "search";
+	public static final String INDEX = "index";
 	
 	public static final String FOLDER_MOVIES = "Movies";
 	public static final String FOLDER_TVSHOWS = "TVshows";
@@ -67,7 +68,9 @@ public class Constants {
 	public static final String[] allowedExtensions = {"mp4","ts"};
 	public static final List<String> toBeConverted = new ArrayList<String>(Arrays.asList(".ts"));
 	
-	public static final String INDEX = "index";
+	public static final String ACTOR_SEARCH = "actor";
+	public static final String YEAR_SEARCH = "year";
+	public static final String TITLE_SEARCH = "title";
 	
 	// public static final Long maxFileSize = 2147483648L;
 	public static final Long maxFileSize = 1073741824L;

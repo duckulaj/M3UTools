@@ -25,6 +25,10 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 	@Transactional(readOnly = true)
 	@Query("SELECT DISTINCT groupTitle FROM M3UItem WHERE type = ?1")
 	List<String> findDistinctByType(String type);
+	
+	@Transactional(readOnly = true)
+	@Query("SELECT m0 FROM M3UItem m0 WHERE type = 'movie' AND channelName LIKE ?1")
+	List<M3UItem> findByChannelName(String channelName);
 
 
 }
