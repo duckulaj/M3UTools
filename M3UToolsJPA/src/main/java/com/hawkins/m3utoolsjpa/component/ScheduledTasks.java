@@ -41,7 +41,7 @@ public class ScheduledTasks {
 		log.info("Scheduled Task createStreams) completed at {}", Utils.printNow());
 	}
 
-	@Scheduled(cron = "0 10 1 * * ?") // 1.10am
+	@Scheduled(cron = "0 */6 * * * ?") // Every 6 hours
 	public void reloadEPG() {
 
 		String epgFile = DownloadProperties.getInstance().getEpgFileName();

@@ -113,7 +113,7 @@ public class DownloadProperties implements Runnable {
 		
 		thisInstance = new DownloadProperties();
 		
-		return new DownloadProperties();
+		return thisInstance;
 
 	}
 
