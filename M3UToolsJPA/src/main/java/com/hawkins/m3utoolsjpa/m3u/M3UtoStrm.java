@@ -50,15 +50,13 @@ public class M3UtoStrm {
 		
 		
 		List<M3UItem> movies = filterItems(playListItems, ofType(Constants.MOVIE));
-		if (log.isDebugEnabled()) {
-			log.debug("{} Movies", movies.size());
-		}
+		log.info("{} Movies", movies.size());
+		
 		 
 		 
 		List<M3UItem> tvshows = filterItems(playListItems, ofType(Constants.SERIES));
-		if (log.isDebugEnabled()) {
-			log.debug("{} TV Shows", tvshows.size());
-		}
+		log.info("{} TV Shows", tvshows.size());
+		
 		 
 		 /* 
 		 * List<M3UItem> HDMovies = filterItems(movies, ofTypeDefinition(Constants.HD));
@@ -75,14 +73,12 @@ public class M3UtoStrm {
 		 * movies.removeAll(FHDMovies); movies.removeAll(UHDMovies);
 		 */
 		createTVshowFolders(tvshows);
-		if (log.isDebugEnabled()) {
-			log.debug("Created TV Shows folders");
-		}
+		log.info("Created TV Shows folders");
+		
 		
 		createMovieFolders(movies, Constants.HD);
-		if (log.isDebugEnabled()) {
-			log.debug("Created HD Movies folders");
-		}
+		log.info("Created HD Movies folders");
+		
 
 		/*
 		 * createMovieFolders(movies, Constants.SD);
