@@ -13,16 +13,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.utils.Constants;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class JsonToList {
 
-	public static List<M3UItem> convertJsonToList(JsonObject jsonObj, M3UItemRepository itemRepository) {
+	public static List<M3UItem> convertJsonToList(JsonObject jsonObj, M3UItemRepository itemRepository, String searchType) {
 
 		/* 
-		 * Thia List will hold the matched items in the database and returned to the search results page
+		 * This List will hold the matched items in the database and returned to the search results page
 		 */
 		List<M3UItem> foundItems = new ArrayList<M3UItem>();
 
@@ -41,26 +42,41 @@ public class JsonToList {
 			while (resultsIterator.hasNext()) {
 				JsonObject result = resultsIterator.next().getAsJsonObject();
 
-				JsonElement known_for_department = result.getAsJsonPrimitive("known_for_department");
+				switch (searchType) {
+				case Constants.ACTOR_SEARCH:
+				
+					JsonElement known_for_department = result.getAsJsonPrimitive("known_for_department");
+					
+					if (known_for_department.getAsString().equalsIgnoreCase("Acting")) {
 
-				if (known_for_department.getAsString().equalsIgnoreCase("Acting")) {
+						JsonArray knownfor = (JsonArray) result.get("known_for");
+						Iterator<JsonElement> knownforIt = knownfor.iterator();
 
-					JsonArray knownfor = (JsonArray) result.get("known_for");
-					Iterator<JsonElement> knownforIt = knownfor.iterator();
+						while (knownforIt.hasNext()) {
+							JsonObject movie = knownforIt.next().getAsJsonObject();
 
-					while (knownforIt.hasNext()) {
-						JsonObject movie = knownforIt.next().getAsJsonObject();
+							String mediatype = movie.get("media_type").getAsString();
 
-						String mediatype = movie.get("media_type").getAsString();
+							if (mediatype.equalsIgnoreCase("tv")) {
+								m3uitems.add(movie.get("name").getAsString());
+							} else if (mediatype.equalsIgnoreCase("movie")) {
+								m3uitems.add(movie.get("title").getAsString());
+							}
 
-						if (mediatype.equalsIgnoreCase("tv")) {
-							m3uitems.add(movie.get("name").getAsString());
-						} else if (mediatype.equalsIgnoreCase("movie")) {
-							m3uitems.add(movie.get("title").getAsString());
 						}
-
 					}
+
+					break;
+					
+				case Constants.YEAR_SEARCH:
+
+					m3uitems.add(result.get("title").getAsString());
+
+					break;
+				default:
+					break;
 				}
+				
 			}
 		}
 

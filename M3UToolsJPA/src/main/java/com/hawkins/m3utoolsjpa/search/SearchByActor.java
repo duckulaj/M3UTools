@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class SearchByActor implements Search {
 			log.info(e.getMessage());
 		}
 
-		return JsonToList.convertJsonToList(obj, itemRepository);
+		return JsonToList.convertJsonToList(obj, itemRepository, Constants.ACTOR_SEARCH);
 	}
 
 }
