@@ -1,5 +1,7 @@
 package com.hawkins.m3utoolsjpa.component;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -41,7 +43,7 @@ public class ScheduledTasks {
 		log.info("Scheduled Task createStreams) completed at {}", Utils.printNow());
 	}
 
-	@Scheduled(cron = "0 */6 * * * ?") // Every 6 hours
+	@Scheduled(fixedRate = 3, timeUnit = TimeUnit.HOURS)
 	public void reloadEPG() {
 
 		String epgFile = DownloadProperties.getInstance().getEpgFileName();
