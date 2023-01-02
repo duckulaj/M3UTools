@@ -197,9 +197,11 @@ public class M3UService {
 		
 		List<M3UItem> searchResults = new ArrayList<M3UItem>();
 		
-		SearchFactory searchFactory = new SearchFactory();
-		Search search = searchFactory.createSearch(searchType);
-		searchResults = search.search(criteria, itemRepository);
+		if (criteria != null && criteria.length() > 0) {
+			SearchFactory searchFactory = new SearchFactory();
+			Search search = searchFactory.createSearch(searchType);
+			searchResults = search.search(criteria, itemRepository);
+		}
 		
 		return searchResults;
 	}
