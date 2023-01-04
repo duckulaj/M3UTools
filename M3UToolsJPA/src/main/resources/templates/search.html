@@ -50,6 +50,7 @@ function openInformationModal(row) { // begin function
                     console.log(data.overview);
                     $("#modalTitleH4").html(data.title);
                     $("#modalBodyDiv").html(data.overview);
+                    $("#releaseDate").html(data.release_date);
                     $("#informationModal").modal("show");
                 }
         	})
@@ -130,29 +131,9 @@ function openInformationModal(row) { // begin function
 			<span>No Titles found!</span>
 		</div>
 		
-		<div id="informationModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-<!-- 					<button type="button" class="close" data-dismiss="modal">&times;</button> -->
-					<h4 class="modal-title" id="modalTitleH4"></h4>
-				</div>
-				<div class="modal-body" id="modalBodyDiv"></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
+		<div th:replace="fragments/informationModal :: informationModal"></div>
 
-	<div>
-		<input type="hidden" name="moviedbapi" id="moviedbapi"
-			th:value="${movieDb.api}" /> <input type="hidden" name="moviedburl"
-			id="moviedbsearchURL" th:value="${movieDb.url}" /> <input
-			type="hidden" name="moviedbmovieURL" id="moviedbsearchMovieURL"
-			th:value="${movieDb.movieURL}" />
-	</div>
+		<div th:replace="fragments/movieDbApi :: movieDbApi"></div>
 	
 </body>
 </html>

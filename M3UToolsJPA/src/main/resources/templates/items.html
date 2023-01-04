@@ -57,6 +57,7 @@
                         console.log(data.overview);
                         $("#modalTitleH4").html(data.title);
                         $("#modalBodyDiv").html(data.overview);
+                        $("#releaseDate").html("Release Date : " + data.release_date);
                         $("#informationModal").modal("show");
                     }
             	})
@@ -64,7 +65,7 @@
         }) //end ajax
     } // end function
 
-</script>
+    </script>
 </head>
 
 <body>
@@ -211,57 +212,13 @@
 		</div>
 	</div>
 	
-	<div id="informationModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-<!-- 					<button type="button" class="close" data-dismiss="modal">&times;</button> -->
-					<h4 class="modal-title" id="modalTitleH4"></h4>
-				</div>
-				<div class="modal-body" id="modalBodyDiv"></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div>
-		<input type="hidden" name="moviedbapi" id="moviedbapi"
-			th:value="${movieDb.api}" /> <input type="hidden" name="moviedburl"
-			id="moviedbsearchURL" th:value="${movieDb.url}" /> <input
-			type="hidden" name="moviedbmovieURL" id="moviedbsearchMovieURL"
-			th:value="${movieDb.movieURL}" />
-	</div>
+	<div th:replace="fragments/informationModal :: informationModal"></div>
+	
+	<div th:replace="fragments/movieDbApi :: movieDbApi"></div>
 
 	<div th:replace="fragments/footer :: footer"></div>
 
 	<script type="text/javascript">
-		$(document).ready(
-				function() {
-					$(".btn-delete").on(
-							"click",
-							function(e) {
-								e.preventDefault();
-								link = $(this);
-
-								tutorialTitle = link.attr("tutorialTitle");
-								$("#yesBtn").attr("href", link.attr("href"));
-								$("#confirmText").html(
-										"Do you want to delete the Tutorial \<strong\>"
-												+ tutorialTitle
-												+ "\<\/strong\>?");
-								$("#confirmModal").modal();
-							});
-
-					$("#btnClear").on("click", function(e) {
-						e.preventDefault();
-						$("#keyword").text("");
-						window.location = "[[@{/}]]";
-					});
-				});
-
 		function changePageSize() {
 			$("#searchForm").submit();
 		}
