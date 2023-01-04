@@ -19,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.data.SelectedChannelsRepository;
+import com.hawkins.m3utoolsjpa.data.SelectedTvChannels;
 import com.hawkins.m3utoolsjpa.job.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -33,8 +35,11 @@ public class M3UController {
 	@Autowired
 	M3UItemRepository itemRepository;
 
-	@Autowired 
+	@Autowired
 	M3UGroupRepository groupRepository;
+
+	@Autowired
+	SelectedChannelsRepository tvRepo;
 
 	private M3UService m3uService;
 
@@ -42,13 +47,13 @@ public class M3UController {
 	M3UController(M3UService m3uService) {
 		this.m3uService = m3uService;
 	}
-	
-	
+
 	@GetMapping("/resetDatabase")
 	public ModelAndView resetDatabase(ModelMap model) {
 
 		List<M3UItem> items = new ArrayList<M3UItem>();
 		m3uService.resetDatabase(itemRepository, groupRepository);
+		tvRepo.save(new SelectedTvChannels((long) 1));
 
 		model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));
 		model.addAttribute("items", items);
@@ -62,14 +67,14 @@ public class M3UController {
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size,
 			@ModelAttribute(Constants.SELECTEDGROUP) M3UGroupSelected selectedGroup) {
 		try {
-			
+
 			Page<M3UItem> pageItems = M3UService.getPageableItems(groupId, page, size, itemRepository);
-			
+
 			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 			model.addAttribute(Constants.SELECTEDGROUP, M3UService.getSelectedGroup(groupId, groupRepository));
 			model.addAttribute("groupId", groupId);
 			model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));
-			model.addAttribute("items",  pageItems.getContent());
+			model.addAttribute("items", pageItems.getContent());
 			model.addAttribute("currentPage", pageItems.getNumber() + 1);
 			model.addAttribute("totalItems", pageItems.getTotalElements());
 			model.addAttribute("totalPages", pageItems.getTotalPages());
@@ -81,43 +86,44 @@ public class M3UController {
 		return Constants.ITEMS;
 	}
 
-	@GetMapping("/viewLog") 
+	@GetMapping("/viewLog")
 	public String viewLog(Model model) {
-		
+
 		model.addAttribute("logFile", FileUtilsForM3UToolsJPA.fileTail("M3UToolsJPA.log", 100));
 		return Constants.VIEW_LOG;
 	}
-	
+
 	@GetMapping("/properties")
 	public String getProperties(Model model) {
-		
+
 		model.addAttribute("properties", M3UService.getOrderedPropertiesEntrySet());
 		model.addAttribute("configProperty", new ConfigProperty());
 		model.addAttribute("propertyFile", M3UService.getConfigFileName());
 		return Constants.PROPERTIES;
 	}
-	
-	@PostMapping(value="/updateProperty")
+
+	@PostMapping(value = "/updateProperty")
 	public String updateProperty(Model model, @ModelAttribute ConfigProperty configProperty) {
-		
+
 		M3UService.updateProperty(configProperty);
 		model.addAttribute("properties", M3UService.getOrderedPropertiesEntrySet());
 		model.addAttribute("configProperty", new ConfigProperty());
 		model.addAttribute("propertyFile", M3UService.getConfigFileName());
-		
+
 		return Constants.PROPERTIES;
 	}
-	
+
 	@GetMapping(value = "/showStatus")
 	public String showStatus(Model model) {
-		
+
 		model.addAttribute(Constants.JOBLIST, new LinkedList<DownloadJob>());
 		return Constants.STATUS;
 	}
 
 	@GetMapping(value = "/search")
-	public String search(Model model, @RequestParam(required = false, defaultValue = "title") String searchType, @RequestParam(required = false, defaultValue = "") String criteria) {
-		
+	public String search(Model model, @RequestParam(required = false, defaultValue = "title") String searchType,
+			@RequestParam(required = false, defaultValue = "") String criteria) {
+
 		model.addAttribute("items", M3UService.searchMedia(searchType, criteria, itemRepository));
 		model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 		return Constants.SEARCH;

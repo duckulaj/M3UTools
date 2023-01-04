@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,8 @@ import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.data.SelectedTvChannels;
+import com.hawkins.m3utoolsjpa.data.SelectedChannelsRepository;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -36,7 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class M3UService {
-
 
 	public void resetDatabase(M3UItemRepository itemRepository, M3UGroupRepository groupRepository) {
 
@@ -60,9 +62,9 @@ public class M3UService {
 			}
 		}
 
+		itemRepository.saveAll(items);
+		log.info("Saved {} M3UItem(s)", items.size());
 
-		itemRepository.saveAll(items); log.info("Saved {} M3UItem(s)", items.size());
-		
 		sw.stop();
 
 		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
@@ -71,7 +73,7 @@ public class M3UService {
 
 	public static Page<M3UItem> findAllPageable(Pageable pageable, M3UItemRepository itemRepository) {
 
-		return itemRepository.findAll(pageable); 
+		return itemRepository.findAll(pageable);
 	}
 
 	public static List<M3UItem> getM3UItems(M3UItemRepository itemRepository) {
@@ -97,13 +99,14 @@ public class M3UService {
 		return IteratorUtils.toList(itemRepository.findByType(type).iterator());
 
 	}
-	public static Page<M3UItem> getM3UItemsByGroupTitle(M3UItemRepository itemRepository, String groupTitle, Pageable pageable) {
+
+	public static Page<M3UItem> getM3UItemsByGroupTitle(M3UItemRepository itemRepository, String groupTitle,
+			Pageable pageable) {
 
 		return itemRepository.findByGroupTitle(groupTitle, pageable);
 
 	}
-	
-	
+
 	public static OrderedProperties getOrderProperties() {
 
 		OrderedProperties properties = new OrderedProperties();
@@ -118,9 +121,9 @@ public class M3UService {
 		return properties;
 
 	}
-	
+
 	public static Set<Entry<String, String>> getOrderedPropertiesEntrySet() {
-		
+
 		OrderedProperties properties = new OrderedProperties();
 		try {
 			properties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
@@ -132,18 +135,15 @@ public class M3UService {
 
 		return properties.entrySet();
 	}
-	
+
 	public static void updateProperty(ConfigProperty configProperty) {
-		
+
 		log.info(configProperty.toString());
 		DownloadProperties.getInstance().updateProperty(configProperty);
 	}
-	
-	public static Page<M3UItem> getPageableItems(Long groupId,
-			int page, 
-			int size,
-			M3UItemRepository itemRepository) {
-		
+
+	public static Page<M3UItem> getPageableItems(Long groupId, int page, int size, M3UItemRepository itemRepository) {
+
 		Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
 
 		Page<M3UItem> pageItems;
@@ -152,27 +152,24 @@ public class M3UService {
 		} else {
 			pageItems = itemRepository.findByGroupId(groupId, paging);
 		}
-		
+
 		return pageItems;
 	}
-	
+
 	public static M3UGroupSelected getSelectedGroup(Long groupId, M3UGroupRepository groupRepository) {
 
 		Optional<M3UGroup> foundGroup = groupRepository.findById(groupId);
 		if (foundGroup.isPresent()) {
-			M3UGroupSelected selectedGroup = new M3UGroupSelected(
-					foundGroup.get().getId(),
-					foundGroup.get().getName(),
+			M3UGroupSelected selectedGroup = new M3UGroupSelected(foundGroup.get().getId(), foundGroup.get().getName(),
 					foundGroup.get().getType());
-			
+
 			return selectedGroup;
 		}
-		
+
 		return new M3UGroupSelected();
 
-		
 	}
-	
+
 	public void resetM3UFile() {
 
 		if (log.isDebugEnabled()) {
@@ -186,27 +183,23 @@ public class M3UService {
 			log.debug("Reloaded m3u file at {}", Utils.printNow());
 		}
 	}
-	
+
 	public static String getConfigFileName() {
-		
+
 		return Utils.getPropertyFile(Constants.CONFIGPROPERTIES).getAbsolutePath();
-		
+
 	}
-	
+
 	public static List<M3UItem> searchMedia(String searchType, String criteria, M3UItemRepository itemRepository) {
-		
+
 		List<M3UItem> searchResults = new ArrayList<M3UItem>();
-		
+
 		if (criteria != null && criteria.length() > 0) {
 			SearchFactory searchFactory = new SearchFactory();
 			Search search = searchFactory.createSearch(searchType);
 			searchResults = search.search(criteria, itemRepository);
 		}
-		
+
 		return searchResults;
 	}
 }
-
-
-
-
