@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.FilterRepository;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
@@ -139,11 +142,23 @@ public class M3UController {
 		model.addAttribute("filters", M3UService.getFilters(filterRepository));		
 		return Constants.FILTERS;
 	}
-
-	@GetMapping(value = "newFilter")
+	
+	@GetMapping(value = "/newFilter")
 	public String newFilter(Model model) {
 		
-		return Constants.ITEMS;
-		
+		model.addAttribute("groups", M3UService.getM3UGroupsByType(groupRepository, Constants.LIVE));
+		model.addAttribute("filter", new Filter(null, null, null, null, null));
+		return Constants.ADD_FILTER;
+	
 	}
+
+	@PostMapping("/saveFilter")
+    public String saveFilter(@Valid Filter filter, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return Constants.ADD_FILTER;
+        }
+        
+        filterRepository.save(filter);
+        return "redirect:/" + Constants.FILTERS;
+    }
 }

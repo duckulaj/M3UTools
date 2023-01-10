@@ -3,9 +3,12 @@ package com.hawkins.m3utoolsjpa.data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
 
 @Entity
 public class Filter {
@@ -23,8 +26,12 @@ public class Filter {
 	@Id
 	@GeneratedValue(generator = "itemSequenceGenerator")
 	private Long Id;
+	
+	@NotBlank(message = "Name is mandatory")
 	private String name;
 	private String description;
+	
+	@NotNull(message = "Group is mandatory")
 	private Long groupId;
 	private String include;
 	private String exclude;
@@ -32,7 +39,6 @@ public class Filter {
 	protected Filter() {}
 
 	public Filter(
-			Long id, 
 			String name, 
 			String description, 
 			Long groupId, 

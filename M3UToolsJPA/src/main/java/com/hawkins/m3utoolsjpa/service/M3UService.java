@@ -90,6 +90,12 @@ public class M3UService {
 		return IteratorUtils.toList(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
 
 	}
+	
+	public static List<M3UGroup> getM3UGroupsByType(M3UGroupRepository groupRepository, String type) {
+
+		return IteratorUtils.toList(groupRepository.findByType(type, Sort.by(Sort.Direction.ASC, "name")).iterator());
+
+	}
 
 	public static List<M3UItem> getM3UItemsByGroupTitle(M3UItemRepository itemRepository, String groupTitle) {
 
