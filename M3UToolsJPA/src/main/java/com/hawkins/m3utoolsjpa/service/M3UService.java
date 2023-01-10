@@ -46,26 +46,28 @@ public class M3UService {
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 
-		itemRepository.deleteAll(itemRepository.findAll());
-
-		groupRepository.deleteAll(groupRepository.findAll());
-
 		LinkedList<M3UItem> items = Parser.parse();
-
-		for (M3UItem item : items) {
-
-			M3UGroup group = groupRepository.findByName(item.getGroupTitle());
-			if (group == null) {
-				M3UGroup newGroup = groupRepository.save(new M3UGroup(item.getGroupTitle(), item.getType()));
-				item.setGroupId(newGroup.getId());
-			} else {
-				item.setGroupId(group.getId());
+		
+		if (items.size() > 0) {
+		
+			itemRepository.deleteAll(itemRepository.findAll());
+	
+			groupRepository.deleteAll(groupRepository.findAll());
+		
+			for (M3UItem item : items) {
+	
+				M3UGroup group = groupRepository.findByName(item.getGroupTitle());
+				if (group == null) {
+					M3UGroup newGroup = groupRepository.save(new M3UGroup(item.getGroupTitle(), item.getType()));
+					item.setGroupId(newGroup.getId());
+				} else {
+					item.setGroupId(group.getId());
+				}
 			}
+	
+			itemRepository.saveAll(items);
+			log.info("Saved {} M3UItem(s)", items.size());
 		}
-
-		itemRepository.saveAll(items);
-		log.info("Saved {} M3UItem(s)", items.size());
-
 		sw.stop();
 
 		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
