@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.hawkins.m3utoolsjpa.data.FilterRepository;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
@@ -40,6 +41,9 @@ public class M3UController {
 
 	@Autowired
 	SelectedChannelsRepository tvRepo;
+	
+	@Autowired
+	FilterRepository filterRepository;
 
 	private M3UService m3uService;
 
@@ -53,7 +57,7 @@ public class M3UController {
 
 		List<M3UItem> items = new ArrayList<M3UItem>();
 		m3uService.resetDatabase(itemRepository, groupRepository);
-		tvRepo.save(new SelectedTvChannels((long) 1));
+		tvRepo.save(new SelectedTvChannels((long) 1, "Test"));
 
 		model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));
 		model.addAttribute("items", items);
@@ -127,6 +131,13 @@ public class M3UController {
 		model.addAttribute("items", M3UService.searchMedia(searchType, criteria, itemRepository));
 		model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 		return Constants.SEARCH;
+	}
+	
+	@GetMapping(value = "/filters")
+	public String filters(Model model) {
+		
+		model.addAttribute("filters", M3UService.getFilters(filterRepository));		
+		return Constants.FILTERS;
 	}
 
 }

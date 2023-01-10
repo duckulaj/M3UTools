@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,12 +17,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import com.hawkins.m3utoolsjpa.data.Filter;
+import com.hawkins.m3utoolsjpa.data.FilterRepository;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.data.SelectedTvChannels;
 import com.hawkins.m3utoolsjpa.data.SelectedChannelsRepository;
+import com.hawkins.m3utoolsjpa.data.SelectedTvChannels;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -106,6 +107,11 @@ public class M3UService {
 		return itemRepository.findByGroupTitle(groupTitle, pageable);
 
 	}
+	
+	public static List<SelectedTvChannels> getTvChannels(SelectedChannelsRepository selectedTvChannelsRepository) {
+		
+		return IteratorUtils.toList(selectedTvChannelsRepository.findAll().iterator());
+	}
 
 	public static OrderedProperties getOrderProperties() {
 
@@ -147,7 +153,7 @@ public class M3UService {
 		Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
 
 		Page<M3UItem> pageItems;
-		if (groupId == null) {
+		if (groupId == null || groupId == 0) {
 			pageItems = itemRepository.findAll(paging);
 		} else {
 			pageItems = itemRepository.findByGroupId(groupId, paging);
@@ -201,5 +207,11 @@ public class M3UService {
 		}
 
 		return searchResults;
+	}
+	
+	public static List<Filter> getFilters(FilterRepository filterRepository) {
+
+		return IteratorUtils.toList(filterRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
+		
 	}
 }

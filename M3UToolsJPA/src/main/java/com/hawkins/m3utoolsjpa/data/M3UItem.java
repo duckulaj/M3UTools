@@ -32,7 +32,7 @@ public class M3UItem {
 	private String tvgLogo;
 	private String tvgShift;
 	private String radio;
-		
+			
 	@Lob
 	private String channelUri;
 	
@@ -40,6 +40,8 @@ public class M3UItem {
 	private String type;
 	private String search;
 
+	private boolean selected;
+	
 	protected M3UItem() {}
 
 	public M3UItem(
@@ -54,7 +56,8 @@ public class M3UItem {
 			String channelUri,
 			String channelName,
 			String type,
-			String search
+			String search,
+			Boolean selected
 			) {
 
 		this.duration = duration;
@@ -69,6 +72,7 @@ public class M3UItem {
 		this.channelName = channelName;
 		this.type = type;
 		this.search = search;
+		this.selected = selected;
 
 	}
 
@@ -145,6 +149,14 @@ public class M3UItem {
 	
 	public void setSearch(String search) {
 		this.search = search;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 	

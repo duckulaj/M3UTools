@@ -53,6 +53,7 @@ public class Constants {
 	public static final String SEARCH = "search";
 	public static final String INDEX = "index";
 	public static final String TV_CHANNELS = "tvChannels";
+	public static final String FILTERS = "filters";
 	
 	public static final String FOLDER_MOVIES = "Movies";
 	public static final String FOLDER_TVSHOWS = "TVshows";
