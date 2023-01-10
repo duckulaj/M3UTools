@@ -1,8 +1,11 @@
 package com.hawkins.m3utoolsjpa.data;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -19,6 +22,9 @@ public class M3UGroup {
 	                @Parameter(name = "increment_size", value = "1")
 	        }
 	)
+	
+	@OneToMany(mappedBy = "group")
+	private Set<M3UItem> items;
 
 	@Id
 	@GeneratedValue(generator = "groupSequenceGenerator")

@@ -140,4 +140,10 @@ public class M3UController {
 		return Constants.FILTERS;
 	}
 
+	@GetMapping(value = "newFilter")
+	public String newFilter(Model model) {
+		
+		return Constants.ITEMS;
+		
+	}
 }

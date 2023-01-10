@@ -3,7 +3,9 @@ package com.hawkins.m3utoolsjpa.data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -20,6 +22,10 @@ public class M3UItem {
 	                @Parameter(name = "increment_size", value = "1")
 	        }
 	)
+	
+	@ManyToOne
+    @JoinColumn(name="groupId", nullable=false, insertable=false, updatable=false)
+    private M3UGroup group;
 
 	@Id
 	@GeneratedValue(generator = "itemSequenceGenerator")
