@@ -85,7 +85,9 @@ public class EpgReader {
 			writer.write(document);
 			writer.close();
 			
-			Emby.refreshGuide();
+			if (dp.isEmbyInstalled()) {
+				Emby.refreshGuide();
+			}
 
 		} catch (DocumentException e) {
 			// TODO Auto-generated catch block

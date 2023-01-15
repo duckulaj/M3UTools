@@ -48,19 +48,19 @@ public class M3UController {
 	@Autowired
 	FilterRepository filterRepository;
 
-	private M3UService m3uService;
-
-	// @Autowired
-	M3UController(M3UService m3uService) {
-		this.m3uService = m3uService;
-	}
+	/*
+	 * private M3UService m3uService;
+	 * 
+	 * // @Autowired M3UController(M3UService m3uService) { this.m3uService =
+	 * m3uService; }
+	 */
 
 	@GetMapping("/resetDatabase")
 	public ModelAndView resetDatabase(ModelMap model) {
 
 		List<M3UItem> items = new ArrayList<M3UItem>();
-		m3uService.resetDatabase(itemRepository, groupRepository);
-		tvRepo.save(new SelectedTvChannels((long) 1, "Test"));
+		M3UService.resetDatabase(itemRepository, groupRepository);
+		// tvRepo.save(new SelectedTvChannels((long) 1, "Test"));
 
 		model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));
 		model.addAttribute("items", items);
@@ -158,7 +158,8 @@ public class M3UController {
             return Constants.ADD_FILTER;
         }
         
-        filterRepository.save(filter);
+        M3UService.saveFilter(filterRepository, filter);
+        
         return "redirect:/" + Constants.FILTERS;
     }
 }

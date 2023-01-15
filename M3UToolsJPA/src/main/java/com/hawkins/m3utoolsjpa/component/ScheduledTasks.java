@@ -43,7 +43,7 @@ public class ScheduledTasks {
 		log.info("Scheduled Task createStreams) completed at {}", Utils.printNow());
 	}
 
-	@Scheduled(fixedRate = 3, timeUnit = TimeUnit.HOURS)
+	@Scheduled(fixedDelay = 3, timeUnit = TimeUnit.HOURS)
 	public void reloadEPG() {
 
 		String epgFile = DownloadProperties.getInstance().getEpgFileName();

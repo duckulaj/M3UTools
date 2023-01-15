@@ -46,14 +46,36 @@
 					<tr>
 						<th hidden="true" scope="col">Id</th>
 						<th scope="col">Filter Name</th>
-						<th scope="col">Filter</th>
+						<th scope="col">Description</th>
+						<th scope="col">Include</th>
+						<th scope="col">Exclude</th>
+						<th scope="col"></th>
+						<th scope="col"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="filter : ${filters}">
 						<th hidden="true" scope="row">[[${filter.id}]]</th>
 						<td>[[${filter.name}]]</td>
-						<td>[[${filter.name}]]</td>
+						<td>[[${filter.description}]]</td>
+						<td>[[${filter.include}]]</td>
+						<td>[[${filter.exclude}]]</td>
+						<td>
+							<form action="#" th:action="@{/editFilter}" method="post">
+								<input type="hidden" th:value="${filter.id}" name="name" id="name" />
+								<button type="submit" class="btn btn-default btn-sm" name="action" id="btndownload" value="download">
+									<i class="fa fa-pencil-square"></i>
+								</button>
+							</form>
+						</td>
+						<td>
+							<form action="#" th:action="@{/deleteFilter}" method="post">
+								<input type="hidden" th:value="${filter.id}" name="name" id="name" />
+								<button type="submit" class="btn btn-default btn-sm" name="action" id="btndownload" value="download">
+									<i class="fa fa-minus-square"></i>
+								</button>
+							</form>
+						</td>
 					</tr>
 				</tbody>
 			</table>

@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class M3UService {
 
-	public void resetDatabase(M3UItemRepository itemRepository, M3UGroupRepository groupRepository) {
+	public static void resetDatabase(M3UItemRepository itemRepository, M3UGroupRepository groupRepository) {
 
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
@@ -220,6 +220,12 @@ public class M3UService {
 	public static List<Filter> getFilters(FilterRepository filterRepository) {
 
 		return IteratorUtils.toList(filterRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
+		
+	}
+	
+	public static void saveFilter(FilterRepository filterRepository, Filter filter) {
+		
+		filterRepository.save(filter);
 		
 	}
 }

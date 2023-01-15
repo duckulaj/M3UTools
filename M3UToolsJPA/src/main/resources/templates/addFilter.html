@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport"
+	content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+<title>M3UToolsJPA</title>
+
+<script th:src="@{webjars/jquery/jquery.min.js}"></script>
+<!-- <script th:src="@{webjars/bootstrap/js/bootstrap.min.js}"></script> -->
+<script th:src="@{webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{webjars/font-awesome/5.8.2/js/all.js}"></script>
+<link rel="stylesheet"
+	th:href="@{webjars/font-awesome/5.8.2/css/all.css}" />
+<link rel="stylesheet"
+	th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
+<body>
+
+	<div th:replace="fragments/header :: header"></div>
+
+	<div class="container-fluid" style="max-width: 1024px; margin: 0 auto;">
+		<h2 class="text-center">Add Filter</h2>
+
+		<div>
+
+			<form action="#" th:action="@{/saveFilter}" th:object="${filter}" method="post">
+			    <label for="name">Name</label>
+			    <input type="text" th:field="*{name}" id="name" placeholder="Name">
+			    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+			    <label for="description">Description</label>
+			    <input type="text" th:field="*{description}" id="description" placeholder="Description">
+			    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+			    <label class="input-group-text" for="${groupId}">Group</label>
+			    <select name="groupId">
+					<option th:each="group : ${groups}" th:value="${group.id}"
+						th:text="${group.name}">Groups
+					</option>
+				</select>
+			    <label for="description">Include</label>
+			    <input type="text" th:field="*{include}" id="include" placeholder="Include">
+			    <span th:if="${#fields.hasErrors('include')}" th:errors="*{include}"></span>
+			    <label for="description">Exclude</label>
+			    <input type="text" th:field="*{exclude}" id="exclude" placeholder="Exclude">
+			    <span th:if="${#fields.hasErrors('exclude')}" th:errors="*{exclude}"></span>
+			    <input type="submit" value="Save">   
+			</form>
+
+
+
+
+
+			<form action="#" th:action="@{/download}" method="post">
+				<button type="submit" class="btn btn-default btn-sm" name="action"
+					id="btnNewFilter" value="newFilter">
+					<i class="fa fa-plus-square"></i> New
+				</button>
+			</form>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success alert-dismissible fade show text-center message"
+			role="alert">
+			[[${message}]]
+			<button type="button" class="close btn-sm" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+	</div>
+	<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
