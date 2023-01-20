@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
-import com.hawkins.m3utoolsjpa.m3u.M3UtoStrm;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.M3UService;
+import com.hawkins.m3utoolsjpa.service.M3UtoStrm;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +28,9 @@ public class ScheduledTasks {
 	
 	@Autowired
 	M3UService m3uService;
+	
+	@Autowired
+	M3UtoStrm m3UtoStrm;
 
 	@Scheduled(cron = "0 1 1 * * ?") // 1.01am
 	public void resetM3UFile() {
@@ -39,7 +42,7 @@ public class ScheduledTasks {
 	@Scheduled(cron = "0 1 5 * * ?") // 5.01am
 	public void createStreams() {
 
-		M3UtoStrm.convertM3UtoStream(itemRepository);
+		m3UtoStrm.convertM3UtoStream();
 		log.info("Scheduled Task createStreams) completed at {}", Utils.printNow());
 	}
 

@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.hawkins"})
+@ComponentScan(basePackages = {"com.hawkins.m3utoolsjpa"})
 @EnableAsync
 @EnableJpaRepositories(bootstrapMode = BootstrapMode.DEFAULT)
 @EnableScheduling

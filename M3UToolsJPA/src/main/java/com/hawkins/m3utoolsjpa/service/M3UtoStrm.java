@@ -1,39 +1,42 @@
-package com.hawkins.m3utoolsjpa.m3u;
+package com.hawkins.m3utoolsjpa.service;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
-import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+@Service
 @Slf4j
 public class M3UtoStrm {
 
+	@Autowired
+	M3UService m3uService;
+	
 	private static String[] videoTypes = {Constants.AVI, Constants.MKV, Constants.MP4};
 	// private static String[] viewingDefinitions = {"[SD]", "[FHD]", "[UHD]", "[HD]", "[4K]", "[8K]"};
 	private static String tvShowRegex = "[S]{1}[0-9]{2} [E]{1}[0-9]{2}";
 	private static String seasonRegex = "[S]{1}[0-9]{2}";
 
-	public static void convertM3UtoStream(M3UItemRepository itemRepository) {
+	public void convertM3UtoStream() {
 
 		/*
 		 * 1. Get an instance of the group list
@@ -46,7 +49,7 @@ public class M3UtoStrm {
 		 */
 
 		
-		List<M3UItem> playListItems = M3UService.getM3UItems(itemRepository);
+		List<M3UItem> playListItems = m3uService.getM3UItems();
 		
 		
 		List<M3UItem> movies = filterItems(playListItems, ofType(Constants.MOVIE));

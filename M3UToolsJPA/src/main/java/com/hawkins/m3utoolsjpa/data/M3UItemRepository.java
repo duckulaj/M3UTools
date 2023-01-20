@@ -6,8 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository
 public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, Long> {
 
 	M3UItem findById(long id);
@@ -23,8 +25,8 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 	Page<M3UItem> findByGroupId(Long groupId, Pageable pageable);
 	
 	@Transactional(readOnly = true)
-	@Query("SELECT DISTINCT groupTitle FROM M3UItem WHERE type = ?1")
-	List<String> findDistinctByType(String type);
+	@Query("SELECT DISTINCT channelName FROM M3UItem WHERE type = ?1")
+	List<String> findDistinctChannelNameByType(String type);
 	
 	@Transactional(readOnly = true)
 	@Query("SELECT m0 FROM M3UItem m0 WHERE type = 'movie' AND channelName LIKE ?1")

@@ -10,11 +10,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.Filter;
@@ -25,6 +26,7 @@ import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.data.SelectedChannelsRepository;
 import com.hawkins.m3utoolsjpa.data.SelectedTvChannels;
+import com.hawkins.m3utoolsjpa.m3u.M3UChannel;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -37,11 +39,30 @@ import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Controller
 @Slf4j
 public class M3UService {
 
-	public static void resetDatabase(M3UItemRepository itemRepository, M3UGroupRepository groupRepository) {
+	@Autowired
+	M3UItemRepository itemRepository;
+
+	@Autowired
+	M3UGroupRepository groupRepository;
+
+	@Autowired
+	SelectedChannelsRepository selectedChannelsRepository;
+	
+	@Autowired
+	FilterRepository filterRepository;
+	
+	@Autowired
+	ChannelRepository channelRepository;
+	
+	@Autowired
+	DatabaseUpdates databaseUpdates;
+	
+	public void resetDatabase() {
+			
 
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
@@ -66,6 +87,10 @@ public class M3UService {
 			}
 	
 			itemRepository.saveAll(items);
+			
+			DatabaseUpdater.resetChannelSequence(databaseUpdates);
+			M3UChannel.populateTVChannels(itemRepository, channelRepository );
+			
 			log.info("Saved {} M3UItem(s)", items.size());
 		}
 		sw.stop();
@@ -74,51 +99,50 @@ public class M3UService {
 		log.info("resetDatabase completed");
 	}
 
-	public static Page<M3UItem> findAllPageable(Pageable pageable, M3UItemRepository itemRepository) {
+	public Page<M3UItem> findAllPageable(Pageable pageable) {
 
 		return itemRepository.findAll(pageable);
 	}
 
-	public static List<M3UItem> getM3UItems(M3UItemRepository itemRepository) {
+	public List<M3UItem> getM3UItems() {
 
 		return IteratorUtils.toList(itemRepository.findAll(Sort.by(Sort.Direction.ASC, "tvgName")).iterator());
 
 	}
 
-	public static List<M3UGroup> getM3UGroups(M3UGroupRepository groupRepository) {
+	public List<M3UGroup> getM3UGroups() {
 
 		return IteratorUtils.toList(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
 
 	}
 	
-	public static List<M3UGroup> getM3UGroupsByType(M3UGroupRepository groupRepository, String type) {
+	public List<M3UGroup> getM3UGroupsByType(String type) {
 
 		return IteratorUtils.toList(groupRepository.findByType(type, Sort.by(Sort.Direction.ASC, "name")).iterator());
 
 	}
 
-	public static List<M3UItem> getM3UItemsByGroupTitle(M3UItemRepository itemRepository, String groupTitle) {
+	public List<M3UItem> getM3UItemsByGroupTitle(String groupTitle) {
 
 		return IteratorUtils.toList(itemRepository.findByGroupTitle(groupTitle).iterator());
 
 	}
 
-	public static List<M3UItem> getM3UItemsByType(M3UItemRepository itemRepository, String type) {
+	public List<M3UItem> getM3UItemsByType(String type) {
 
 		return IteratorUtils.toList(itemRepository.findByType(type).iterator());
 
 	}
 
-	public static Page<M3UItem> getM3UItemsByGroupTitle(M3UItemRepository itemRepository, String groupTitle,
-			Pageable pageable) {
+	public Page<M3UItem> getM3UItemsByGroupTitle(String groupTitle, Pageable pageable) {
 
 		return itemRepository.findByGroupTitle(groupTitle, pageable);
 
 	}
 	
-	public static List<SelectedTvChannels> getTvChannels(SelectedChannelsRepository selectedTvChannelsRepository) {
+	public List<SelectedTvChannels> getTvChannels() {
 		
-		return IteratorUtils.toList(selectedTvChannelsRepository.findAll().iterator());
+		return IteratorUtils.toList(selectedChannelsRepository.findAll().iterator());
 	}
 
 	public static OrderedProperties getOrderProperties() {
@@ -156,7 +180,7 @@ public class M3UService {
 		DownloadProperties.getInstance().updateProperty(configProperty);
 	}
 
-	public static Page<M3UItem> getPageableItems(Long groupId, int page, int size, M3UItemRepository itemRepository) {
+	public Page<M3UItem> getPageableItems(Long groupId, int page, int size) {
 
 		Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
 
@@ -170,7 +194,7 @@ public class M3UService {
 		return pageItems;
 	}
 
-	public static M3UGroupSelected getSelectedGroup(Long groupId, M3UGroupRepository groupRepository) {
+	public M3UGroupSelected getSelectedGroup(Long groupId) {
 
 		Optional<M3UGroup> foundGroup = groupRepository.findById(groupId);
 		if (foundGroup.isPresent()) {
@@ -204,7 +228,7 @@ public class M3UService {
 
 	}
 
-	public static List<M3UItem> searchMedia(String searchType, String criteria, M3UItemRepository itemRepository) {
+	public List<M3UItem> searchMedia(String searchType, String criteria) {
 
 		List<M3UItem> searchResults = new ArrayList<M3UItem>();
 
@@ -217,13 +241,13 @@ public class M3UService {
 		return searchResults;
 	}
 	
-	public static List<Filter> getFilters(FilterRepository filterRepository) {
+	public List<Filter> getFilters() {
 
 		return IteratorUtils.toList(filterRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
 		
 	}
 	
-	public static void saveFilter(FilterRepository filterRepository, Filter filter) {
+	public void saveFilter(Filter filter) {
 		
 		filterRepository.save(filter);
 		

@@ -19,12 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.data.Filter;
-import com.hawkins.m3utoolsjpa.data.FilterRepository;
-import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
-import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.data.SelectedChannelsRepository;
-import com.hawkins.m3utoolsjpa.data.SelectedTvChannels;
 import com.hawkins.m3utoolsjpa.job.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -37,32 +32,17 @@ import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 public class M3UController {
 
 	@Autowired
-	M3UItemRepository itemRepository;
-
-	@Autowired
-	M3UGroupRepository groupRepository;
-
-	@Autowired
-	SelectedChannelsRepository tvRepo;
+	M3UService m3uService;
 	
-	@Autowired
-	FilterRepository filterRepository;
-
-	/*
-	 * private M3UService m3uService;
-	 * 
-	 * // @Autowired M3UController(M3UService m3uService) { this.m3uService =
-	 * m3uService; }
-	 */
-
 	@GetMapping("/resetDatabase")
 	public ModelAndView resetDatabase(ModelMap model) {
 
 		List<M3UItem> items = new ArrayList<M3UItem>();
-		M3UService.resetDatabase(itemRepository, groupRepository);
+		m3uService.resetDatabase();
+		// M3UService.resetDatabase(itemRepository, groupRepository, channelRepository);
 		// tvRepo.save(new SelectedTvChannels((long) 1, "Test"));
 
-		model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));
+		model.addAttribute("groups", m3uService.getM3UGroups());
 		model.addAttribute("items", items);
 		model.addAttribute("name", "");
 		model.addAttribute(Constants.SELECTEDGROUP, new M3UGroupSelected());
@@ -75,12 +55,12 @@ public class M3UController {
 			@ModelAttribute(Constants.SELECTEDGROUP) M3UGroupSelected selectedGroup) {
 		try {
 
-			Page<M3UItem> pageItems = M3UService.getPageableItems(groupId, page, size, itemRepository);
+			Page<M3UItem> pageItems = m3uService.getPageableItems(groupId, page, size);
 
 			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
-			model.addAttribute(Constants.SELECTEDGROUP, M3UService.getSelectedGroup(groupId, groupRepository));
+			model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
 			model.addAttribute("groupId", groupId);
-			model.addAttribute("groups", M3UService.getM3UGroups(groupRepository));
+			model.addAttribute("groups", m3uService.getM3UGroups());
 			model.addAttribute("items", pageItems.getContent());
 			model.addAttribute("currentPage", pageItems.getNumber() + 1);
 			model.addAttribute("totalItems", pageItems.getTotalElements());
@@ -131,7 +111,7 @@ public class M3UController {
 	public String search(Model model, @RequestParam(required = false, defaultValue = "title") String searchType,
 			@RequestParam(required = false, defaultValue = "") String criteria) {
 
-		model.addAttribute("items", M3UService.searchMedia(searchType, criteria, itemRepository));
+		model.addAttribute("items", m3uService.searchMedia(searchType, criteria));
 		model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 		return Constants.SEARCH;
 	}
@@ -139,14 +119,14 @@ public class M3UController {
 	@GetMapping(value = "/filters")
 	public String filters(Model model) {
 		
-		model.addAttribute("filters", M3UService.getFilters(filterRepository));		
+		model.addAttribute("filters", m3uService.getFilters());		
 		return Constants.FILTERS;
 	}
 	
 	@GetMapping(value = "/newFilter")
 	public String newFilter(Model model) {
 		
-		model.addAttribute("groups", M3UService.getM3UGroupsByType(groupRepository, Constants.LIVE));
+		model.addAttribute("groups", m3uService.getM3UGroupsByType(Constants.LIVE));
 		model.addAttribute("filter", new Filter(null, null, null, null, null));
 		return Constants.ADD_FILTER;
 	
@@ -158,7 +138,8 @@ public class M3UController {
             return Constants.ADD_FILTER;
         }
         
-        M3UService.saveFilter(filterRepository, filter);
+        
+        m3uService.saveFilter(filter);
         
         return "redirect:/" + Constants.FILTERS;
     }
