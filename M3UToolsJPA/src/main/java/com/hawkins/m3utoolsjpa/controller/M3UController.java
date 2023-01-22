@@ -39,9 +39,7 @@ public class M3UController {
 
 		List<M3UItem> items = new ArrayList<M3UItem>();
 		m3uService.resetDatabase();
-		// M3UService.resetDatabase(itemRepository, groupRepository, channelRepository);
-		// tvRepo.save(new SelectedTvChannels((long) 1, "Test"));
-
+		
 		model.addAttribute("groups", m3uService.getM3UGroups());
 		model.addAttribute("items", items);
 		model.addAttribute("name", "");
@@ -51,6 +49,30 @@ public class M3UController {
 
 	@GetMapping("/")
 	public String getAll(Model model, @RequestParam(required = false, defaultValue = "-1") Long groupId,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size,
+			@ModelAttribute(Constants.SELECTEDGROUP) M3UGroupSelected selectedGroup) {
+		try {
+
+			Page<M3UItem> pageItems = m3uService.getPageableItems(groupId, page, size);
+
+			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
+			model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
+			model.addAttribute("groupId", groupId);
+			model.addAttribute("groups", m3uService.getM3UGroups());
+			model.addAttribute("items", pageItems.getContent());
+			model.addAttribute("currentPage", pageItems.getNumber() + 1);
+			model.addAttribute("totalItems", pageItems.getTotalElements());
+			model.addAttribute("totalPages", pageItems.getTotalPages());
+			model.addAttribute("pageSize", size);
+		} catch (Exception e) {
+			model.addAttribute("message", e.getMessage());
+		}
+
+		return Constants.ITEMS;
+	}
+	
+	@GetMapping("/tvchannels")
+	public String getTvChannels(Model model, @RequestParam(required = false, defaultValue = "-1") Long groupId,
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size,
 			@ModelAttribute(Constants.SELECTEDGROUP) M3UGroupSelected selectedGroup) {
 		try {

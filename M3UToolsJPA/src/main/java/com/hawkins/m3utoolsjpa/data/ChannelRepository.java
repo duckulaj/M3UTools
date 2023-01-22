@@ -1,10 +1,10 @@
-package com.hawkins.m3utoolsjpa.service;
+package com.hawkins.m3utoolsjpa.data;
+
+import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-
-import com.hawkins.m3utoolsjpa.data.Channel;
 
 @Repository
 public interface ChannelRepository extends PagingAndSortingRepository<Channel, Long> {
@@ -15,4 +15,6 @@ public interface ChannelRepository extends PagingAndSortingRepository<Channel, L
 	Channel findByName(String name);
 	
 	Channel findById(long id, Sort sort);
+	
+	List<Channel> findBySelected(boolean selected);
 }

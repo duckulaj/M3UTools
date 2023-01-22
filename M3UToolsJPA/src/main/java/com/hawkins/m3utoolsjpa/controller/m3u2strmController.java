@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.service.M3UtoStrm;
+import com.hawkins.m3utoolsjpa.service.M3UtoStrmService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ public class m3u2strmController {
 	M3UItemRepository itemRepository;
 	
 	@Autowired
-	M3UtoStrm m3UtoStrm;
+	M3UtoStrmService m3UtoStrm;
 	
 	@GetMapping("/convertToStream") 
 	public ModelAndView convertM3UtoStream(ModelMap model) {

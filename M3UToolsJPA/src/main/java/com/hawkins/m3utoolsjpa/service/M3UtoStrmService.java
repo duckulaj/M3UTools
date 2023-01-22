@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class M3UtoStrm {
+public class M3UtoStrmService {
 
 	@Autowired
 	M3UService m3uService;
@@ -60,39 +60,12 @@ public class M3UtoStrm {
 		List<M3UItem> tvshows = filterItems(playListItems, ofType(Constants.SERIES));
 		log.info("{} TV Shows", tvshows.size());
 		
-		 
-		 /* 
-		 * List<M3UItem> HDMovies = filterItems(movies, ofTypeDefinition(Constants.HD));
-		 * log.info("{} HD Movies", HDMovies.size());
-		 * 
-		 * List<M3UItem> FHDMovies = filterItems(movies,
-		 * ofTypeDefinition(Constants.FHD)); log.info("{} FHD Movies",
-		 * FHDMovies.size());
-		 * 
-		 * List<M3UItem> UHDMovies = filterItems(movies,
-		 * ofTypeDefinition(Constants.UHD)); log.info("{} UHD Movies",
-		 * UHDMovies.size());
-		 * 
-		 * movies.removeAll(FHDMovies); movies.removeAll(UHDMovies);
-		 */
 		createTVshowFolders(tvshows);
 		log.info("Created TV Shows folders");
 		
 		
 		createMovieFolders(movies, Constants.HD);
 		log.info("Created HD Movies folders");
-		
-
-		/*
-		 * createMovieFolders(movies, Constants.SD);
-		 * log.info("Created SD Movies folders");
-		 * 
-		 * createMovieFolders(FHDMovies, Constants.FHD);
-		 * log.info("Created FHD Movies folders");
-		 * 
-		 * createMovieFolders(UHDMovies, Constants.UHD);
-		 * log.info("Created UHD Movies folders");
-		 */ 
 		
 	}
 
@@ -238,12 +211,6 @@ public class M3UtoStrm {
 			
 			FileSystemUtils.deleteRecursively(pathToBeDeleted);
 			
-			/*
-			 * if (pathToBeDeleted.toFile().exists()) { Files.walk(pathToBeDeleted)
-			 * .sorted(Comparator.reverseOrder()) .map(Path::toFile) .forEach(File::delete);
-			 * }
-			 */
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -306,11 +273,6 @@ public class M3UtoStrm {
 
 			String url = movie.getChannelUri();
 
-			/*
-			 * if (type.equals(Constants.FHD)) { folder = folder.replace(Constants.FHD,
-			 * "").trim(); } else if (type.equals(Constants.UHD)) { folder =
-			 * folder.replace(Constants.UHD, "").trim(); }
-			 */
 			try {
 				if (!groupTitle.contains(Constants.ADULT)) { // Exclude Adult
 

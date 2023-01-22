@@ -11,7 +11,7 @@ import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.M3UService;
-import com.hawkins.m3utoolsjpa.service.M3UtoStrm;
+import com.hawkins.m3utoolsjpa.service.M3UtoStrmService;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class ScheduledTasks {
 	M3UService m3uService;
 	
 	@Autowired
-	M3UtoStrm m3UtoStrm;
+	M3UtoStrmService m3UtoStrm;
 
 	@Scheduled(cron = "0 1 1 * * ?") // 1.01am
 	public void resetM3UFile() {

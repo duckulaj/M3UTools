@@ -26,26 +26,40 @@ public class Channel {
 	private Long Id;
 	
 	private String name;
+	private Long groupId;
+	private boolean selected;
 		
 	protected Channel() {}
 
 	public Channel(
-			String name 
+			String name,
+			Long groupId,
+			boolean selected
 			) {
 	
 		this.name = name;
+		this.groupId = groupId;
+		this.selected = selected;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public Long getId() {
 		return Id;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	public Long getGroupId() {
+		return groupId;
 	}
 	
 	

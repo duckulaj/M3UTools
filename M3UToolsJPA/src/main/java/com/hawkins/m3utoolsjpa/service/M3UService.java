@@ -18,14 +18,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StopWatch;
 
+import com.hawkins.m3utoolsjpa.data.Channel;
+import com.hawkins.m3utoolsjpa.data.ChannelRepository;
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.FilterRepository;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.data.SelectedChannelsRepository;
-import com.hawkins.m3utoolsjpa.data.SelectedTvChannels;
 import com.hawkins.m3utoolsjpa.m3u.M3UChannel;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.parser.Parser;
@@ -49,9 +49,6 @@ public class M3UService {
 	@Autowired
 	M3UGroupRepository groupRepository;
 
-	@Autowired
-	SelectedChannelsRepository selectedChannelsRepository;
-	
 	@Autowired
 	FilterRepository filterRepository;
 	
@@ -140,9 +137,14 @@ public class M3UService {
 
 	}
 	
-	public List<SelectedTvChannels> getTvChannels() {
+	public List<Channel> getTvChannels() {
 		
-		return IteratorUtils.toList(selectedChannelsRepository.findAll().iterator());
+		return IteratorUtils.toList(channelRepository.findAll().iterator());
+	}
+	
+	public List<Channel> getSelectedTvChannels() {
+		
+		return IteratorUtils.toList(channelRepository.findBySelected(true).iterator());
 	}
 
 	public static OrderedProperties getOrderProperties() {
