@@ -77,12 +77,12 @@ public class M3UController {
 			@ModelAttribute(Constants.SELECTEDGROUP) M3UGroupSelected selectedGroup) {
 		try {
 
-			Page<M3UItem> pageItems = m3uService.getPageableItems(groupId, page, size);
+			Page<M3UItem> pageItems = m3uService.getPageableTvChannels(groupId, page, size);
 
 			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 			model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
 			model.addAttribute("groupId", groupId);
-			model.addAttribute("groups", m3uService.getM3UGroups());
+			model.addAttribute("groups", m3uService.getM3UGroupsByType(Constants.LIVE));
 			model.addAttribute("items", pageItems.getContent());
 			model.addAttribute("currentPage", pageItems.getNumber() + 1);
 			model.addAttribute("totalItems", pageItems.getTotalElements());
@@ -92,7 +92,7 @@ public class M3UController {
 			model.addAttribute("message", e.getMessage());
 		}
 
-		return Constants.ITEMS;
+		return Constants.TV_CHANNELS;
 	}
 
 	@GetMapping("/viewLog")

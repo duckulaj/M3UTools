@@ -9,6 +9,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hawkins.m3utoolsjpa.utils.Constants;
+
 @Repository
 public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, Long> {
 
@@ -23,18 +25,26 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 	Page<M3UItem> findByGroupTitle(String groupTitle, Pageable pageable);
 
 	Page<M3UItem> findByGroupId(Long groupId, Pageable pageable);
-	
-	@Transactional(readOnly = true)
-	@Query("SELECT DISTINCT channelName FROM M3UItem WHERE type = ?1")
-	List<String> findDistinctChannelNameByType(String type);
-	
+		
 	@Transactional(readOnly = true)
 	@Query("SELECT m0 FROM M3UItem m0 WHERE type = ?1 AND channelName LIKE ?2")
 	List<M3UItem> findByChannelName(String type, String channelName);
 	
 	@Transactional(readOnly = true)
-	@Query("SELECT m0 FROM M3UItem m0 WHERE type = ?1 AND channelName LIKE ?2")
-	M3UItem findDistinctByChannelName(String type, String channelName);
-
+	@Query("SELECT m0 FROM M3UItem m0 WHERE type = '" +  Constants.LIVE + "'")
+	Page<M3UItem> findTvChannels(Pageable pageable);
+	
+	@Transactional(readOnly = true)
+	@Query("SELECT m0 FROM M3UItem m0 WHERE type = '" +  Constants.LIVE + "'" + " AND groupId = ?1")
+	Page<M3UItem> findTvChannelsByGroup(Long groupId, Pageable pageable);
+	
+	@Transactional(readOnly = true)
+	@Query("SELECT m0 FROM M3UItem m0 WHERE type = '" +  Constants.LIVE + "'" + " AND selected = ?1")
+	List<M3UItem> findTvChannelsBySelected(boolean selected);
+	
+	@Transactional(readOnly = true)
+	@Query("SELECT m0 FROM M3UItem m0 WHERE type = '" +  Constants.LIVE + "'" + " AND selected = ?1 AND groupId = ?2")
+	List<M3UItem> findTvChannelsBySelectedAndGroup(boolean selected, Long groupId);
+	
 
 }

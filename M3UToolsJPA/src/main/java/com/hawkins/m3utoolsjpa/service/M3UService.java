@@ -18,8 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StopWatch;
 
-import com.hawkins.m3utoolsjpa.data.Channel;
-import com.hawkins.m3utoolsjpa.data.ChannelRepository;
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.FilterRepository;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
@@ -52,9 +50,6 @@ public class M3UService {
 	FilterRepository filterRepository;
 	
 	@Autowired
-	ChannelRepository channelRepository;
-	
-	@Autowired
 	DatabaseUpdates databaseUpdates;
 	
 	public void resetDatabase() {
@@ -83,9 +78,6 @@ public class M3UService {
 			}
 	
 			itemRepository.saveAll(items);
-			
-			DatabaseUpdater.resetChannelSequence(databaseUpdates);
-			populateTVChannels();
 			
 			log.info("Saved {} M3UItem(s)", items.size());
 		}
@@ -136,14 +128,9 @@ public class M3UService {
 
 	}
 	
-	public List<Channel> getTvChannels() {
+	public List<M3UItem> getSelectedTvChannels() {
 		
-		return IteratorUtils.toList(channelRepository.findAll().iterator());
-	}
-	
-	public List<Channel> getSelectedTvChannels() {
-		
-		return IteratorUtils.toList(channelRepository.findBySelected(true).iterator());
+		return IteratorUtils.toList(itemRepository.findTvChannelsBySelected(true).iterator());
 	}
 
 	public static OrderedProperties getOrderProperties() {
@@ -194,6 +181,20 @@ public class M3UService {
 
 		return pageItems;
 	}
+	
+	public Page<M3UItem> getPageableTvChannels(Long groupId, int page, int size) {
+
+		Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
+
+		Page<M3UItem> pageItems;
+		if (groupId == null || groupId == 0 || groupId == -1) {
+			pageItems = itemRepository.findTvChannels(paging);
+		} else {
+			pageItems = itemRepository.findTvChannelsByGroup(groupId, paging);
+		}
+
+		return pageItems;
+	}
 
 	public M3UGroupSelected getSelectedGroup(Long groupId) {
 
@@ -208,27 +209,7 @@ public class M3UService {
 		return new M3UGroupSelected();
 
 	}
-
-	public void populateTVChannels() {
-		
-		List<M3UItem> tvChannels = itemRepository.findByType(Constants.LIVE);
-		
-		List<Channel> channels = new ArrayList<Channel>();
-		
-		for (M3UItem channel : tvChannels) {
-			channels.add(new Channel(channel.getChannelName(), channel.getGroupId(), false));
-		}
-		
-		if (channels.size()> 0) {
-			channelRepository.deleteAll();
-			channelRepository.saveAll(channels);
-			
-		}
-		
-		log.info("Saved {} channels", channels.size());
-		 
-	}
-
+	
 	public void resetM3UFile() {
 
 		if (log.isDebugEnabled()) {

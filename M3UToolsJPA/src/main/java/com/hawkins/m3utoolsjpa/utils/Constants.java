@@ -66,7 +66,8 @@ public class Constants {
 	public static final String DEFINITION_4K = "[4K]";
 	public static final String DEFINITION_8K = "[8K]";
 	
-	public static final String ADULT = "For Adults";
+	public static final String FOR_ADULTS = "For Adults";
+	public static final String ADULT = "ADULT";
 	
 	public static final String[] allowedExtensions = {"mp4","ts"};
 	public static final List<String> toBeConverted = new ArrayList<String>(Arrays.asList(".ts"));

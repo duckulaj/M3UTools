@@ -85,7 +85,7 @@
 		</div>
 
 		<div class="my-3">
-			<form th:action="@{/}" id="searchForm">
+			<form th:action="@{/tvchannels}" id="searchForm">
 				<div class="row d-flex">
 					<div class="col-md-6 mt-2">
 						<div class="col-md-3 input-group mt-2">
@@ -122,29 +122,14 @@
 					<tr>
 						<th hidden="true" scope="col">Id</th>
 						<th scope="col">Title</th>
-						<th scope="col"></th>
-						<th scope="col"></th>
+						<th scope="col">Selected</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="item : ${items}">
 						<th hidden="true" scope="row">[[${item.id}]]</th>
 						<td>[[${item.tvgName}]]</td>
-						<form action="#" th:action="@{/download}" method="post">
-					<td><input type="hidden" th:value="${item.tvgName}"
-						name="name" id="name" />
-						<button type="submit" class="btn btn-default btn-sm" name="action"
-							id="btndownload" value="download">
-							<i class="fa fa-download fa-lg"></i>
-						</button></td>
-				</form>
-				<td><input type="hidden" th:value="${item.search}"
-					name="searchInfo" id="searchInfo" />
-					<button type="submit" class="btn btn-default btn-sm"
-						name="btninformation" id="btninformation"
-						th:onclick="openInformationModal(this);" th:value="${item.search}">
-						<i class="fa fa-info-circle fa-lg"></i>
-					</button></td>
+						<td><input type="checkbox" th:checked="*{item.selected}" /></td>
 					</tr>
 				</tbody>
 			</table>
@@ -158,11 +143,11 @@
 			<ul class="pagination justify-content-center">
 				<li class="page-item"
 					th:classappend="${currentPage == 1} ? 'disabled'"><a
-					th:replace="fragments/paging :: paging(1, '<<', 'First Page')"></a>
+					th:replace="fragments/tvpaging :: tvpaging(1, '<<', 'First Page')"></a>
 				</li>
 				<li class="page-item font-weight-bold"
 					th:classappend="${currentPage == 1} ? 'disabled'"><a
-					th:replace="fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page')"></a>
+					th:replace="fragments/tvpaging :: tvpaging(${currentPage - 1}, 'Prev', 'Previous Page')"></a>
 				</li>
 				<li class="page-item disabled" th:if="${currentPage - 2 > 1}">
 					<a class="page-link" href="#">...</a>
@@ -171,18 +156,18 @@
 					th:classappend="${page == currentPage} ? 'active'"
 					th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
 					<a
-					th:replace="fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page})"></a>
+					th:replace="fragments/tvpaging :: tvpaging(${page}, ${page}, 'Page ' + ${page})"></a>
 				</li>
 				<li class="page-item disabled"
 					th:if="${currentPage + 2 < totalPages}"><a class="page-link"
 					href="#">...</a></li>
 				<li class="page-item font-weight-bold"
 					th:classappend="${currentPage == totalPages} ? 'disabled'"><a
-					th:replace="fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page')"></a>
+					th:replace="fragments/tvpaging :: tvpaging(${currentPage + 1},'Next', 'Next Page')"></a>
 				</li>
 				<li class="page-item"
 					th:classappend="${currentPage == totalPages} ? 'disabled'"><a
-					th:replace="fragments/paging :: paging(${totalPages}, '>>', 'Last Page')"></a>
+					th:replace="fragments/tvpaging :: tvpaging(${totalPages}, '>>', 'Last Page')"></a>
 				</li>
 			</ul>
 		</nav>
