@@ -35,6 +35,8 @@ public class M3UItem {
 	private Long groupId;
 	private String tvgId;
 	private String tvgName;
+	
+	@Lob
 	private String tvgLogo;
 	private String tvgShift;
 	private String radio;
