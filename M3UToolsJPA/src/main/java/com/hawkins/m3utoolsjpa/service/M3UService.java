@@ -26,7 +26,6 @@ import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.m3u.M3UChannel;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -86,7 +85,7 @@ public class M3UService {
 			itemRepository.saveAll(items);
 			
 			DatabaseUpdater.resetChannelSequence(databaseUpdates);
-			M3UChannel.populateTVChannels(itemRepository, channelRepository );
+			populateTVChannels();
 			
 			log.info("Saved {} M3UItem(s)", items.size());
 		}
@@ -208,6 +207,26 @@ public class M3UService {
 
 		return new M3UGroupSelected();
 
+	}
+
+	public void populateTVChannels() {
+		
+		List<M3UItem> tvChannels = itemRepository.findByType(Constants.LIVE);
+		
+		List<Channel> channels = new ArrayList<Channel>();
+		
+		for (M3UItem channel : tvChannels) {
+			channels.add(new Channel(channel.getChannelName(), channel.getGroupId(), false));
+		}
+		
+		if (channels.size()> 0) {
+			channelRepository.deleteAll();
+			channelRepository.saveAll(channels);
+			
+		}
+		
+		log.info("Saved {} channels", channels.size());
+		 
 	}
 
 	public void resetM3UFile() {

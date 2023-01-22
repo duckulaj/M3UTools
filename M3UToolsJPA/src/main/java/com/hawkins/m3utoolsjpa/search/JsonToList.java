@@ -89,7 +89,7 @@ public class JsonToList {
 
 			for (String m3uItem : m3uitems) {
 
-				List<M3UItem> filmList = itemRepository.findByChannelName("%" + m3uItem + "%");
+				List<M3UItem> filmList = itemRepository.findByChannelName(Constants.MOVIE,"%" + m3uItem + "%");
 				ListIterator<M3UItem> iFilters = filmList.listIterator();
 
 				while (iFilters.hasNext()) {
