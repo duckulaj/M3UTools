@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
+import com.hawkins.dmanager.util.StringUtils;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
+import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -35,7 +37,7 @@ public class M3UtoStrmService {
 	// private static String[] viewingDefinitions = {"[SD]", "[FHD]", "[UHD]", "[HD]", "[4K]", "[8K]"};
 	private static String tvShowRegex = "[S]{1}[0-9]{2} [E]{1}[0-9]{2}";
 	private static String seasonRegex = "[S]{1}[0-9]{2}";
-
+	
 	public void convertM3UtoStream() {
 
 		/*
@@ -274,7 +276,7 @@ public class M3UtoStrmService {
 			String url = movie.getChannelUri();
 
 			try {
-				if (!groupTitle.contains(Constants.ADULT)) { // Exclude Adult
+				if (!RegexUtils.containsRegex(groupTitle, Patterns.ADULT_REGEX)) {
 
 					String newFolder = Utils.normaliseName(folder);
 					String newFolderPath = createFolder(Constants.FOLDER_MOVIES + File.separator + newFolder);

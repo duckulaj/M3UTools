@@ -14,6 +14,7 @@ import org.springframework.util.StopWatch;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
+import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -75,7 +76,9 @@ public class Parser {
 						entry.setSearch(Utils.normaliseName(entry.getChannelName()));
 					}
 					
-					entries.add(entry);
+					if (!(entry.getTvgName().contains("####")) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
+						entries.add(entry);
+					}
 				}
 			}
 		} catch (IOException e) {

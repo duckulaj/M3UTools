@@ -17,5 +17,5 @@ public class Patterns {
 	public static final Pattern SQUARE_BRACKET_REGEX = Pattern.compile("\\[.*?\\]", Pattern.CASE_INSENSITIVE);
 	public static final Pattern PIPES_REGEX = Pattern.compile("([^|]*\\|){1}([^|]*\\|)", Pattern.CASE_INSENSITIVE);
 	public static final Pattern PIPE_REGEX = Pattern.compile("([^|]*\\|{1}[^|]{1}[^|])", Pattern.CASE_INSENSITIVE);
-
+	public static final Pattern ADULT_REGEX = Pattern.compile("\b(?:ADULT|For Adults)\b", Pattern.CASE_INSENSITIVE);
 }
