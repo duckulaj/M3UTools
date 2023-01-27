@@ -139,7 +139,7 @@ public final class BrowserProxyInfo
   public String getOverridesString()
   {
     String str = "";
-    if ((this._overrides != null) && (this._overrides.length > 0)) {
+    if (this._overrides != null && this._overrides.length > 0) {
       for (int i = 0; i < this._overrides.length; i++) {
         if (i != this._overrides.length - 1) {
           str = str.concat(this._overrides[i] + "|");

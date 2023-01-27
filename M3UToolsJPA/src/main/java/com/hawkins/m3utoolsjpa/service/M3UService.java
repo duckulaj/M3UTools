@@ -15,7 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.Filter;
@@ -36,7 +36,7 @@ import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@Service
 @Slf4j
 public class M3UService {
 
@@ -153,7 +153,7 @@ public class M3UService {
 		OrderedProperties properties = new OrderedProperties();
 		try {
 			properties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
-			properties = OrderedProperties.copyOf(properties);
+					properties = OrderedProperties.copyOf(properties);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

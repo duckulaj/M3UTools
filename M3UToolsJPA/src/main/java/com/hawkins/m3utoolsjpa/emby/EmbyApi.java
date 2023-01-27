@@ -17,7 +17,7 @@ import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Emby {
+public class EmbyApi {
 
 
 

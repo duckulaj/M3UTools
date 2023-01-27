@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,9 +13,7 @@ import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class JsonToList {
 
 	public static List<M3UItem> convertJsonToList(JsonObject jsonObj, M3UItemRepository itemRepository, String searchType) {
@@ -69,7 +65,7 @@ public class JsonToList {
 					break;
 					
 				case Constants.YEAR_SEARCH:
-
+					
 					m3uitems.add(result.get("title").getAsString());
 
 					break;

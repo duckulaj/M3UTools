@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.component.ScheduledTasks;
-import com.hawkins.m3utoolsjpa.emby.Emby;
+import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.M3UService;
@@ -29,7 +29,7 @@ public class ManualController {
 	@GetMapping("/updateEmbyLibraries")
 	public ModelAndView updateEmbyLibraries(ModelMap model) {
 
-		Emby.refreshLibraries();
+		EmbyApi.refreshLibraries();
 		
 		log.info("updateEmbyLibraries(Manual) completed at {}", Utils.printNow());
 		

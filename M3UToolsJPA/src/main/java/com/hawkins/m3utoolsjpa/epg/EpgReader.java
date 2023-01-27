@@ -13,7 +13,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
-import com.hawkins.m3utoolsjpa.emby.Emby;
+import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +86,7 @@ public class EpgReader {
 			writer.close();
 			
 			if (dp.isEmbyInstalled()) {
-				Emby.refreshGuide();
+				EmbyApi.refreshGuide();
 			}
 
 		} catch (DocumentException e) {

@@ -34,8 +34,9 @@ public class SearchByYear implements Search {
 			parameters.put("api_key", api);
 			parameters.put("language", "en-GB");
 			parameters.put("region", "GB");
-			parameters.put("release_date.gte", year + "-01-01");
-			parameters.put("release_date.lte", year + "-12-31");
+			parameters.put("primary_release_year", year);
+			// parameters.put("release_date.gte", year + "-01-01");
+			// parameters.put("release_date.lte", year + "-12-31");
 
 			URL url = new URL(discoverURL + "?" + Utils.getParamsString(parameters));
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
