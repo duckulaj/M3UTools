@@ -1,0 +1,84 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+	<title>M3UToolsJPA</title>
+	<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
+	
+	<script type="text/javascript">
+		function groupChange(selectObj) {
+			var idx = selectObj.selectedIndex;
+			var which = selectObj.options[idx].value;
+			// alert("id:" + idx + " name:" + encodeURIComponent(which));
+			if (selectObj.value) {
+				selectObj.form.submit(which);
+			}
+		}
+	</script>	
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1> Tv Channels </h1>
+		</div>
+	</div>
+	
+	<div class="my-3">
+		<form th:action="@{/tvChannels}" id="searchForm">
+			<div class="row d-flex">
+				<div class="col-md-6 mt-2">
+					<div class="col-md-3 input-group mt-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="${group.id}">Channel
+								Group:</label> <select form="searchForm" name="groupId"
+								th:onchange="'groupChange(this)'";>
+								<option th:each="group : ${groups}" th:value="${group.id}"
+									th:text="${group.name}"
+									th:selected="${group.id==selectedGroup.id}">Groups</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+					
+	<div class="row">
+		<div class="col-md-6">
+			<form action="#" class="form-horizontal"
+				  th:action="@{/saveTvChannels}"
+				  th:object="${form}"
+				  method="post">
+				<fieldset>
+					<span class="float-right">
+						    <input type="submit" id="submitButton" class="btn btn-success" th:value="Save">
+						    <input type="reset" id="resetButton" class="btn btn-danger" th:value="Reset"/>
+					</span>
+					<table class="table">
+						<thead>
+						<tr>
+							<th> Id</th>
+							<th> Title</th>
+							<th> Selected</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr th:each="channel, itemStat : ${form.channels}">
+							<td><input th:name="|channels[${itemStat.index}].id|" th:value="${channel.getId()}"/></td>
+							<td><input th:placeholder="Name + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].tvgName|" th:value="${channel.getTvgName()}"
+									   required/></td>
+							<td><input type = "checkbox" th:placeholder="Selected + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].selected|"
+									   th:checked="${channel.isSelected()}"/></td>
+						</tr>
+						</tbody>
+					</table>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
