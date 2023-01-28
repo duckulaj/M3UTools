@@ -41,7 +41,7 @@ public class MultipleChannelsController {
         model.addAttribute("groups", m3uService.getM3UGroups());
         model.addAttribute("form", new SelectedChannelsCreationDto(channels));
 
-        return "editChannelsForm";
+        return Constants.EDIT_CHANNELS;
     }
 
     @PostMapping(value = "/saveTvChannels")
