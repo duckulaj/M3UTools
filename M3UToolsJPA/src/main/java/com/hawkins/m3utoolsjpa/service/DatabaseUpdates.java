@@ -15,8 +15,10 @@ public class DatabaseUpdates {
 	@Transactional
 	public void resetChannelSequence() {
 
-		String query = "ALTER SEQUENCE CHANNEL_SEQUENCE START WITH 1001";
-
+		String query = "DROP SEQUENCE ITEM_SEQUENCE";
+		entityManager.createNativeQuery(query).executeUpdate();
+		
+		query = "CREATE SEQUENCE ITEM_SEQUENCE START WITH 1001";
 		entityManager.createNativeQuery(query).executeUpdate();
 	}
 }

@@ -19,7 +19,8 @@ public class M3UItem {
 	        parameters = {
 	                @Parameter(name = "sequence_name", value = "itemSequence"),
 	                @Parameter(name = "initial_value", value = "1"),
-	                @Parameter(name = "increment_size", value = "1")
+	                @Parameter(name = "increment_size", value = "3"),
+	                @Parameter(name = "optimizer", value = "hilo")
 	        }
 	)
 	

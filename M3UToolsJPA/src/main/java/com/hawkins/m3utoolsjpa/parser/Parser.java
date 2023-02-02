@@ -76,7 +76,7 @@ public class Parser {
 						entry.setSearch(Utils.normaliseName(entry.getChannelName()));
 					}
 					
-					if (!(entry.getTvgName().contains("####")) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
+					if (!RegexUtils.containsRegex(entry.getTvgName(), Patterns.HASH_REGEX) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
 						entries.add(entry);
 					}
 				}
@@ -108,7 +108,8 @@ public class Parser {
 	private static M3UItem extractExtInfo(String globalTvgShift, String line) {
 		String duration = extract(line, Patterns.DURATION_REGEX);
 		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
-		String tvgName = Utils.removeFromString((extract(line, Patterns.TVG_NAME_REGEX)), Patterns.SQUARE_BRACKET_REGEX);
+		String tvgName = Utils.removeFromString((extract(line, Patterns.TVG_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
+		
 		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
 		if (tvgShift == null) {
 			tvgShift = globalTvgShift;
@@ -117,11 +118,9 @@ public class Parser {
 		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
 		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
-		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.SQUARE_BRACKET_REGEX);
+		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
 
-		if (channelName.contains("|")) {
-			channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.PIPES_REGEX).trim();
-		}
+		
 		// Remove |EN|
 		return new M3UItem(
 				duration,

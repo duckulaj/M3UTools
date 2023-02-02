@@ -24,6 +24,8 @@ import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.data.TvChannel;
+import com.hawkins.m3utoolsjpa.data.TvChannelRepository;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -50,6 +52,9 @@ public class M3UService {
 	FilterRepository filterRepository;
 	
 	@Autowired
+	TvChannelRepository channelRepository;
+	
+	@Autowired
 	DatabaseUpdates databaseUpdates;
 	
 	public void resetDatabase() {
@@ -62,10 +67,9 @@ public class M3UService {
 		
 		if (items.size() > 0) {
 		
-			itemRepository.deleteAll(itemRepository.findAll());
-	
-			groupRepository.deleteAll(groupRepository.findAll());
-		
+			groupRepository.deleteAll();
+			itemRepository.deleteAll();
+				
 			for (M3UItem item : items) {
 	
 				M3UGroup group = groupRepository.findByName(item.getGroupTitle());
@@ -254,4 +258,11 @@ public class M3UService {
 		filterRepository.save(filter);
 		
 	}
+	
+	public List<TvChannel> getTvChannels() {
+
+		return IteratorUtils.toList(channelRepository.findAll(Sort.by(Sort.Direction.ASC, "channelId")).iterator());
+
+	}
+
 }
