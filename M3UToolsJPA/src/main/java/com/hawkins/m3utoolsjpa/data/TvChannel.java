@@ -23,7 +23,7 @@ public class TvChannel {
 	@Id
 	@GeneratedValue(generator = "tvChannelSequenceGenerator")
 	private Long id;
-	public String channelID;
+	public Long channelID;
 	public String tvgChNo;
 	public String tvgName;
 	public String tvgId;
@@ -31,7 +31,13 @@ public class TvChannel {
 	public String groupTitle;
 	public String tvgUrl;
 	
-	public TvChannel(String channelID, String tvgChNo, String tvgName, String tvgId, String tvgLogo, String groupTitle,
+	
+	
+	public TvChannel() {
+		super();
+	}
+
+	public TvChannel(Long channelID, String tvgChNo, String tvgName, String tvgId, String tvgLogo, String groupTitle,
 			String tvgUrl) {
 		super();
 		this.channelID = channelID;
@@ -51,11 +57,11 @@ public class TvChannel {
 		this.id = id;
 	}
 	
-	public String getChannelID() {
+	public Long getChannelID() {
 		return channelID;
 	}
 
-	public void setChannelID(String channelID) {
+	public void setChannelID(Long channelID) {
 		this.channelID = channelID;
 	}
 

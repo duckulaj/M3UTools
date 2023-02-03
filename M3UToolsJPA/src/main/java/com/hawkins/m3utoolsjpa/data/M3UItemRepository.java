@@ -17,6 +17,8 @@ import com.hawkins.m3utoolsjpa.utils.Constants;
 public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, Long> {
 
 	M3UItem findById(long id);
+	
+	M3UItem findByChannelName(String channelName);
 
 	List<M3UItem> findByGroupTitle(String groupTitle);
 	
