@@ -53,6 +53,10 @@ public class Parser {
 			if (line == null) {
 				throw new ParsingException(0, "Empty stream");
 			}
+			
+			if (line.trim().equalsIgnoreCase("")) {
+				line = buffer.readLine();
+			}
 			lineNbr++;
 			
 			checkStart(line);
@@ -128,6 +132,7 @@ public class Parser {
 				groupId,
 				tvgId,
 				tvgName,
+				"",
 				tvgLogo,
 				tvgShift,
 				radio,

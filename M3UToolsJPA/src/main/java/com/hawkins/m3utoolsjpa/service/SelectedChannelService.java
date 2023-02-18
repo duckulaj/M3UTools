@@ -76,9 +76,15 @@ public class SelectedChannelService {
     		 
     		TvChannel newChannel = new TvChannel(newChannelNumber, newChannelNumber.toString(), thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(), thisItem.getChannelUri());
     		tvChannelRepository.save(newChannel);
+    		thisItem.setTvgChNo(newChannel.getTvgChNo());
+    		itemRepository.save(thisItem);
     	} else {
     		if (!channel.isSelected()) {
-    			if (tvChannel != null) tvChannelRepository.delete(tvChannel);
+    			if (tvChannel != null) {
+    				tvChannelRepository.delete(tvChannel);
+    				thisItem.setTvgChNo("");
+    				itemRepository.save(thisItem);
+    			}
     		}
     	}
     }

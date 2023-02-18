@@ -25,6 +25,8 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 	List<M3UItem> findByType(String type);
 
 	List<M3UItem> findByTvgName(String tvgName);
+	
+	M3UItem findByTvgNameDistinct(String tvgName);
 
 	Page<M3UItem> findByGroupTitle(String groupTitle, Pageable pageable);
 
@@ -62,5 +64,10 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 	@Modifying
 	@Query("update M3UItem m0 set m0.selected = :selected where m0.id = :id")
 	void updateSelected(@Param(value = "id") long id, @Param(value = "selected") boolean selected);
+	
+	@Transactional
+	@Modifying
+	@Query("update M3UItem m0 set m0.tvgChNo = :tvgChNo where m0.id = :id")
+	void updateTvgChNo(@Param(value = "id") long id, @Param(value = "tvgChNo") String tvgChNo);
 
 }

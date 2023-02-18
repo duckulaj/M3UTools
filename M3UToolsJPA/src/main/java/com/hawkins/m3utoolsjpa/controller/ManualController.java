@@ -57,4 +57,12 @@ public class ManualController {
 		
 		return new ModelAndView("forward:/", model);
 	}
+	
+	@GetMapping("writeM3U")
+	public ModelAndView writeM3U(ModelMap model) {
+		
+		m3uService.writeTvChannelsM3U();
+		
+		return new ModelAndView("forward:/", model);
+	}
 }

@@ -68,7 +68,7 @@
 						<tr th:each="channel, itemStat : ${form.channels}">
 							<td><input th:name="|channels[${itemStat.index}].id|" th:value="${channel.getId()}"/></td>
 							<td><input th:placeholder="Name + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].tvgName|" th:value="${channel.getTvgName()}"
-									   required/></td>
+									   required /></td>
 							<td><input type = "checkbox" th:placeholder="Selected + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].selected|"
 									   th:checked="${channel.isSelected()}"/></td>
 						</tr>

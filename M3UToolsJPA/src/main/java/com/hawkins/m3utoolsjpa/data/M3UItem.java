@@ -36,6 +36,7 @@ public class M3UItem {
 	private Long groupId;
 	private String tvgId;
 	private String tvgName;
+	private String tvgChNo;
 	
 	@Lob
 	private String tvgLogo;
@@ -59,6 +60,7 @@ public class M3UItem {
 			Long groupId,
 			String tvgId,
 			String tvgName,
+			String tvgChNo,
 			String tvgLogo,
 			String tvgShift,
 			String radio,
@@ -74,6 +76,7 @@ public class M3UItem {
 		this.groupId = groupId;
 		this.tvgId = tvgId;
 		this.tvgName = tvgName;
+		this.tvgChNo = tvgChNo;
 		this.tvgLogo = tvgLogo;
 		this.tvgShift = tvgShift;
 		this.radio = radio;
@@ -86,10 +89,13 @@ public class M3UItem {
 	}
 
 	@Override
+	
 	public String toString() {
-		return String.format(
-				"M3UItem[id=%d, groupId='%s', groupTitle='%s']",
-				id, groupId, groupTitle);
+		return "M3UItem [group=" + group + ", id=" + id + ", duration=" + duration + ", groupTitle=" + groupTitle
+				+ ", groupId=" + groupId + ", tvgId=" + tvgId + ", tvgName=" + tvgName + ", tvgChNo=" + tvgChNo
+				+ ", tvgLogo=" + tvgLogo + ", tvgShift=" + tvgShift + ", radio=" + radio + ", channelUri=" + channelUri
+				+ ", channelName=" + channelName + ", type=" + type + ", search=" + search + ", selected=" + selected
+				+ "]";
 	}
 
 	public Long getId() {
@@ -118,6 +124,14 @@ public class M3UItem {
 
 	public String getTvgName() {
 		return tvgName;
+	}
+	
+	public String getTvgChNo() {
+		return tvgChNo;
+	}
+
+	public void setTvgChNo(String tvgChNo) {
+		this.tvgChNo = tvgChNo;
 	}
 
 	public String getTvgLogo() {

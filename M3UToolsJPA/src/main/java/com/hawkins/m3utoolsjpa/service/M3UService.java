@@ -1,5 +1,8 @@
 package com.hawkins.m3utoolsjpa.service;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.dom4j.io.OutputFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +39,7 @@ import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
+import com.hawkins.m3utoolsjpa.utils.Writer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,6 +62,7 @@ public class M3UService {
 	@Autowired
 	DatabaseUpdates databaseUpdates;
 	
+	
 	public void resetDatabase() {
 			
 
@@ -67,8 +73,9 @@ public class M3UService {
 		
 		if (items.size() > 0) {
 		
-			groupRepository.deleteAll();
 			itemRepository.deleteAll();
+			groupRepository.deleteAll();
+			
 				
 			for (M3UItem item : items) {
 	
@@ -89,6 +96,22 @@ public class M3UService {
 
 		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
 		log.info("resetDatabase completed");
+		
+		/*
+		 * It is possible that we will have selected TV Channels. Now that the M3UItem and M3UGroup has been rebuilt
+		 * we need to go through any existing channels and update M3UItem.selected and M3UItem.tvgChNo
+		 */
+		
+		Iterable<TvChannel> tvChannels = channelRepository.findAll(); 
+		
+		for (TvChannel tvChannel : tvChannels) {
+			M3UItem item = itemRepository.findByTvgNameDistinct(tvChannel.getTvgName());
+			if (item != null) {
+				item.setSelected(true);
+				item.setTvgChNo(tvChannel.getTvgChNo());
+				itemRepository.save(item);
+			}
+		}
 	}
 
 	public Page<M3UItem> findAllPageable(Pageable pageable) {
@@ -263,6 +286,26 @@ public class M3UService {
 
 		return IteratorUtils.toList(channelRepository.findAll(Sort.by(Sort.Direction.ASC, "channelId")).iterator());
 
+	}
+	
+	public void writeTvChannelsM3U() {
+		
+		DownloadProperties dp = DownloadProperties.getInstance();
+				
+		String outputFile = dp.getFileWatcherLocation() + "/M3UToolsJPA.m3u";
+		
+		List<M3UItem> channels = getSelectedTvChannels();
+		
+		
+		try {
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile));
+			Writer.write(channels, bos);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 }
