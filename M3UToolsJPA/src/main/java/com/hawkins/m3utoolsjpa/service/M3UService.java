@@ -92,10 +92,6 @@ public class M3UService {
 			
 			log.info("Saved {} M3UItem(s)", items.size());
 		}
-		sw.stop();
-
-		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
-		log.info("resetDatabase completed");
 		
 		/*
 		 * It is possible that we will have selected TV Channels. Now that the M3UItem and M3UGroup has been rebuilt
@@ -105,13 +101,23 @@ public class M3UService {
 		Iterable<TvChannel> tvChannels = channelRepository.findAll(); 
 		
 		for (TvChannel tvChannel : tvChannels) {
-			M3UItem item = itemRepository.findByTvgNameDistinct(tvChannel.getTvgName());
-			if (item != null) {
-				item.setSelected(true);
-				item.setTvgChNo(tvChannel.getTvgChNo());
-				itemRepository.save(item);
+			List<M3UItem> theseItems = itemRepository.findByTvgName(tvChannel.getTvgName());
+			for (M3UItem item : theseItems) {
+				if (item != null) {
+					item.setSelected(true);
+					item.setTvgChNo(tvChannel.getTvgChNo());
+					itemRepository.save(item);
+				}
 			}
 		}
+		
+		sw.stop();
+
+		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
+		log.info("resetDatabase completed");
+		
+		writeTvChannelsM3U();
+
 	}
 
 	public Page<M3UItem> findAllPageable(Pageable pageable) {
@@ -304,6 +310,8 @@ public class M3UService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		log.info("Updated m3u file written to {}", outputFile);
 		
 		
 	}

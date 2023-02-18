@@ -47,6 +47,7 @@ public class MultipleChannelsController {
     @PostMapping(value = "/saveTvChannels")
     public String saveTvChannels(@ModelAttribute SelectedChannelsCreationDto form, Model model) {
         channelsService.saveAll(form.getChannels());
+        m3uService.writeTvChannelsM3U();
 
         model.addAttribute("channels", channelsService.find(-1L));
 

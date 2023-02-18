@@ -26,8 +26,6 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 
 	List<M3UItem> findByTvgName(String tvgName);
 	
-	M3UItem findByTvgNameDistinct(String tvgName);
-
 	Page<M3UItem> findByGroupTitle(String groupTitle, Pageable pageable);
 
 	Page<M3UItem> findByGroupId(Long groupId, Pageable pageable);
