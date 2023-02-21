@@ -9,7 +9,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.hawkins.m3utoolsjpa.component.ScheduledTasks;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
+import com.hawkins.m3utoolsjpa.epg.XmltvDoc;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -21,6 +23,10 @@ public class ManualController {
 
 	@Autowired
 	M3UService m3uService;
+	
+	@Autowired
+	EpgService epgService;
+	
 	/*
 	 * This controller exists to allow the invocation on controller methods that
 	 * have no graphical trigger.
@@ -62,6 +68,14 @@ public class ManualController {
 	public ModelAndView writeM3U(ModelMap model) {
 		
 		m3uService.writeTvChannelsM3U();
+		
+		return new ModelAndView("forward:/", model);
+	}
+	
+	@GetMapping("readEPG")
+	public ModelAndView readEPG(ModelMap model) {
+		
+		XmltvDoc doc = epgService.readEPG();
 		
 		return new ModelAndView("forward:/", model);
 	}
