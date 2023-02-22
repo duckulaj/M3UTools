@@ -75,7 +75,7 @@ public class ManualController {
 	@GetMapping("readEPG")
 	public ModelAndView readEPG(ModelMap model) {
 		
-		XmltvDoc doc = epgService.readEPG();
+		epgService.readEPG();
 		
 		return new ModelAndView("forward:/", model);
 	}
