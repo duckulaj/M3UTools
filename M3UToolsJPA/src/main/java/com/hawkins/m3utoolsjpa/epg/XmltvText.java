@@ -14,7 +14,7 @@ public class XmltvText {
     }
 
     public XmltvText(String text) {
-        this(text, null);
+        this(text, "");
     }
 
     public XmltvText(String text, String language) {

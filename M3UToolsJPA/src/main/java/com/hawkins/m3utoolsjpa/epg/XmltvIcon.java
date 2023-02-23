@@ -12,6 +12,12 @@ public class XmltvIcon {
     @JacksonXmlProperty(isAttribute = true)
     String width;
     
+    public XmltvIcon(String src, String height, String width) {
+    	this.src = src;
+    	this.height= height;
+    	this.width = width;
+    }
+    
     public XmltvIcon() {
     }
 

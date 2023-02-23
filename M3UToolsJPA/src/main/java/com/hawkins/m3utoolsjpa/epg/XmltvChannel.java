@@ -12,6 +12,7 @@ public class XmltvChannel {
     @JacksonXmlProperty(localName = "display-name")
     private List<XmltvText> displayNames;
 
+    @JacksonXmlProperty(localName = "icon")
     private XmltvIcon icon;
 
     public XmltvChannel() {

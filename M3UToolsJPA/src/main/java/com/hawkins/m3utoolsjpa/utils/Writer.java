@@ -14,6 +14,7 @@ public class Writer {
     private static final String M3U_INFO_MARKER = "#EXTINF:";
     private static final String DURATION_PATTERN ="{0} ";
     private static final String TVG_ID_PATTERN ="tvg-id=\"{0}\" ";
+    private static final String TVG_CHNO_PATTERN ="tvg-chno=\"{0}\" ";
     private static final String TVG_NAME_PATTERN ="tvg-name=\"{0}\" ";
     private static final String TVG_LOGO_PATTERN ="tvg-logo=\"{0}\" ";
     private static final String TVG_SHIFT_PATTERN ="tvg-shift=\"{0}\" ";
@@ -30,12 +31,14 @@ public class Writer {
         for (M3UItem entry : entries) {
             builder = new StringBuilder();
             builder.append(M3U_INFO_MARKER);
-            appendIfNotNull(builder, entry.getDuration(), DURATION_PATTERN);
-            appendIfNotNull(builder, entry.getTvgId(), TVG_ID_PATTERN);
+            appendIfNotNull(builder, entry.getTvgChNo(), TVG_CHNO_PATTERN);
             appendIfNotNull(builder, StringUtils.removeCountryIdentifier(entry.getTvgName()), TVG_NAME_PATTERN);
+            appendIfNotNull(builder, entry.getTvgId(), TVG_ID_PATTERN);
+            appendIfNotNull(builder, entry.getTvgLogo(), TVG_LOGO_PATTERN);
+            appendIfNotNull(builder, entry.getDuration(), DURATION_PATTERN);
             appendIfNotNull(builder, entry.getTvgShift(), TVG_SHIFT_PATTERN);
             appendIfNotNull(builder, entry.getRadio(), RADIO_PATTERN);
-            appendIfNotNull(builder, entry.getTvgLogo(), TVG_LOGO_PATTERN);
+            appendIfNotNull(builder, entry.getDuration(), DURATION_PATTERN);
             appendIfNotNull(builder, entry.getGroupTitle(), GROUP_TITLE_PATTERN);
             builder.deleteCharAt(builder.length()-1);
             appendIfNotNull(builder, StringUtils.removeCountryIdentifier(entry.getChannelName()), CHANNEL_NAME_PATTERN);

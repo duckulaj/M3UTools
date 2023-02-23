@@ -7,16 +7,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class XmltvProgramme {
-    @JacksonXmlProperty(isAttribute = true)
+    
+	@JacksonXmlProperty(isAttribute = true)
+    private String channel;
+	
+	@JacksonXmlProperty(isAttribute = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss Z")
     private ZonedDateTime start;
 
     @JacksonXmlProperty(isAttribute = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss Z")
     private ZonedDateTime stop;
-
-    @JacksonXmlProperty(isAttribute = true)
-    private String channel;
 
     private XmltvText category;
 
@@ -30,17 +31,17 @@ public class XmltvProgramme {
     
     private String credits;
     
-    private String video;
+    private XmltvVideo video;
     
-    private Date date;
+    private String date;
 
     public XmltvProgramme() {
     }
 
     public XmltvProgramme(XmltvProgramme p) {
-        this.start = p.start;
+    	this.channel = p.channel;
+    	this.start = p.start;
         this.stop = p.stop;
-        this.channel = p.channel;
         this.category = p.category;
         this.title = p.title;
         this.desc = p.desc;
@@ -139,22 +140,23 @@ public class XmltvProgramme {
         return this;
     }
     
-    public String getVideo() {
-        return video;
-    }
 
-    public XmltvProgramme setVideo(String video) {
-        this.video = video;
-        return this;
-    }
-
-    public Date getdate() {
+    public String getdate() {
         return date;
     }
 
-    public XmltvProgramme setDate(Date date) {
+    public XmltvProgramme setDate(String date) {
         this.date = date;
         return this;
+    }
+    
+    public XmltvVideo getVideo() {
+    	return video;
+    }
+    
+    public XmltvProgramme setVideo(XmltvVideo video) {
+    	this.video = video;
+    	return this;
     }
 
 }
