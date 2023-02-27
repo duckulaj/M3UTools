@@ -17,6 +17,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
 import com.hawkins.m3utoolsjpa.epg.XmltvChannel;
 import com.hawkins.m3utoolsjpa.epg.XmltvDoc;
@@ -104,6 +105,11 @@ public class EpgService {
 			xm.writerWithDefaultPrettyPrinter();
 			xm.writeValue(new File("./generatedChannels.xml"), selectedXmltvDoc);
 			log.info("Written ./generatedChannels.xml");
+			
+			if (dp.isEmbyInstalled()) {
+				EmbyApi.refreshGuide();
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -272,6 +272,10 @@ public class M3UtoStrmService {
 			folder = Utils.removeFromString(folder, Patterns.PIPE_REGEX);
 			
 			folder = folder.replace("/", " ").trim();
+			
+			if (folder.contains("EN ")) {
+				folder = folder.substring(3);
+			}
 
 			String url = movie.getChannelUri();
 
