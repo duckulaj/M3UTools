@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.internal.util.ZonedDateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.epg.EpgReader;
 import com.hawkins.m3utoolsjpa.epg.XmltvChannel;
 import com.hawkins.m3utoolsjpa.epg.XmltvDoc;
 import com.hawkins.m3utoolsjpa.epg.XmltvIcon;
@@ -43,11 +45,11 @@ public class EpgService {
 		List<XmltvProgramme> selectedXmltvProgrammes = new ArrayList<XmltvProgramme>();
 		
 		XmlMapper xm = XmltvUtils.createMapper();
+		// XmlMapper xm = new XmlMapper();
 		XmltvDoc doc = new XmltvDoc();
 		
 		try {
-			File xmlFile = Utils.downloadFile(dp.getProps().getProperty(Constants.STREAM_PLAYLIST), "/home/jonathan/.xteve/data/interim.xml");
-			doc = xm.readValue(xmlFile, XmltvDoc.class);
+			doc = xm.readValue(new File("./epg.xml"), XmltvDoc.class);
 			// xm.writeValue(new File("/home/jonathan/.xteve/data/ReWrittenChannels.xml"), doc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -62,48 +64,46 @@ public class EpgService {
 		
 		log.info("Found {} programmes", xmltvProgrammes.size());
 		
-		Long counter = 0L;
-		for (XmltvProgramme p : xmltvProgrammes) {
-			log.debug("Programme Date is {}", DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(p.getStart()));
-			if (p.getStart().isAfter(ZonedDateTime.now())) {
-				counter++;
-			}
-		}
-		
-		log.info("Counter = {}", counter);
-		
-		
-		for (M3UItem m3uItem : m3uItems) {
-			for (XmltvChannel xmltvChannel : xmltvChannels) {
+		for (XmltvChannel xmltvChannel : xmltvChannels) {
+			for (M3UItem m3uItem : m3uItems) {
+			
 				if (xmltvChannel.getDisplayNames().get(0).getText().contains(m3uItem.getChannelName())) {
-					xmltvChannel.setId(m3uItem.getTvgChNo());
+					xmltvChannel.setId(m3uItem.getTvgId());
 					selectedXmltvChannels.add(xmltvChannel);
 					
 				}
 			}
 		}
 		
-		for (XmltvChannel channel : xmltvChannels) {
+		log.info("Processing {} selected channels", selectedXmltvChannels.size());
+		
+		for (XmltvChannel channel : selectedXmltvChannels) {
 			for (XmltvProgramme xmltvProgramme : xmltvProgrammes) {
 				if (xmltvProgramme.getChannel().contains(channel.getId())) {
-					xmltvProgramme.setChannel(channel.getDisplayNames().get(0).getText());
+					// xmltvProgramme.setChannel(channel.getDisplayNames().get(0).getText());
+					xmltvProgramme.setChannel(channel.getId());
 					xmltvProgramme.setIcon(new XmltvIcon("", "", ""));
 					xmltvProgramme.setCredits("");
 					xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
+					// xmltvProgramme.setStart(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString())));
+					// xmltvProgramme.setStop(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString())));
 					// log.info("Programme Date is {}", DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(xmltvProgramme.getStart()));
 					selectedXmltvProgrammes.add(xmltvProgramme);
 				}
 			}
 		}
 		
-		selectedXmltvDoc.setGeneratorName("M3UToolsJPA");
-		selectedXmltvDoc.setSourceInfoName("M3UToolsJPA - 0.0.1");
+		log.info("Found {} programmes", selectedXmltvProgrammes.size());
+		
+		selectedXmltvDoc.setGeneratorName(doc.getGeneratorName());
+		selectedXmltvDoc.setSourceInfoName(doc.getSourceInfoName());
 		selectedXmltvDoc.setChannels(selectedXmltvChannels);
 		selectedXmltvDoc.setProgrammes(selectedXmltvProgrammes);
 		
 		try {
 			xm.writerWithDefaultPrettyPrinter();
-			xm.writeValue(new File("/home/jonathan/.xteve/data/generatedChannels.xml"), selectedXmltvDoc);
+			xm.writeValue(new File("./generatedChannels.xml"), selectedXmltvDoc);
+			log.info("Written ./generatedChannels.xml");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

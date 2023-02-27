@@ -35,6 +35,10 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 	List<M3UItem> findByChannelName(String type, String channelName);
 	
 	@Transactional(readOnly = true)
+	@Query("SELECT m0 FROM M3UItem m0 WHERE channelName LIKE ?1")
+	List<M3UItem> findListByChannelName(String channelName);
+	
+	@Transactional(readOnly = true)
 	@Query("SELECT m0 FROM M3UItem m0 WHERE type = '" +  Constants.LIVE + "'")
 	Page<M3UItem> findTvChannels(Pageable pageable);
 	

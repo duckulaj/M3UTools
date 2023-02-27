@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.epg;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +14,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
+import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 
@@ -28,89 +30,81 @@ public class EpgReader {
 		
 	private static final String START = "start";
 	private static final String STOP = "stop";
+	
+	private static final String downloadedXML = "./downloadedEPG.xml";
+	private static final String EPG_XML = "./epg.xml";
 		
 	public EpgReader() {
 		super();
 	}
 	
-	public void changeLocalTime() {
-		changeLocalTime(properties.getEpgFileName());
+	public static String changeLocalTime(String timeString) {
+		
+		String epgTimeDifference = DownloadProperties.getInstance().getEpgTimeDifference();
+		
+		String updatedTimeString = timeString.replace("+0000", epgTimeDifference);
+		
+		return updatedTimeString;
 		
 	}
 
-	public static void changeLocalTime(String fileName) {
+	public static void createEPG() {
 		
-		
-
-		// SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyyMMddHHmmss Z");
-		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-		log.info("Filename is {}", fileName);
-		
-		SAXReader reader = new SAXReader();
-		DownloadProperties dp = DownloadProperties.getInstance();
-		
-		String epgTimeDifference = dp.getEpgTimeDifference();
-		try {
-			document = reader.read(fileName);
-
-			Element rootElement = document.getRootElement();
-
-			/*
-			 *  Now we need to make any adjustments to the programme start and end dates
-			 */
+			SAXReader reader = new SAXReader();
+			DownloadProperties dp = DownloadProperties.getInstance();
 			
+			File xmlFile = Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
 			
-			Iterator<Element> itProgramme = rootElement.elementIterator("programme");
+			try {
+				document = reader.read(downloadedXML);
 
-			while (itProgramme.hasNext() ) {
-				Element pgmElement = (Element) itProgramme.next();
+				Element rootElement = document.getRootElement();
 
-				szStart = pgmElement.attribute(START).getStringValue();
-				szEnd = pgmElement.attribute(STOP).getStringValue();
-			
-				String szNewStart = szStart.replace("+0000", epgTimeDifference);
-				String szNewEnd = szEnd.replace("+0000", epgTimeDifference);
+				/*
+				 *  Now we need to make any adjustments to the programme start and end dates
+				 */
 				
-				pgmElement.attribute(START).setText(szNewStart);
-				pgmElement.attribute(STOP).setText(szNewEnd);
-			}
-			
-			OutputFormat format = OutputFormat.createPrettyPrint();
-			XMLWriter writer;
-			
-			String outputFile = properties.getFileWatcherLocation() + "/xteveNew.xml";
-			
-			log.info("Writing {}", outputFile);
-			writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(outputFile)), format);
-			// writer = new XMLWriter(System.out, format);
-			writer.write(document);
-			writer.close();
-			
-			if (dp.isEmbyInstalled()) {
-				EmbyApi.refreshGuide();
+				
+				Iterator<Element> itProgramme = rootElement.elementIterator("programme");
+
+				while (itProgramme.hasNext() ) {
+					Element pgmElement = (Element) itProgramme.next();
+
+					szStart = pgmElement.attribute(START).getStringValue();
+					szEnd = pgmElement.attribute(STOP).getStringValue();
+				
+					String szNewStart = changeLocalTime(szStart);
+					String szNewEnd = changeLocalTime(szEnd);
+					
+					pgmElement.attribute(START).setText(szNewStart);
+					pgmElement.attribute(STOP).setText(szNewEnd);
+				}
+				
+				OutputFormat format = OutputFormat.createPrettyPrint();
+				XMLWriter writer;
+				
+				log.info("Writing {}", EPG_XML);
+				writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(EPG_XML)), format);
+				
+				writer.write(document);
+				writer.close();
+				
+				if (dp.isEmbyInstalled()) {
+					EmbyApi.refreshGuide();
+				}
+
+			} catch (DocumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
-	}
 
-	public static String formatStr(String instr) {
-		instr = instr.replaceAll("'","''");
-		// instr = instr.replaceAll("[UK]'","");
-        //instr = instr.replaceAll("[HD]","");
-        // instr = instr.replaceAll("[\\[\\]\"]", "");
-        /*instr = instr.replaceAll(">",">");
-        instr = instr.replaceAll("<","<");*/
-		return instr.trim();
-	}
 }

@@ -72,8 +72,10 @@ public class SelectedChannelService {
 		log.debug("Finding channel(M3UItem) {}", channel.getTvgName());
 
 		try {
-			M3UItem thisItem = itemRepository.findByChannelName(channel.getTvgName());
-
+			List<M3UItem> items = itemRepository.findListByChannelName(channel.getTvgName());
+			
+			M3UItem thisItem = items.get(0);
+			
 			TvChannel tvChannel = tvChannelRepository.findByTvgName(thisItem.getTvgName());
 
 			if (tvChannel == null && channel.isSelected()) {

@@ -37,8 +37,9 @@ public class Parser {
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 		
-		String m3uFile = DownloadProperties.getInstance().getFullM3U();
-
+		Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), "./channels.m3u");
+		// String m3uFile = DownloadProperties.getInstance().getFullM3U();
+		String m3uFile = "./channels.m3u";
 		if (m3uFile == null) {
 			throw new ParsingException(0, "Cannot read m3uFile");
 		}

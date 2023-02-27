@@ -49,9 +49,7 @@ public class ScheduledTasks {
 	@Scheduled(fixedDelay = 3, timeUnit = TimeUnit.HOURS)
 	public void reloadEPG() {
 
-		String epgFile = DownloadProperties.getInstance().getEpgFileName();
-		
-		EpgReader.changeLocalTime(epgFile);
+		EpgReader.createEPG();
 		log.info("Scheduled Task reloadEPG completed at {}", Utils.printNow());
 	}
 	

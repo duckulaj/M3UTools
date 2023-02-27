@@ -298,7 +298,8 @@ public class M3UService {
 		
 		DownloadProperties dp = DownloadProperties.getInstance();
 				
-		String outputFile = dp.getFileWatcherLocation() + "/M3UToolsJPA.m3u";
+		// String outputFile = dp.getFileWatcherLocation() + "/M3UToolsJPA.m3u";
+		String outputFile = "./M3UToolsJPA.m3u";
 		
 		List<M3UItem> channels = getSelectedTvChannels();
 		

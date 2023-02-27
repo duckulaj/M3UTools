@@ -43,6 +43,8 @@ public class DownloadProperties implements Runnable {
 	private String xteveUser = null;
 	private String xteveUrl = null;
 	private String fileName = null;
+	private String streamXMLUrl = null;
+	private String streamChannels = null;
 	
 	public DownloadProperties() {
 
@@ -76,6 +78,9 @@ public class DownloadProperties implements Runnable {
 		this.setXteveUser(props.getProperty("xteve.user"));
 		this.setXteveUrl(props.getProperty("xteve.url"));
 		this.setFileName(props.getProperty("fileName"));
+		this.setStreamXMLUrl(props.getProperty(Constants.STREAM_PLAYLIST));
+		this.setStreamChannels(props.getProperty(Constants.STREAM_CHANNELS));
+		
 		
 	}
 
@@ -302,6 +307,22 @@ public class DownloadProperties implements Runnable {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getStreamXMLUrl() {
+		return streamXMLUrl;
+	}
+
+	public void setStreamXMLUrl(String streamXMLUrl) {
+		this.streamXMLUrl = streamXMLUrl;
+	}
+
+	public String getStreamChannels() {
+		return streamChannels;
+	}
+
+	public void setStreamChannels(String streamChannels) {
+		this.streamChannels = streamChannels;
 	}
 	
 	
