@@ -76,6 +76,8 @@ public class Constants {
 	public static final String ACTOR_SEARCH = "actor";
 	public static final String YEAR_SEARCH = "year";
 	public static final String TITLE_SEARCH = "title";
+
+	public static final String STREAM_PLAYLIST = "stream.playlist";
 	
 	// public static final Long maxFileSize = 2147483648L;
 	public static final Long maxFileSize = 1073741824L;

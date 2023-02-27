@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -104,7 +105,7 @@ public class Utils {
 	}
 
 
-	public static void copyUrlToFile(String url, String fileName) {
+	public static File copyUrlToFile(String url, String fileName) {
 		long start = System.currentTimeMillis();
 
 		try (
@@ -114,16 +115,20 @@ public class Utils {
 
 			fileOS.getChannel().transferFrom(readChannel, 0L, Long.MAX_VALUE);
 
+			long end = System.currentTimeMillis();
+			if (log.isDebugEnabled()) {
+				log.debug("copyUrlToFile executed in {} ms", (end - start));
+			}
+			
+			return new File(fileName);
 		} catch (IOException ioe) {
 			if (log.isDebugEnabled()) {
 				log.debug(ioe.getMessage());
 			}
-		} 
-
-		long end = System.currentTimeMillis();
-		if (log.isDebugEnabled()) {
-			log.debug("copyUrlToFile executed in {} ms", (end - start));
 		}
+		return new File(fileName); 
+
+		
 	}
 
 	public static void copyUrlToFileUsingCommonsIO(String url, String fileName) {
@@ -303,6 +308,25 @@ public class Utils {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
 		Date date = new Date();  
 		return formatter.format(date);  
+	}
+	
+	public static File downloadFile(String src, String fileName) {
+		
+		URL url;
+		try {
+			url = new URL(src);
+			ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+			FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+			FileChannel fileChannel = fileOutputStream.getChannel();
+			fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new File(fileName);
+		
 	}
 }
 

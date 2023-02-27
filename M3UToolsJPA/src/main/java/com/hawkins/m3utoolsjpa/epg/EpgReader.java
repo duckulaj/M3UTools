@@ -45,6 +45,8 @@ public class EpgReader {
 		// SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyyMMddHHmmss Z");
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+		log.info("Filename is {}", fileName);
+		
 		SAXReader reader = new SAXReader();
 		DownloadProperties dp = DownloadProperties.getInstance();
 		
