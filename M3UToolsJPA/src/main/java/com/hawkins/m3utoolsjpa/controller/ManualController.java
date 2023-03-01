@@ -55,9 +55,7 @@ public class ManualController {
 	@GetMapping("/reloadEPG")
 	public ModelAndView reloadEPG(ModelMap model) {
 
-		String epgFile = DownloadProperties.getInstance().getEpgFileName();
-		
-		EpgReader.changeLocalTime(epgFile);
+		epgService.readEPG();
 		
 		log.info("reloadEPG(Manual) completed at {}", Utils.printNow());
 		

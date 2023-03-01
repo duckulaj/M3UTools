@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Iterator;
 
 import org.dom4j.Document;
@@ -39,6 +42,16 @@ public class EpgReader {
 	public static String changeLocalTime(String timeString) {
 		
 		String epgTimeDifference = DownloadProperties.getInstance().getEpgTimeDifference();
+		
+		ZonedDateTime defaultZonedDateTime = ZonedDateTime.of(2020, 01, 01, 0, 0, 0, 0, ZoneId.of("UTC"));
+		
+
+		/*
+		 * try { ZonedDateTime zonedDateTime = ZonedDateTime.parse(timeString); }
+		 * catch(DateTimeParseException e) {
+		 * log.info("DateTimeParserEception for String {}", timeString); timeString =
+		 * defaultZonedDateTime.toString(); }
+		 */
 		
 		String updatedTimeString = timeString.replace("+0000", epgTimeDifference);
 		
