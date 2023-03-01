@@ -17,6 +17,7 @@ import org.dom4j.io.XMLWriter;
 import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.utils.Constants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,9 +32,6 @@ public class EpgReader {
 	private static final String START = "start";
 	private static final String STOP = "stop";
 	
-	private static final String downloadedXML = "./downloadedEPG.xml";
-	private static final String EPG_XML = "./epg.xml";
-		
 	public EpgReader() {
 		super();
 	}
@@ -49,6 +47,9 @@ public class EpgReader {
 	}
 
 	public static void createEPG() {
+		
+			
+		String downloadedXML = Constants.DOWNLOADED_XML;
 		
 			SAXReader reader = new SAXReader();
 			DownloadProperties dp = DownloadProperties.getInstance();
@@ -83,11 +84,15 @@ public class EpgReader {
 				OutputFormat format = OutputFormat.createPrettyPrint();
 				XMLWriter writer;
 				
-				log.info("Writing {}", EPG_XML);
-				writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(EPG_XML)), format);
+				String epgFile = Constants.EPG_XML;
+						
+				log.info("Writing {}", epgFile);
+				writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(epgFile)), format);
 				
 				writer.write(document);
 				writer.close();
+				
+				if (xmlFile.exists()) xmlFile.delete();
 				
 				if (dp.isEmbyInstalled()) {
 					EmbyApi.refreshGuide();

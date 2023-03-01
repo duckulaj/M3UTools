@@ -12,12 +12,14 @@ public class XmltvProgramme {
     private String channel;
 	
 	@JacksonXmlProperty(isAttribute = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss Z")
-    private ZonedDateTime start;
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss Z")
+    // private ZonedDateTime start;
+	private String start;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss Z")
-    private ZonedDateTime stop;
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss Z")
+    // private ZonedDateTime stop;
+    private String stop;
 
     private XmltvText category;
 
@@ -49,7 +51,7 @@ public class XmltvProgramme {
         this.icon = p.icon;
     }
 
-    public XmltvProgramme(String channel, ZonedDateTime start, ZonedDateTime stop) {
+    public XmltvProgramme(String channel, String start, String stop) {
         this.channel = channel;
         this.start = start;
         this.stop = stop;
@@ -68,20 +70,20 @@ public class XmltvProgramme {
         return this;
     }
 
-    public ZonedDateTime getStart() {
+    public String getStart() {
         return start;
     }
 
-    public XmltvProgramme setStart(ZonedDateTime start) {
+    public XmltvProgramme setStart(String start) {
         this.start = start;
         return this;
     }
 
-    public ZonedDateTime getStop() {
+    public String getStop() {
         return stop;
     }
 
-    public XmltvProgramme setStop(ZonedDateTime stop) {
+    public XmltvProgramme setStop(String stop) {
         this.stop = stop;
         return this;
     }

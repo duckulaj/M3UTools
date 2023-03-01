@@ -1,22 +1,26 @@
 package com.hawkins.m3utoolsjpa.service;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.internal.util.ZonedDateTimeComparator;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.data.SelectedChannel;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
 import com.hawkins.m3utoolsjpa.epg.XmltvChannel;
@@ -41,6 +45,9 @@ public class EpgService {
 		
 		DownloadProperties dp = DownloadProperties.getInstance();
 		
+		log.info("Passing control to createEPG");
+		EpgReader.createEPG();
+		
 		XmltvDoc selectedXmltvDoc = new XmltvDoc();
 		List<XmltvChannel> selectedXmltvChannels = new ArrayList<XmltvChannel>();
 		List<XmltvProgramme> selectedXmltvProgrammes = new ArrayList<XmltvProgramme>();
@@ -50,6 +57,7 @@ public class EpgService {
 		XmltvDoc doc = new XmltvDoc();
 		
 		try {
+			log.info("Reading epg.xml");
 			doc = xm.readValue(new File("./epg.xml"), XmltvDoc.class);
 			// xm.writeValue(new File("/home/jonathan/.xteve/data/ReWrittenChannels.xml"), doc);
 		} catch (IOException e) {
@@ -63,6 +71,8 @@ public class EpgService {
 		List<XmltvChannel> xmltvChannels = doc.getChannels();
 		List<XmltvProgramme> xmltvProgrammes = doc.getProgrammes();
 		
+		log.info("Found {} m3uItems", m3uItems.size());
+		log.info("Found {} channels", xmltvChannels.size());
 		log.info("Found {} programmes", xmltvProgrammes.size());
 		
 		for (XmltvChannel xmltvChannel : xmltvChannels) {
@@ -115,5 +125,79 @@ public class EpgService {
 			e.printStackTrace();
 		}
 	}
-	
+
+public void readEPGUsingSax() {
+		
+		DownloadProperties dp = DownloadProperties.getInstance();
+		
+		log.info("Passing control to createEPG");
+		EpgReader.createEPG();
+		
+		
+		try {
+			SAXReader reader = new SAXReader();
+			Document document = reader.read("./epg.xml");
+			Element rootElement = document.getRootElement();
+			String generatorName = rootElement.attribute("generator-info-name").getStringValue();
+			
+			Iterator<Element> itChannel = rootElement.elementIterator("channel");
+			Iterator<Element> itProgramme = rootElement.elementIterator("programme");
+			
+			List<M3UItem> m3uItems = itemRepository.findTvChannelsBySelected(true);
+			
+			List<Element> selectedChannels = new ArrayList<Element>();
+						
+			Document selectedDocument = DocumentHelper.createDocument();
+			Element root = selectedDocument.addElement("tv");
+			root.addAttribute("generator-info-name", generatorName);
+			
+			for (M3UItem m3uItem : m3uItems) {
+			
+				while (itChannel.hasNext() ) {
+					Element chElement = (Element) itChannel.next();
+					
+				
+					if (chElement.attribute("id").getStringValue().equalsIgnoreCase(m3uItem.getTvgId())) {
+						selectedChannels.add(chElement);
+						root.appendAttributes(chElement);
+						
+					}
+				}
+			}
+			
+			while (itProgramme.hasNext() ) {
+				Element pgmElement = (Element) itProgramme.next();
+				for (Element selectedChannel : selectedChannels) {
+				
+					if (selectedChannel.attribute("id").getStringValue().equalsIgnoreCase(pgmElement.attribute("channel").getStringValue())) {
+						root.appendAttributes(pgmElement);
+						
+					}
+				}
+			}
+			
+			
+			
+			OutputFormat format = OutputFormat.createPrettyPrint();
+			XMLWriter writer;
+			
+			String epgFile = "./generatedChannels.xml";
+					
+			log.info("Writing {}", epgFile);
+			writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(epgFile)), format);
+			
+			writer.write(selectedDocument);
+			writer.close();
+			
+			log.info("Written ./generatedChannels.xml");
+			
+			if (dp.isEmbyInstalled()) {
+				EmbyApi.refreshGuide();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

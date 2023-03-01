@@ -80,6 +80,9 @@ public class Constants {
 	public static final String STREAM_PLAYLIST = "stream.playlist";
 	public static final String STREAM_CHANNELS = "stream.channels";
 	
+	public static final String DOWNLOADED_XML = "./downloadedEPG.xml";
+	public static final String EPG_XML = "./epg.xml";
+	
 	// public static final Long maxFileSize = 2147483648L;
 	public static final Long maxFileSize = 1073741824L;
 	

@@ -173,6 +173,10 @@ public class M3UtoStrmService {
 			tvShowName = Utils.removeFromString(tvShowName, Patterns.SQUARE_BRACKET_REGEX);
 			tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPES_REGEX);
 			tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPE_REGEX);
+			
+			if (tvShowName.contains("EN ")) {
+				tvShowName = tvShowName.substring(3);
+			}
 					
 			Pattern seasonPattern = Pattern.compile(seasonRegex, Pattern.CASE_INSENSITIVE);
 			Matcher seasonMatcher = seasonPattern.matcher(tvShowName);
