@@ -10,6 +10,7 @@ import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.epg.EpgReader;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.service.ApplicationService;
 import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.service.M3UtoStrmService;
@@ -34,14 +35,7 @@ public class ScheduledTasks {
 	M3UtoStrmService m3UtoStrm;
 	
 	@Autowired
-	EpgService epgService;
-
-	@Scheduled(cron = "0 1 1 * * ?") // 1.01am
-	public void resetM3UFile() {
-
-		m3uService.resetM3UFile();
-	}
-
+	ApplicationService  applicationService;
 
 	@Scheduled(cron = "0 1 5 * * ?") // 5.01am
 	public void createStreams() {
@@ -50,19 +44,12 @@ public class ScheduledTasks {
 		log.info("Scheduled Task createStreams) completed at {}", Utils.printNow());
 	}
 
-	/*
-	 * @Scheduled(fixedDelay = 3, timeUnit = TimeUnit.HOURS) public void reloadEPG()
-	 * {
-	 * 
-	 * EpgReader.createEPG(); log.info("Scheduled Task reloadEPG completed at {}",
-	 * Utils.printNow()); }
-	 */
-	
+		
 	@Scheduled(cron = "0 1 3 * * ?") // 5.01am
-	public void readEPG() {
+	public void updateApplication() {
 
-		epgService.readEPG();
-		log.info("Scheduled Task createStreams) completed at {}", Utils.printNow());
+		applicationService.runAtStartup();
+		log.info("Scheduled Task updateApplication completed at {}", Utils.printNow());
 	}
 
 	

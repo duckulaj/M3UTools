@@ -42,16 +42,6 @@ public class ManualController {
 		return new ModelAndView("forward:/", model);
 	}
 	
-	@GetMapping("/resetM3UFile")
-	public ModelAndView resetM3UFile(ModelMap model) {
-
-		m3uService.resetM3UFile();
-		
-		log.info("resetM3UFile(Manual) completed at {}", Utils.printNow());
-		
-		return new ModelAndView("forward:/", model);
-	}
-	
 	@GetMapping("/reloadEPG")
 	public ModelAndView reloadEPG(ModelMap model) {
 

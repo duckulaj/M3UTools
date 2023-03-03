@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hawkins.m3utoolsjpa.data.SelectedChannel;
 import com.hawkins.m3utoolsjpa.data.SelectedChannelsCreationDto;
+import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.service.SelectedChannelService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
@@ -26,6 +27,9 @@ public class MultipleChannelsController {
     
     @Autowired
     private M3UService m3uService;
+    
+    @Autowired
+    private EpgService epgService;
 
     @GetMapping(value = "/tvChannels")
     public String editTvChannels(Model model, @RequestParam(required = false, defaultValue = "-1") Long groupId) {
@@ -48,6 +52,7 @@ public class MultipleChannelsController {
     public String saveTvChannels(@ModelAttribute SelectedChannelsCreationDto form, Model model) {
         channelsService.saveAll(form.getChannels());
         m3uService.writeTvChannelsM3U();
+        epgService.readEPG();
 
         model.addAttribute("channels", channelsService.find(-1L));
 
