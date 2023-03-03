@@ -73,30 +73,32 @@ public class SelectedChannelService {
 
 		try {
 			List<M3UItem> items = itemRepository.findListByChannelName(channel.getTvgName());
-			
-			M3UItem thisItem = items.get(0);
-			
-			TvChannel tvChannel = tvChannelRepository.findByTvgName(thisItem.getTvgName());
 
-			if (tvChannel == null && channel.isSelected()) {
-				if (tvChannelRepository.getMaxChannelNumber() == null) {
-					newChannelNumber = 1000L;
+			if (items.size() > 0) {
+				M3UItem thisItem = items.get(0);
+
+				TvChannel tvChannel = tvChannelRepository.findByTvgName(thisItem.getTvgName());
+
+				if (tvChannel == null && channel.isSelected()) {
+					if (tvChannelRepository.getMaxChannelNumber() == null) {
+						newChannelNumber = 1000L;
+					} else {
+						newChannelNumber = tvChannelRepository.getMaxChannelNumber() + 1L;
+					}
+
+					TvChannel newChannel = new TvChannel(newChannelNumber, newChannelNumber.toString(),
+							thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(),
+							thisItem.getChannelUri());
+					tvChannelRepository.save(newChannel);
+					thisItem.setTvgChNo(newChannel.getTvgChNo());
+					itemRepository.save(thisItem);
 				} else {
-					newChannelNumber = tvChannelRepository.getMaxChannelNumber() + 1L;
-				}
-
-				TvChannel newChannel = new TvChannel(newChannelNumber, newChannelNumber.toString(),
-						thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(),
-						thisItem.getChannelUri());
-				tvChannelRepository.save(newChannel);
-				thisItem.setTvgChNo(newChannel.getTvgChNo());
-				itemRepository.save(thisItem);
-			} else {
-				if (!channel.isSelected()) {
-					if (tvChannel != null) {
-						tvChannelRepository.delete(tvChannel);
-						thisItem.setTvgChNo("");
-						itemRepository.save(thisItem);
+					if (!channel.isSelected()) {
+						if (tvChannel != null) {
+							tvChannelRepository.delete(tvChannel);
+							thisItem.setTvgChNo("");
+							itemRepository.save(thisItem);
+						}
 					}
 				}
 			}

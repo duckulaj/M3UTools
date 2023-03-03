@@ -16,6 +16,7 @@ import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.StringUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -124,7 +125,10 @@ public class Parser {
 		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
-
+		
+		if (channelName.contains("EN ")) {
+			channelName = channelName.substring(3);
+		}
 		
 		// Remove |EN|
 		return new M3UItem(
@@ -140,7 +144,7 @@ public class Parser {
 				"",
 				channelName,
 				"",
-				"",
+				channelName,
 				false);
 				
 	}

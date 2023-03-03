@@ -43,7 +43,7 @@ public class EpgReader {
 		
 		String epgTimeDifference = DownloadProperties.getInstance().getEpgTimeDifference();
 		
-		ZonedDateTime defaultZonedDateTime = ZonedDateTime.of(2020, 01, 01, 0, 0, 0, 0, ZoneId.of("UTC"));
+		// ZonedDateTime defaultZonedDateTime = ZonedDateTime.of(2020, 01, 01, 0, 0, 0, 0, ZoneId.of("UTC"));
 		
 
 		/*
