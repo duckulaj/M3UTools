@@ -35,12 +35,14 @@ public class Parser {
 	 */
 	public static LinkedList<M3UItem> parse() {
 
+		String m3uFile = Constants.M3U_FILE;
+		
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 		
-		Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), "./channels.m3u");
-		// String m3uFile = DownloadProperties.getInstance().getFullM3U();
-		String m3uFile = "./channels.m3u";
+		Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
+		
+		
 		if (m3uFile == null) {
 			throw new ParsingException(0, "Cannot read m3uFile");
 		}

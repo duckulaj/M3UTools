@@ -73,7 +73,13 @@ public class EpgService {
 		
 		log.info("Found {} m3uItems", m3uItems.size());
 		log.info("Found {} channels", xmltvChannels.size());
-		log.info("Found {} programmes", xmltvProgrammes.size());
+		
+		if (xmltvProgrammes != null) {
+			log.info("Found {} programmes", xmltvProgrammes.size());
+		} else {
+			log.info("No programmes found");
+		}
+		
 		
 		for (XmltvChannel xmltvChannel : xmltvChannels) {
 			for (M3UItem m3uItem : m3uItems) {
@@ -125,79 +131,4 @@ public class EpgService {
 			e.printStackTrace();
 		}
 	}
-
-public void readEPGUsingSax() {
-		
-		DownloadProperties dp = DownloadProperties.getInstance();
-		
-		log.info("Passing control to createEPG");
-		EpgReader.createEPG();
-		
-		
-		try {
-			SAXReader reader = new SAXReader();
-			Document document = reader.read("./epg.xml");
-			Element rootElement = document.getRootElement();
-			String generatorName = rootElement.attribute("generator-info-name").getStringValue();
-			
-			Iterator<Element> itChannel = rootElement.elementIterator("channel");
-			Iterator<Element> itProgramme = rootElement.elementIterator("programme");
-			
-			List<M3UItem> m3uItems = itemRepository.findTvChannelsBySelected(true);
-			
-			List<Element> selectedChannels = new ArrayList<Element>();
-						
-			Document selectedDocument = DocumentHelper.createDocument();
-			Element root = selectedDocument.addElement("tv");
-			root.addAttribute("generator-info-name", generatorName);
-			
-			for (M3UItem m3uItem : m3uItems) {
-			
-				while (itChannel.hasNext() ) {
-					Element chElement = (Element) itChannel.next();
-					
-				
-					if (chElement.attribute("id").getStringValue().equalsIgnoreCase(m3uItem.getTvgId())) {
-						selectedChannels.add(chElement);
-						root.appendAttributes(chElement);
-						
-					}
-				}
-			}
-			
-			while (itProgramme.hasNext() ) {
-				Element pgmElement = (Element) itProgramme.next();
-				for (Element selectedChannel : selectedChannels) {
-				
-					if (selectedChannel.attribute("id").getStringValue().equalsIgnoreCase(pgmElement.attribute("channel").getStringValue())) {
-						root.appendAttributes(pgmElement);
-						
-					}
-				}
-			}
-			
-			
-			
-			OutputFormat format = OutputFormat.createPrettyPrint();
-			XMLWriter writer;
-			
-			String epgFile = "./generatedChannels.xml";
-					
-			log.info("Writing {}", epgFile);
-			writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(epgFile)), format);
-			
-			writer.write(selectedDocument);
-			writer.close();
-			
-			log.info("Written ./generatedChannels.xml");
-			
-			if (dp.isEmbyInstalled()) {
-				EmbyApi.refreshGuide();
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 }

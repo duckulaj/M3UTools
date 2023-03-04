@@ -16,6 +16,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.springframework.util.StopWatch;
 
 import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
@@ -67,14 +68,25 @@ public class EpgReader {
 			SAXReader reader = new SAXReader();
 			DownloadProperties dp = DownloadProperties.getInstance();
 			
+			StopWatch sw = new StopWatch();
+			sw.start();
 			File xmlFile = Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
+			sw.stop();
 			
+			log.info("Downloading {} took {}ms", dp.getStreamXMLUrl(), sw.getTotalTimeMillis());
 			try {
+				
+				
+				sw.start();
 				document = reader.read(downloadedXML);
-
+				sw.stop();
+				
+				log.info("Reading {} took {}ms", downloadedXML, sw.getTotalTimeMillis());
+				
 				Element rootElement = document.getRootElement();
 
 				/*
+				 * 
 				 *  Now we need to make any adjustments to the programme start and end dates
 				 */
 				
