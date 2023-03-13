@@ -19,7 +19,7 @@ public class StartupApplicationListener implements ApplicationListener<ContextRe
 	@Override 
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 
-		applicationService.runAtStartup();
+		// applicationService.runAtStartup();
 	}
 }
 

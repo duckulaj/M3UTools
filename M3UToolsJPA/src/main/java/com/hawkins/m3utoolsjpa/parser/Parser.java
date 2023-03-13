@@ -128,6 +128,8 @@ public class Parser {
 		Long groupId = -1L;
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
 		
+		
+		
 		if (channelName.contains("EN ")) {
 			channelName = channelName.substring(3);
 		}
