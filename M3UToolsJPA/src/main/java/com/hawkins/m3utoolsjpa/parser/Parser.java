@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -12,6 +13,8 @@ import java.util.regex.Pattern;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
+import com.hawkins.m3utoolsjpa.m3u.M3uDoc;
+import com.hawkins.m3utoolsjpa.m3u.M3uParser;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
@@ -42,10 +45,18 @@ public class Parser {
 		
 		Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		
-		
-		if (m3uFile == null) {
-			throw new ParsingException(0, "Cannot read m3uFile");
+		StopWatch swM3UParser = new org.springframework.util.StopWatch();
+		swM3UParser.start();
+		try {
+			
+			M3uDoc m3uDoc = M3uParser.parse(Files.readString(Path.of(m3uFile)));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		
+		swM3UParser.stop();
+		log.info("M3UParser took {}ms", swM3UParser.getTotalTimeMillis());
 		
 		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
 		
