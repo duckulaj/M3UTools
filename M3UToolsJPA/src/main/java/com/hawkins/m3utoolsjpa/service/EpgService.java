@@ -76,23 +76,25 @@ public class EpgService {
 
 		log.info("Processing {} selected channels", selectedXmltvChannels.size());
 
-		for (XmltvChannel channel : selectedXmltvChannels) { 
-			for (XmltvProgramme	xmltvProgramme : xmltvProgrammes) { 
-				if (xmltvProgramme.getChannel().contains(channel.getId())) {
-					xmltvProgramme.setChannel(channel.getDisplayNames().get(0).getText());
-					xmltvProgramme.setChannel(channel.getId()); 
-					xmltvProgramme.setIcon(new XmltvIcon("", "", "")); 
-					xmltvProgramme.setCredits("");
-					xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
-					// xmltvProgramme.setStart(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString())));
-					//xmltvProgramme.setStop(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString()))); 
-					// log.info("Programme Date is {}", DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(xmltvProgramme.getStart()));
-					selectedXmltvProgrammes.add(xmltvProgramme); 
+		if (xmltvProgrammes != null) {
+			for (XmltvChannel channel : selectedXmltvChannels) { 
+				for (XmltvProgramme	xmltvProgramme : xmltvProgrammes) { 
+					if (xmltvProgramme.getChannel().contains(channel.getId())) {
+						xmltvProgramme.setChannel(channel.getDisplayNames().get(0).getText());
+						xmltvProgramme.setChannel(channel.getId()); 
+						xmltvProgramme.setIcon(new XmltvIcon("", "", "")); 
+						xmltvProgramme.setCredits("");
+						xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
+						// xmltvProgramme.setStart(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString())));
+						//xmltvProgramme.setStop(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString()))); 
+						// log.info("Programme Date is {}", DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(xmltvProgramme.getStart()));
+						selectedXmltvProgrammes.add(xmltvProgramme); 
+					} 
 				} 
-			} 
+			}
+
 		}
-
-
+		
 		MultiValuedMap<String, XmltvProgramme> programmesMap = programmeListToMap(xmltvProgrammes);
 		MultiValuedMap<String,XmltvChannel> channelsMap = channelListToMap(xmltvChannels);
 
@@ -142,12 +144,15 @@ public class EpgService {
 
 		MultiValuedMap<String, XmltvChannel> xmltvChannelsMap = new ArrayListValuedHashMap<>();
 
-		for (XmltvChannel channel : xmltvChannels) {
+		if (xmltvChannels != null) {
+			for (XmltvChannel channel : xmltvChannels) {
+	
+				String channelName = channel.getDisplayNames().get(0).getText().replaceAll("[^\\x00-\\x7F]", "");
+				xmltvChannelsMap.put(channelName.trim(), channel);
+			}
 
-			String channelName = channel.getDisplayNames().get(0).getText().replaceAll("[^\\x00-\\x7F]", "");
-			xmltvChannelsMap.put(channelName.trim(), channel);
 		}
-
+		
 		return xmltvChannelsMap;
 	}
 
@@ -155,12 +160,14 @@ public class EpgService {
 
 		MultiValuedMap<String, XmltvProgramme> xmltvProgrammesMap = new ArrayListValuedHashMap<>();
 
-		for (XmltvProgramme programme : xmltvProgrammes) {
-
-			String channelName = programme.getChannel().replaceAll("[^\\x00-\\x7F]", "");
-			xmltvProgrammesMap.put(channelName, programme);
+		if (xmltvProgrammes != null) {
+			for (XmltvProgramme programme : xmltvProgrammes) {
+	
+				String channelName = programme.getChannel().replaceAll("[^\\x00-\\x7F]", "");
+				xmltvProgrammesMap.put(channelName, programme);
+			}
 		}
-
+		
 		return xmltvProgrammesMap;
 	}
 }
