@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
-import org.dom4j.io.OutputFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +30,8 @@ import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.data.TvChannel;
 import com.hawkins.m3utoolsjpa.data.TvChannelRepository;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
+import com.hawkins.m3utoolsjpa.m3u.M3uDoc;
+import com.hawkins.m3utoolsjpa.m3u.M3uParserService;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -65,7 +66,17 @@ public class M3UService {
 	
 	public void resetDatabase() {
 			
-
+		/*
+		 * StopWatch swM3UParser = new org.springframework.util.StopWatch();
+		 * swM3UParser.start();
+		 * 
+		 * M3uDoc m3uDoc = M3uParserService.parse();
+		 * 
+		 * swM3UParser.stop(); log.info("M3UParser took {}ms",
+		 * swM3UParser.getTotalTimeMillis());
+		 */		
+		
+		
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 

@@ -231,4 +231,18 @@ public class Utils {
 						: resultString;
 	}
 
+	public static String deriveGroupTypeByUrl(String url) {
+
+		String groupType = "";
+
+		if (url.contains(Constants.SERIES)) {
+			groupType = Constants.SERIES;
+		} else if (url.contains(Constants.MOVIE)) {
+			groupType = Constants.MOVIE;
+		} else if (url.length() > 0) {
+			groupType = Constants.LIVE;
+		}
+
+		return groupType;
+	}
 }

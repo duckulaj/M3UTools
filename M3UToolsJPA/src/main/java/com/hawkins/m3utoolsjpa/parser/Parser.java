@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -13,13 +12,10 @@ import java.util.regex.Pattern;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
-import com.hawkins.m3utoolsjpa.m3u.M3uDoc;
-import com.hawkins.m3utoolsjpa.m3u.M3uParser;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.StringUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -45,18 +41,6 @@ public class Parser {
 		
 		Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		
-		StopWatch swM3UParser = new org.springframework.util.StopWatch();
-		swM3UParser.start();
-		try {
-			
-			M3uDoc m3uDoc = M3uParser.parse(Files.readString(Path.of(m3uFile)));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		swM3UParser.stop();
-		log.info("M3UParser took {}ms", swM3UParser.getTotalTimeMillis());
 		
 		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
 		
@@ -87,7 +71,7 @@ public class Parser {
 					if (entry == null) {
 						throw new ParsingException(lineNbr, "Missing " + Patterns.M3U_INFO_MARKER);
 					}
-					String type = deriveGroupTypeByUrl(line);
+					String type = Utils.deriveGroupTypeByUrl(line);
 					entry.setType(type);
 					entry.setChannelUri(line);
 					
@@ -174,20 +158,7 @@ public class Parser {
 	
 	
 
-	public static String deriveGroupTypeByUrl(String url) {
-
-		String groupType = "";
-
-		if (url.contains(Constants.SERIES)) {
-			groupType = Constants.SERIES;
-		} else if (url.contains(Constants.MOVIE)) {
-			groupType = Constants.MOVIE;
-		} else if (url.length() > 0) {
-			groupType = Constants.LIVE;
-		}
-
-		return groupType;
-	}
+	
 
 	
 }

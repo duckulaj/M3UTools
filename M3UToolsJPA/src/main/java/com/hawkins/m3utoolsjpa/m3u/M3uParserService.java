@@ -1,5 +1,8 @@
 package com.hawkins.m3utoolsjpa.m3u;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,18 +13,47 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
+
+import com.hawkins.m3utoolsjpa.data.M3UGroup;
+import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
+import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.Utils;
+
 import lombok.extern.slf4j.Slf4j;
 
+@Service
 @Slf4j
-public class M3uParser {
-    
+public class M3uParserService {
 
-    private static final Pattern TAG_PAT = Pattern.compile("#(\\w+)(?:[ :](.*))?");
+	@Autowired
+	M3UGroupRepository groupRepository;
+	
+	private static final Pattern TAG_PAT = Pattern.compile("#(\\w+)(?:[ :](.*))?");
     private static final Pattern PROP_PAT = Pattern.compile(" *([\\w-_]+)=\"([^\"]*)\"(.*)");
     private static final Pattern PROP_NONSTD_PAT = Pattern.compile(" *([\\w-_]+)=([^\"][^ ]*)(.*)");
     private static final Pattern INFO_PAT = Pattern.compile("([-+0-9]+) ?(.*)");
 
-    public static M3uDoc parse(String content) {
+    public static M3uDoc parse() {
+    	
+    	String m3uFile = Constants.M3U_FILE;
+		
+		StopWatch sw = new org.springframework.util.StopWatch();
+		sw.start();
+		
+		Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
+		
+		String content = null;
+		try {
+			content = Files.readString(Path.of(m3uFile));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
         Map<String, String> m3uProps = Collections.emptyMap();//new HashMap<>();
         List<M3uChannel> channels = new ArrayList<>();
 
@@ -122,5 +154,21 @@ public class M3uParser {
         }
 
         return postfix;
+    }
+    
+    public void save(M3uDoc m3uDoc) {
+    	
+    	List<M3uChannel> m3uChannels = m3uDoc.getChannels();
+
+		for (M3uChannel channel : m3uChannels) {
+		
+			String group = channel.getGroups().iterator().next();
+			
+			M3UGroup thisGroup = groupRepository.findByName(group);
+			if (thisGroup == null) {
+				M3UGroup newGroup = groupRepository.save(new M3UGroup(group, channel.getType()));
+			}
+		}
+
     }
 }
