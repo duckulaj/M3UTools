@@ -241,12 +241,21 @@ public class M3UService {
 	public M3UGroupSelected getSelectedGroup(Long groupId) {
 
 		Optional<M3UGroup> foundGroup = groupRepository.findById(groupId);
+		
 		if (foundGroup.isPresent()) {
 			M3UGroupSelected selectedGroup = new M3UGroupSelected(foundGroup.get().getId(), foundGroup.get().getName(),
 					foundGroup.get().getType());
-
-			return selectedGroup;
+			return selectedGroup; 
 		}
+		 
+
+		/*
+		 * if (foundGroup != null) { M3UGroupSelected selectedGroup = new
+		 * M3UGroupSelected(foundGroup.getId(), foundGroup.getName(),
+		 * foundGroup.getType());
+		 * 
+		 * return selectedGroup; }
+		 */
 
 		return new M3UGroupSelected();
 
@@ -291,7 +300,7 @@ public class M3UService {
 	
 	public void writeTvChannelsM3U() {
 		
-		DownloadProperties dp = DownloadProperties.getInstance();
+		// DownloadProperties dp = DownloadProperties.getInstance();
 				
 		// String outputFile = dp.getFileWatcherLocation() + "/M3UToolsJPA.m3u";
 		String outputFile = "./M3UToolsJPA.m3u";

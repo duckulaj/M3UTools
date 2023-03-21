@@ -120,8 +120,8 @@ public abstract class AbstractChannel implements Runnable {
 				chunk.getChunkListener().synchronize();
 				long rem = chunk.getLength() - chunk.getDownloaded();
 				if (rem == 0) {
-					if (this instanceof HttpChannel) {
-						if (((HttpChannel) this).isFinished()) {
+					if (this instanceof HttpChannel channel) {
+						if (channel.isFinished()) {
 							close();
 						}
 					} else {

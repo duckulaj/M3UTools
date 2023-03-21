@@ -4,17 +4,18 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hawkins.m3utoolsjpa.utils.Constants;
 
-@Repository
-public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, Long> {
+
+public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
 
 	M3UItem findById(long id);
 	
@@ -72,4 +73,5 @@ public interface M3UItemRepository extends PagingAndSortingRepository<M3UItem, L
 	@Query("update M3UItem m0 set m0.tvgChNo = :tvgChNo where m0.id = :id")
 	void updateTvgChNo(@Param(value = "id") long id, @Param(value = "tvgChNo") String tvgChNo);
 
+	
 }

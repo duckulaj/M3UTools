@@ -2,13 +2,13 @@ package com.hawkins.m3utoolsjpa.data;
 
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class M3UGroup {
@@ -50,9 +50,8 @@ public class M3UGroup {
 
 	@Override
 	public String toString() {
-		return String.format(
-				"M3UGroup[id=%d, name='%s', type='%s']",
-				id, name, type);
+		return "M3UGroup[id=%d, name='%s', type='%s']".formatted(
+                id, name, type);
 	}
 
 	public Long getId() {

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.8</version>
+		<version>3.0.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.hawkins</groupId>
@@ -13,7 +13,8 @@
 	<name>M3uJpa</name>
 	<description>M3U Handler with JPA</description>
 	<properties>
-		<java.version>11</java.version>
+		<jakarta-servlet.version>5.0.0</jakarta-servlet.version>
+		<java.version>17</java.version>
 		<tests.skip>true</tests.skip>
 	</properties>
 	<dependencies>
@@ -91,6 +92,22 @@
 			<version>2.11.0</version>
 		</dependency>
 		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.transaction</groupId>
+			<artifactId>jakarta.transaction-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
 			<version>4.6.2</version>
@@ -102,9 +119,9 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator -->
 		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>webjars-locator</artifactId>
-			<version>0.46</version>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>webjars-locator</artifactId>
+		    <version>0.46</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -123,14 +140,17 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>6.0.13.Final</version>
-		</dependency>
+			</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.14.2</version>
 		</dependency>
+		<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-properties-migrator</artifactId>
+	<scope>runtime</scope>
+</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -63,7 +63,7 @@ function openInformationModal(row) { // begin function
 </head>
 <body>
 
-	<div th:replace="fragments/header :: header"></div>
+	<div th:replace="~{fragments/header :: header}"></div>
 	
 	<div class="container-fluid" style="max-width: 1024px; margin: 0 auto;">
 		<h2 class="text-center">Search</h2>
@@ -131,9 +131,9 @@ function openInformationModal(row) { // begin function
 			<span>No Titles found!</span>
 		</div>
 		
-		<div th:replace="fragments/informationModal :: informationModal"></div>
+		<div th:replace="~{fragments/informationModal :: informationModal}"></div>
 
-		<div th:replace="fragments/movieDbApi :: movieDbApi"></div>
+		<div th:replace="~{fragments/movieDbApi :: movieDbApi}"></div>
 	
 </body>
 </html>

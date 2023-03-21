@@ -163,7 +163,7 @@ public class Utils {
 			}
 			bytes = bytes / 1024;
 		}
-		return String.format("%." + digits + "f", bytes) + " " + dictionary[index];
+		return ("%." + digits + "f").formatted(bytes) + " " + dictionary[index];
 	}
 
 	public static String printNow() {

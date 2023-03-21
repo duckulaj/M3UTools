@@ -1,9 +1,5 @@
 package com.hawkins.m3utoolsjpa.epg;
 
-import java.time.ZonedDateTime;
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class XmltvProgramme {

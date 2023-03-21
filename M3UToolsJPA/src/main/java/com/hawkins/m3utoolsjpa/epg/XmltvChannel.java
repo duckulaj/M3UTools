@@ -1,6 +1,5 @@
 package com.hawkins.m3utoolsjpa.epg;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -25,7 +24,7 @@ public class XmltvChannel {
     }
 
     public XmltvChannel(String id, XmltvText displayName, XmltvIcon icon) {
-        this(id, Collections.singletonList(displayName), icon);
+        this(id, List.of(displayName), icon);
     }
 
     public String getId() {

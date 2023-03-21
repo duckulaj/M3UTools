@@ -3,8 +3,6 @@ package com.hawkins.m3utoolsjpa.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.NonUniqueResultException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +12,7 @@ import com.hawkins.m3utoolsjpa.data.SelectedChannel;
 import com.hawkins.m3utoolsjpa.data.TvChannel;
 import com.hawkins.m3utoolsjpa.data.TvChannelRepository;
 
+import jakarta.persistence.NonUniqueResultException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

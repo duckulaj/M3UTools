@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -181,7 +180,7 @@ public class Utils {
 			}
 			bytes = bytes / 1024;
 		}
-		return String.format("%." + digits + "f", bytes) + " " + dictionary[index];
+		return ("%." + digits + "f").formatted(bytes) + " " + dictionary[index];
 	}
 
 	public static String getURLFromName(String filmName, M3UItemRepository m3uItemRepository) {
@@ -317,14 +316,19 @@ public class Utils {
 			url = new URL(src);
 			ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
 			FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-			FileChannel fileChannel = fileOutputStream.getChannel();
-			fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+			
+			try {
+				fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+			} catch(Exception e) {
+				log.info(e.getMessage());
+			} finally {
+				fileOutputStream.close();
+			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		} 
 		return new File(fileName);
 		
 	}

@@ -300,8 +300,8 @@ public class HttpChannel extends AbstractChannel {
 	}
 
 	public boolean isFinished() {
-		if (hc instanceof DManagerHttpClient) {
-			return ((DManagerHttpClient) hc).isFinished();
+		if (hc instanceof DManagerHttpClient client) {
+			return client.isFinished();
 		} else {
 			return false;
 		}

@@ -18,7 +18,7 @@
 
 </head>
 <body>
-	<div th:replace="fragments/header :: header"></div>
+	<div th:replace="~{fragments/header :: header}"></div>
 	<div width="90%" class="form-group shadow-textarea">
 		<label for="exampleFormControlTextarea6">Log File -
 			M3UToolsJPA.log</label>
@@ -27,6 +27,6 @@
 			th:text="${logFile}"></textarea>
 	</div>
 
-	<div th:replace="fragments/footer :: footer"></div>
+	<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

@@ -1,7 +1,6 @@
 package com.hawkins.m3utoolsjpa.utils;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 

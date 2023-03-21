@@ -138,7 +138,7 @@ public class MacUtils {
 				+ "</plist>";
 		String s1 = getProperPath(System.getProperty("java.home"));
 		String s2 = DManagerUtils.getJarFile().getAbsolutePath();
-		return String.format(str, s1, s2);
+		return str.formatted(s1, s2);
 	}
 
 	private static String getProperPath(String path) {

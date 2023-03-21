@@ -6,11 +6,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.hawkins.m3utoolsjpa.component.ScheduledTasks;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
-import com.hawkins.m3utoolsjpa.epg.EpgReader;
-import com.hawkins.m3utoolsjpa.epg.XmltvDoc;
-import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Utils;

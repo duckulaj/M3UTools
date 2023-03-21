@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
-import com.hawkins.dmanager.util.StringUtils;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
-import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;

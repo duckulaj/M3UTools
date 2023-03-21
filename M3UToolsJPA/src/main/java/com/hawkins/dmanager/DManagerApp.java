@@ -318,30 +318,29 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 			
 			Downloader downloader = null;
 
-			if (metadata instanceof DashMetadata) {
+			if (metadata instanceof DashMetadata dm) {
 				log.info("Dash download with stream: " + streams);
 				if (streams == 1) {
-					DashMetadata dm = (DashMetadata) metadata;
 					dm.setUrl(dm.getUrl2());// set video url as main url
 					dm.setUrl2(null);
 				} else if (streams == 2) {
-					DashMetadata dm = (DashMetadata) metadata;
+					
 					dm.setUrl2(null);
 				} else {
 					log.info("Dash download created");
 
 					// create dash downloader
-					DashMetadata dm = (DashMetadata) metadata;
+					
 					downloader = new DashDownloader(id, Config.getInstance().getTemporaryFolder(), dm);
 				}
 			}
-			if (metadata instanceof HlsMetadata) {
+			if (metadata instanceof HlsMetadata hlsMetadata) {
 				log.info("Hls download created");
-				downloader = new HlsDownloader(id, Config.getInstance().getTemporaryFolder(), (HlsMetadata) metadata);
+				downloader = new HlsDownloader(id, Config.getInstance().getTemporaryFolder(), hlsMetadata);
 			}
-			if (metadata instanceof HdsMetadata) {
+			if (metadata instanceof HdsMetadata hdsMetadata) {
 				log.info("Hls download created");
-				downloader = new HdsDownloader(id, Config.getInstance().getTemporaryFolder(), (HdsMetadata) metadata);
+				downloader = new HdsDownloader(id, Config.getInstance().getTemporaryFolder(), hdsMetadata);
 			}
 			if (downloader == null) {
 				downloader = new HttpDownloader(id, Config.getInstance().getTemporaryFolder(), metadata);
@@ -400,18 +399,15 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 					 */
 				}
 				Downloader downloader = null;
-				if (metadata instanceof DashMetadata) {
-					DashMetadata dm = (DashMetadata) metadata;
+				if (metadata instanceof DashMetadata dm) {
 					log.info("Dash download- url1: " + dm.getUrl() + " url2: " + dm.getUrl2());
 					downloader = new DashDownloader(id, Config.getInstance().getTemporaryFolder(), dm);
 				}
-				if (metadata instanceof HlsMetadata) {
-					HlsMetadata hm = (HlsMetadata) metadata;
+				if (metadata instanceof HlsMetadata hm) {
 					log.info("HLS download- url1: " + hm.getUrl());
 					downloader = new HlsDownloader(id, Config.getInstance().getTemporaryFolder(), hm);
 				}
-				if (metadata instanceof HdsMetadata) {
-					HdsMetadata hm = (HdsMetadata) metadata;
+				if (metadata instanceof HdsMetadata hm) {
 					log.info("HLS download- url1: " + hm.getUrl());
 					downloader = new HdsDownloader(id, Config.getInstance().getTemporaryFolder(), hm);
 				}

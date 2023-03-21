@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.hawkins.dmanager.DManagerApp;
 import com.hawkins.dmanager.DManagerConstants;
 import com.hawkins.dmanager.DownloadEntry;
 import com.hawkins.dmanager.DownloadListener;

@@ -1,17 +1,12 @@
 package com.hawkins.m3utoolsjpa.component;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.epg.EpgReader;
-import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.ApplicationService;
-import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.service.M3UtoStrmService;
 import com.hawkins.m3utoolsjpa.utils.Utils;

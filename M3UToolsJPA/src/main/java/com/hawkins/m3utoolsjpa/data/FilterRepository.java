@@ -1,11 +1,10 @@
 package com.hawkins.m3utoolsjpa.data;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public interface FilterRepository extends PagingAndSortingRepository<Filter, Long> {
+
+public interface FilterRepository extends JpaRepository<Filter, Long> {
 
 	
 	Filter findById(long id);
@@ -14,4 +13,5 @@ public interface FilterRepository extends PagingAndSortingRepository<Filter, Lon
 	
 	Filter findById(long id, Sort sort);
 
+	Filter save(Filter filter);
 }

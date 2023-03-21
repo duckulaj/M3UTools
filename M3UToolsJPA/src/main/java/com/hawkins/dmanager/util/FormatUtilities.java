@@ -26,11 +26,11 @@ public class FormatUtilities {
 		if (length < 0)
 			return "---";
 		if (length > MB) {
-			return String.format("%.1f MB", (float) length / MB);
+			return "%.1f MB".formatted((float) length / MB);
 		} else if (length > KB) {
-			return String.format("%.1f KB", (float) length / KB);
+			return "%.1f KB".formatted((float) length / KB);
 		} else {
-			return String.format("%d B", (int) length);
+			return "%d B".formatted((int) length);
 		}
 	}
 
@@ -86,7 +86,7 @@ public class FormatUtilities {
 		hrs = sec / 3600;
 		min = (sec % 3600) / 60;
 		sec = sec % 60;
-		String str = String.format("%02d:%02d:%02d", hrs, min, sec);
+		String str = "%02d:%02d:%02d".formatted(hrs, min, sec);
 		return str;
 	}
 }

@@ -5,9 +5,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedList;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -32,6 +29,8 @@ import com.hawkins.m3utoolsjpa.service.DownloadService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -59,7 +58,6 @@ public class DownloadController {
 	@Autowired
 	M3UItemRepository m3uItemRepository;
 	
-	@Autowired
 	DownloadController(DownloadService downloadService) {
 		this.downloadService = downloadService;
 	}

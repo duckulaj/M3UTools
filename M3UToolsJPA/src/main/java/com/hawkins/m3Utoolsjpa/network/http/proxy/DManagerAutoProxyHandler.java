@@ -40,8 +40,7 @@ public class DManagerAutoProxyHandler extends AbstractAutoProxyHandler {
 				this.engine.put("obj", this);
 				//System.out.println(this.autoProxyScript.toString());
 				this.engine.eval(this.autoProxyScript.toString());
-				if ((this.engine instanceof Invocable)) {
-					Invocable localInvocable = (Invocable) this.engine;
+				if ((this.engine instanceof Invocable localInvocable)) {
 					Object localObject = localInvocable.invokeFunction(
 							"FindProxyForURL", new Object[] {
 									paramURL.toString(), paramURL.getHost() });
