@@ -19,6 +19,7 @@ public class Patterns {
 	public static final Pattern PIPE_REGEX = Pattern.compile("([^|]*\\|{1}[^|]{1}[^|])", Pattern.CASE_INSENSITIVE);
 	public static final Pattern ADULT_REGEX = Pattern.compile("\b(?:ADULT|For Adults)\b", Pattern.CASE_INSENSITIVE);
 	public static final Pattern HASH_REGEX = Pattern.compile("[#]{3}");
-	public static final Pattern VALID_CHANNEL_NAME = Pattern.compile("[^a-zA-Z0-9 -]");
+	public static final Pattern VALID_CHANNEL_NAME = Pattern.compile("(?:\\w[A-Z]\\s[-]\\s)");
+	//public static final Pattern VALID_CHANNEL_NAME = Pattern.compile("[^a-zA-Z0-9 -]");
 	public static final Pattern STRIP_COUNTRY_IDETIFIER = Pattern.compile(".{2,} - *");
 }
