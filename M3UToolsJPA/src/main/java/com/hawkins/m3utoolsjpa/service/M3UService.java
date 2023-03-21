@@ -30,8 +30,6 @@ import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.data.TvChannel;
 import com.hawkins.m3utoolsjpa.data.TvChannelRepository;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
-import com.hawkins.m3utoolsjpa.m3u.M3uDoc;
-import com.hawkins.m3utoolsjpa.m3u.M3uParserService;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
