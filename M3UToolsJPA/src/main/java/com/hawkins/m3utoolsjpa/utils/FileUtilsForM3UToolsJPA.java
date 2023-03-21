@@ -34,6 +34,9 @@ public class FileUtilsForM3UToolsJPA {
 		File file = new File(filename);
 		int counter = 0; 
 
+		if (!file.exists()) {
+			return "Log file not found";
+		}
 		int linesInFile = numberOfLines(file);
 
 		// Can't read more lines than exist in the file

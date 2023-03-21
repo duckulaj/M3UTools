@@ -22,4 +22,5 @@ public class Patterns {
 	public static final Pattern VALID_CHANNEL_NAME = Pattern.compile("(?:\\w[A-Z]\\s[-]\\s)");
 	//public static final Pattern VALID_CHANNEL_NAME = Pattern.compile("[^a-zA-Z0-9 -]");
 	public static final Pattern STRIP_COUNTRY_IDETIFIER = Pattern.compile(".{2,} - *");
+	public static final Pattern FISHEYE_CHARACTER = Pattern.compile("[^\\x1F-\\x7F]+");
 }

@@ -117,7 +117,7 @@ public class Parser {
 		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
-		
+		channelName = Utils.removeFromString(channelName, Patterns.FISHEYE_CHARACTER);
 		
 		
 		if (channelName.contains("EN ")) {
