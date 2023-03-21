@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -35,19 +36,18 @@ public class Parser {
 	public static LinkedList<M3UItem> parse() {
 
 		String m3uFile = Constants.M3U_FILE;
+		int lineNbr = 0;
+		String line;
+		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
+		
 		
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 		
-		Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
+		Utils.copyUrlToFileUsingCommonsIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		
-		
-		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
-		
-		int lineNbr = 0;
-		String line;
 		try (BufferedReader buffer = Files.newBufferedReader(Paths.get(m3uFile), StandardCharsets.UTF_8)) {
-
+			
 			line = buffer.readLine();
 			if (line == null) {
 				throw new ParsingException(0, "Empty stream");
@@ -60,13 +60,13 @@ public class Parser {
 			
 			checkStart(line);
 			
-			String globalTvgShif = extract(line, Patterns.TVG_SHIFT_REGEX);
+			// String globalTvgShif = extract(line, Patterns.TVG_SHIFT_REGEX);
 
 			M3UItem entry = null;
 			while ((line = buffer.readLine()) != null) {
 				lineNbr++;
 				if (isExtInfo(line)) {
-					entry = extractExtInfo(globalTvgShif, line);
+					entry = extractExtInfo(line);
 				} else {
 					if (entry == null) {
 						throw new ParsingException(lineNbr, "Missing " + Patterns.M3U_INFO_MARKER);
@@ -108,15 +108,11 @@ public class Parser {
 		return line.contains(Patterns.M3U_INFO_MARKER);
 	}
 
-	private static M3UItem extractExtInfo(String globalTvgShift, String line) {
+	private static M3UItem extractExtInfo(String line) {
 		String duration = extract(line, Patterns.DURATION_REGEX);
 		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
 		String tvgName = Utils.removeFromString((extract(line, Patterns.TVG_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
-		
 		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
-		if (tvgShift == null) {
-			tvgShift = globalTvgShift;
-		}
 		String radio = extract(line, Patterns.RADIO_REGEX);
 		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
 		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
