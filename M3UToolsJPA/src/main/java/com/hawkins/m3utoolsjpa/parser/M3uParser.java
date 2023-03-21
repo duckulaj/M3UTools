@@ -25,13 +25,10 @@ import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
-@Slf4j
-public class M3uParserService {
 
-	@Autowired
-	M3UGroupRepository groupRepository;
-	
+@Slf4j
+public class M3uParser {
+
 	private static final Pattern TAG_PAT = Pattern.compile("#(\\w+)(?:[ :](.*))?");
     private static final Pattern PROP_PAT = Pattern.compile(" *([\\w-_]+)=\"([^\"]*)\"(.*)");
     private static final Pattern PROP_NONSTD_PAT = Pattern.compile(" *([\\w-_]+)=([^\"][^ ]*)(.*)");
@@ -156,19 +153,5 @@ public class M3uParserService {
         return postfix;
     }
     
-    public void save(M3uDoc m3uDoc) {
-    	
-    	List<M3uChannel> m3uChannels = m3uDoc.getChannels();
-
-		for (M3uChannel channel : m3uChannels) {
-		
-			String group = channel.getGroups().iterator().next();
-			
-			M3UGroup thisGroup = groupRepository.findByName(group);
-			if (thisGroup == null) {
-				M3UGroup newGroup = groupRepository.save(new M3UGroup(group, channel.getType()));
-			}
-		}
-
-    }
+    
 }
