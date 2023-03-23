@@ -13,13 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class StartupApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 
-	@Autowired
-	ApplicationService applicationService;
+	// @Autowired
+	// ApplicationService applicationService;
 
 	@Override 
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 
-		applicationService.runAtStartup();
+		// applicationService.runAtStartup();
 	}
 }
 

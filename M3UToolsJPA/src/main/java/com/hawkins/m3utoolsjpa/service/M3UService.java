@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -108,6 +109,7 @@ public class M3UService {
 		 */
 		
 		Iterable<TvChannel> tvChannels = channelRepository.findAll(); 
+		log.info("Found {} selected TvChannels", IterableUtils.size(tvChannels));
 		
 		for (TvChannel tvChannel : tvChannels) {
 			List<M3UItem> theseItems = itemRepository.findByTvgName(tvChannel.getTvgName());

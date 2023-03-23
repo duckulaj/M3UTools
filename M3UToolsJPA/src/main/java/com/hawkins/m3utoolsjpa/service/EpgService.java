@@ -3,10 +3,12 @@ package com.hawkins.m3utoolsjpa.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ import com.hawkins.m3utoolsjpa.epg.XmltvProgramme;
 import com.hawkins.m3utoolsjpa.epg.XmltvUtils;
 import com.hawkins.m3utoolsjpa.epg.XmltvVideo;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,11 +37,15 @@ public class EpgService {
 	M3UItemRepository itemRepository;
 
 	public void readEPG() {
+		
+		log.info("readEPG started at {}", Utils.printNow());
 
 		DownloadProperties dp = DownloadProperties.getInstance();
 
-		log.info("Passing control to createEPG");
-		EpgReader.createEPG();
+		// log.info("Passing control to createEPG");
+		// EpgReader.createEPG();
+		
+		String epgFile = Constants.EPG_XML;
 
 		XmltvDoc selectedXmltvDoc = new XmltvDoc();
 		List<XmltvChannel> selectedXmltvChannels = new ArrayList<XmltvChannel>();
@@ -48,9 +56,10 @@ public class EpgService {
 		XmltvDoc doc = new XmltvDoc();
 
 		try {
+			log.info("Retrieving EPG from remote source");
+			Utils.copyUrlToFile(dp.getStreamXMLUrl(), epgFile);
 			log.info("Reading epg.xml");
-			doc = xm.readValue(new File("./epg.xml"), XmltvDoc.class);
-			// xm.writeValue(new File("/home/jonathan/.xteve/data/ReWrittenChannels.xml"), doc);
+			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,43 +71,7 @@ public class EpgService {
 		List<XmltvChannel> xmltvChannels = doc.getChannels();
 		List<XmltvProgramme> xmltvProgrammes = doc.getProgrammes();
 
-
-
-
-		for (XmltvChannel xmltvChannel : xmltvChannels) { for (M3UItem m3uItem :
-			m3uItems) {
-
-			if (xmltvChannel.getDisplayNames().get(0).getText().contains(m3uItem.
-					getChannelName())) { xmltvChannel.setId(m3uItem.getTvgId());
-					selectedXmltvChannels.add(xmltvChannel);
-
-			} } }
-
-		log.info("Processing {} selected channels", selectedXmltvChannels.size());
-
-		if (xmltvProgrammes != null) {
-			for (XmltvChannel channel : selectedXmltvChannels) { 
-				for (XmltvProgramme	xmltvProgramme : xmltvProgrammes) { 
-					if (xmltvProgramme.getChannel().contains(channel.getId())) {
-						xmltvProgramme.setChannel(channel.getDisplayNames().get(0).getText());
-						xmltvProgramme.setChannel(channel.getId()); 
-						xmltvProgramme.setIcon(new XmltvIcon("", "", "")); 
-						xmltvProgramme.setCredits("");
-						xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
-						// xmltvProgramme.setStart(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString())));
-						//xmltvProgramme.setStop(ZonedDateTime.parse(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString()))); 
-						// log.info("Programme Date is {}", DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(xmltvProgramme.getStart()));
-						selectedXmltvProgrammes.add(xmltvProgramme); 
-					} 
-				} 
-			}
-
-		}
-		
-		MultiValuedMap<String, XmltvProgramme> programmesMap = programmeListToMap(xmltvProgrammes);
-		MultiValuedMap<String,XmltvChannel> channelsMap = channelListToMap(xmltvChannels);
-
-		log.info("Found {} m3uItems", m3uItems.size());
+		log.info("Found {} selected m3uItems", m3uItems.size());
 		log.info("Found {} channels", xmltvChannels.size());
 
 		if (xmltvProgrammes != null) {
@@ -107,15 +80,64 @@ public class EpgService {
 			log.info("No programmes found");
 		}
 
+		
+		 // We need to ensure that the tvg-id in the epg matches the tvg-id for the m3u Item
+		  
+		 for (XmltvChannel xmltvChannel : xmltvChannels) { 
+			 for (M3UItem m3uItem : m3uItems) {
+				 if (xmltvChannel.getDisplayNames().get(0).getText().contains(m3uItem.getChannelName())) { 
+					 XmltvChannel channel = new XmltvChannel();
+					 channel.setId(String.valueOf(m3uItem.getTvgId()));
+					 channel.setIcon(new XmltvIcon(m3uItem.getTvgLogo()));
+					 channel.setDisplayNames(xmltvChannel.getDisplayNames());
+					 
+					 selectedXmltvChannels.add(channel);
+		 		 }
+			 } 
+		 }
+		  
+		  log.info("Processing {} selected channels", selectedXmltvChannels.size());
+		  
+		  if (xmltvProgrammes != null) { 
+			  for (XmltvChannel channel : selectedXmltvChannels) { 
+				  for (XmltvProgramme xmltvProgramme : xmltvProgrammes) { 
+					  if (xmltvProgramme.getChannel().contains(channel.getId())) { 
+						  // xmltvProgramme.setChannel(channel.getDisplayNames().get(0).getText());
+						  xmltvProgramme.setChannel(channel.getId()); 
+						  xmltvProgramme.setIcon(new XmltvIcon("", "", "")); xmltvProgramme.setCredits("");
+						  xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
+						  xmltvProgramme.setStart(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString()));
+						  xmltvProgramme.setStop(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString())); 
+						  selectedXmltvProgrammes.add(xmltvProgramme); 
+					  } 
+				  } 
+			  }
+		  }
+		 
+		
+		MultiValuedMap<String, XmltvProgramme> programmesMap = programmeListToMap(xmltvProgrammes);
+		MultiValuedMap<String,XmltvChannel> channelsMap = channelListToMap(selectedXmltvChannels);
 
-		for (M3UItem m3uItem : m3uItems) {
-			selectedXmltvChannels.addAll(channelsMap.get(m3uItem.getTvgId())); 
-		}
+		
+
+
+		/*
+		 * for (M3UItem m3uItem : m3uItems) {
+		 * selectedXmltvChannels.addAll(channelsMap.get(m3uItem.getChannelName().trim())
+		 * ); }
+		 */
 
 		log.info("Processing {} selected channels", selectedXmltvChannels.size());
 
 		for (XmltvChannel channel : selectedXmltvChannels) {
-			selectedXmltvProgrammes.addAll(programmesMap.get(channel.getId())); 
+			if (StringUtils.isNotEmpty(channel.getId())) {
+				
+				log.info("{} selectedXmltvProgrammes before mapping match", selectedXmltvProgrammes.size());
+				log.info("finding programmes for channel {}", channel.getId());
+				Collection<XmltvProgramme> foundPrograms = programmesMap.get(channel.getId());
+				selectedXmltvProgrammes.addAll(programmesMap.get(channel.getId())); 
+				log.info("Found {} programmes for channel {}", programmesMap.get(channel.getId()).size(), channel.getId());
+			}
 		}
 
 		log.info("Found {} programmes", selectedXmltvProgrammes.size());
@@ -137,6 +159,8 @@ public class EpgService {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			log.info("readEPG finished at {}", Utils.printNow());
 		}
 	}
 
@@ -147,8 +171,7 @@ public class EpgService {
 		if (xmltvChannels != null) {
 			for (XmltvChannel channel : xmltvChannels) {
 	
-				String channelName = channel.getDisplayNames().get(0).getText().replaceAll("[^\\x00-\\x7F]", "");
-				xmltvChannelsMap.put(channelName.trim(), channel);
+				xmltvChannelsMap.put(channel.getId(), channel);
 			}
 
 		}
@@ -163,11 +186,12 @@ public class EpgService {
 		if (xmltvProgrammes != null) {
 			for (XmltvProgramme programme : xmltvProgrammes) {
 	
-				String channelName = programme.getChannel().replaceAll("[^\\x00-\\x7F]", "");
-				xmltvProgrammesMap.put(channelName, programme);
+				xmltvProgrammesMap.put(programme.getChannel(), programme);
 			}
 		}
 		
 		return xmltvProgrammesMap;
 	}
+	
+	
 }

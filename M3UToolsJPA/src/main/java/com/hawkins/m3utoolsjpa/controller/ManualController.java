@@ -43,8 +43,6 @@ public class ManualController {
 
 		epgService.readEPG();
 		
-		log.info("reloadEPG(Manual) completed at {}", Utils.printNow());
-		
 		return new ModelAndView("forward:/", model);
 	}
 	

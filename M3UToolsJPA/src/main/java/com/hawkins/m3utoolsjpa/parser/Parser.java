@@ -44,6 +44,7 @@ public class Parser {
 		sw.start();
 		
 		Utils.copyUrlToFileUsingCommonsIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
+		// Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		
 		try (BufferedReader buffer = Files.newBufferedReader(Paths.get(m3uFile), StandardCharsets.UTF_8)) {
 			
@@ -118,7 +119,7 @@ public class Parser {
 		Long groupId = -1L;
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
 		channelName = Utils.removeFromString(channelName, Patterns.FISHEYE_CHARACTER);
-		
+		tvgName = Utils.removeFromString(tvgName, Patterns.FISHEYE_CHARACTER);
 		
 		if (channelName.contains("EN ")) {
 			channelName = channelName.substring(3);

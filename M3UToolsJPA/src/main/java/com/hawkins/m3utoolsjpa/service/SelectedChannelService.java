@@ -59,6 +59,9 @@ public class SelectedChannelService {
 	public void saveAll(List<SelectedChannel> channels) {
 
 		channels.forEach(channel -> {
+			
+			if (channel.isSelected()) log.info("Channel {} IS selected", channel.getTvgName());
+			
 			itemRepository.updateSelected(channel.getId(), channel.isSelected());
 			AddOrUpdateTvChannel(channel);
 		});
@@ -90,12 +93,14 @@ public class SelectedChannelService {
 							thisItem.getChannelUri());
 					tvChannelRepository.save(newChannel);
 					thisItem.setTvgChNo(newChannel.getTvgChNo());
+					thisItem.setSelected(true);
 					itemRepository.save(thisItem);
 				} else {
 					if (!channel.isSelected()) {
 						if (tvChannel != null) {
 							tvChannelRepository.delete(tvChannel);
 							thisItem.setTvgChNo("");
+							thisItem.setSelected(false);
 							itemRepository.save(thisItem);
 						}
 					}
