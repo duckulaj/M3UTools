@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
@@ -60,9 +61,10 @@ public class EpgService {
 			Utils.copyUrlToFile(dp.getStreamXMLUrl(), epgFile);
 			log.info("Reading epg.xml");
 			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (JsonParseException jpe) {
+			log.info("Error parsing {} , invalid xml format", epgFile);
+		} catch (IOException ioe) {
+			log.info("Error reading {}", epgFile);
 		}
 
 		// Now that we have the XmltvDoc we can extract the channels that we have selected
@@ -72,12 +74,19 @@ public class EpgService {
 		List<XmltvProgramme> xmltvProgrammes = doc.getProgrammes();
 
 		log.info("Found {} selected m3uItems", m3uItems.size());
-		log.info("Found {} channels", xmltvChannels.size());
 
+		if (xmltvChannels != null) {
+			log.info("Found {} channels", xmltvChannels.size());
+		} else {
+			log.info("No channels found");
+			xmltvChannels = new ArrayList<XmltvChannel>();
+		}
+		
 		if (xmltvProgrammes != null) {
 			log.info("Found {} programmes", xmltvProgrammes.size());
 		} else {
 			log.info("No programmes found");
+			xmltvProgrammes = new ArrayList<XmltvProgramme>();
 		}
 
 		
