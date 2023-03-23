@@ -32,7 +32,7 @@ public class ScheduledTasks {
 	@Autowired
 	ApplicationService  applicationService;
 
-	@Scheduled(cron = "0 1 5 * * ?") // 5.01am
+	@Scheduled(cron = "0 1 1 * * ?") // 1.01am
 	public void createStreams() {
 
 		m3UtoStrm.convertM3UtoStream();

@@ -16,7 +16,7 @@
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
 <entry key="emby.url">http://192.168.0.110:8096/emby/</entry>
 <entry key="moviedb.searchURL">https://api.themoviedb.org/3/search/movie</entry>
-<entry key="emby.installed">false</entry>
+<entry key="emby.installed">true</entry>
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="xteve.user">duckulaj</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
