@@ -19,8 +19,8 @@ public class Constants {
 	public static final String STAT_DOWNLOADING = "Downloading";
 	public static final String STAT_ASSEMBLING = "Assembling";
 	
-	public static final String CONFIGPROPERTIES = "config.properties";
-	public static final String CONFIGPROPERTIES_BU = "config.properties.bu";
+	public static final String CONFIGPROPERTIES = "config.properties.xml";
+	public static final String CONFIGPROPERTIES_BU = "config.properties.xml.bu";
 	public static final String DMPROPERTIES = "dm.properties";
 	
 	public static final String AVI = "avi";

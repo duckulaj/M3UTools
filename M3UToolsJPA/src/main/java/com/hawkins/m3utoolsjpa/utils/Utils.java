@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -50,14 +51,19 @@ public class Utils {
 
 		long start = System.currentTimeMillis();
 
-		File configFile = getPropertyFile(propertyType);
+		
 
 		Properties props = new Properties();
-
+		
 		try {
-			FileReader reader = new FileReader(configFile);
-			props.load(reader);
-			reader.close();
+			File configFile = getPropertyFile(propertyType);
+			
+			if (propertyType.equals(Constants.DMPROPERTIES)) {
+				props.load(new FileInputStream(configFile));
+			} else {
+				props.loadFromXML(new FileInputStream(new File(Constants.CONFIGPROPERTIES)));
+			}
+			
 			props.putIfAbsent("fileName", configFile.getPath());
 		} catch (FileNotFoundException fnfe) {
 			log.debug(fnfe.toString());
@@ -84,7 +90,8 @@ public class Utils {
 				}
 			});
 
-			props.store(output, "");
+			// props.store(output, "");
+			props.storeToXML(new FileOutputStream(new File(Constants.CONFIGPROPERTIES)), "");
 
 		} catch (IOException io) {
 			if (log.isDebugEnabled()) {
