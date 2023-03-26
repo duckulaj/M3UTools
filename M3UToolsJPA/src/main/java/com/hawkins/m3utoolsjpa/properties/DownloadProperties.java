@@ -50,7 +50,7 @@ public class DownloadProperties implements Runnable {
 
 		this.props = Utils.readProperties(Constants.CONFIGPROPERTIES);
 
-		this.setChannels(props.getProperty("channels"));
+		// this.setChannels(props.getProperty("channels"));
 		
 		
 		if (SystemUtils.IS_OS_WINDOWS) {
@@ -70,7 +70,7 @@ public class DownloadProperties implements Runnable {
 		this.setEpgFileName(props.getProperty("epg.filename"));
 		this.setEpgTimeDifference(props.getProperty("epg.time.difference"));
 		this.setFileWatcherLocation(props.getProperty("fileWatcher.location"));
-		this.setFileWatcherPollingDuration(Long.parseLong(props.getProperty("filewatcher.pollingDuration")));
+		// this.setFileWatcherPollingDuration(Long.parseLong(props.getProperty("filewatcher.pollingDuration")));
 		this.setEmbyInstalled(Boolean.parseBoolean(props.getProperty("emby.installed")));
 		this.setEmbyApi(props.getProperty("emby.api"));
 		this.setEmbyUrl(props.getProperty("emby.url"));

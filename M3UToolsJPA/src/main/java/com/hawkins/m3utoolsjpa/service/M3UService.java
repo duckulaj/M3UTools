@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.service;
 
 import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -196,7 +197,7 @@ public class M3UService {
 
 		OrderedProperties properties = new OrderedProperties();
 		try {
-			properties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
+			properties.loadFromXML(new FileInputStream(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
 					properties = OrderedProperties.copyOf(properties);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

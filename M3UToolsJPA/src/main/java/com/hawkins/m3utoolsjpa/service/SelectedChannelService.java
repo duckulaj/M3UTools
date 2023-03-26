@@ -29,6 +29,7 @@ public class SelectedChannelService {
 	 * TvChannel table
 	 */
 
+	
 	@Autowired
 	M3UItemRepository itemRepository;
 
@@ -54,6 +55,24 @@ public class SelectedChannelService {
 		});
 
 		return channels;
+	}
+	
+	public List<SelectedChannel> find(boolean selected) {
+		
+		List<TvChannel> channels = new ArrayList<TvChannel>();
+		channels = tvChannelRepository.findAll();
+		
+		List<SelectedChannel> selectedChannels = new ArrayList<SelectedChannel>();
+
+		channels.forEach(channel -> {
+			SelectedChannel selectedChannel = new SelectedChannel();
+			selectedChannel.setId(channel.getId());
+			selectedChannel.setTvgName(channel.getTvgName());
+			selectedChannel.setSelected(true);
+			selectedChannels.add(selectedChannel);
+		});
+
+		return selectedChannels;
 	}
 
 	public void saveAll(List<SelectedChannel> channels) {

@@ -59,5 +59,20 @@ public class MultipleChannelsController {
         return "redirect:/tvChannels";
     }
     
-    
+    @GetMapping(value = "/showAllSelected")
+    public String showAllSelected(Model model, @RequestParam(required = false, defaultValue = "-1") Long groupId) {
+    	
+    	List<SelectedChannel> channels = new ArrayList<>();
+        channelsService.find(true)
+            .iterator()
+            .forEachRemaining(channels::add);
+
+        model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
+        model.addAttribute("groupId", groupId);
+        model.addAttribute("form", new SelectedChannelsCreationDto(channels));
+        
+        
+        return Constants.EDIT_CHANNELS;
+    	
+    }
 }
