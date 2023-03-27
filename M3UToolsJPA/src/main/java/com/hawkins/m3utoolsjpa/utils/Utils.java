@@ -31,8 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Utils {
-	private static String propertyFile;
-
+	
 	public static File getPropertyFile(String propertyType) {
 
 		File configFile = new File(FileUtilsForM3UToolsJPA.getCurrentWorkingDirectory() + propertyType);
@@ -99,7 +98,7 @@ public class Utils {
 			}
 		}
 
-		return readProperties(propertyFile);
+		return readProperties(Constants.CONFIGPROPERTIES);
 	}
 
 	public static void copyUrlToFile(String url, String fileName) {
