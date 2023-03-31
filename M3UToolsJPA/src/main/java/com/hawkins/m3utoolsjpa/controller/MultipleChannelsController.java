@@ -68,6 +68,7 @@ public class MultipleChannelsController {
             .forEachRemaining(channels::add);
 
         model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
+        model.addAttribute("groups", m3uService.getM3UGroups());
         model.addAttribute("groupId", groupId);
         model.addAttribute("form", new SelectedChannelsCreationDto(channels));
         

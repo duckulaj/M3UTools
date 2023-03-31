@@ -40,9 +40,15 @@
 								th:onchange="'groupChange(this)'";>
 								<option th:each="group : ${groups}" th:value="${group.id}"
 									th:text="${group.name}"
-									th:selected="${group.id==selectedGroup.id}">Groups</option>
+									th:selected="${group.id==selectedGroup.id}">Groups
+								</option>
 							</select>
+							&nbsp;
+							<label class="input-group-text">Show All</label>
+							&nbsp;
+							<input type = "checkbox" th:name="showAll" th:checked="false"  th:onclick="|window.location.href='/showAllSelected'|"/>
 						</div>
+						
 					</div>
 				</div>
 			</div>
@@ -59,7 +65,6 @@
 					<span class="float-right">
 						    <input type="submit" id="submitButton" class="btn btn-success" th:value="Save">
 						    <input type="reset" id="resetButton" class="btn btn-danger" th:value="Reset"/>
-						    <input type = "checkbox" th:name="showAll" th:checked="false"  th:onclick="|window.location.href='/showAllSelected'|"/> Show All Selected
 					</span>
 					<table class="table">
 						<thead>

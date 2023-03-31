@@ -18,13 +18,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
-import com.hawkins.m3utoolsjpa.job.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
+import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +77,7 @@ public class M3UController {
 	@GetMapping("/viewLog")
 	public String viewLog(Model model) {
 
-		model.addAttribute("logFile", FileUtilsForM3UToolsJPA.fileTail("M3UToolsJPA.log", 100));
+		model.addAttribute("logFile", FileUtilsForM3UToolsJPA.fileTail("M3UToolsJPA.log", 200));
 		return Constants.VIEW_LOG;
 	}
 

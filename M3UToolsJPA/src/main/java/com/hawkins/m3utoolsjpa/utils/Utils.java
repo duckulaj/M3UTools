@@ -16,6 +16,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -26,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -251,4 +254,23 @@ public class Utils {
 
 		return groupType;
 	}
+	
+	public static DownloadJob findJobByName(List<DownloadJob> jobs, String name) {
+
+		DownloadJob thisJob = null;
+
+		ListIterator<DownloadJob> iJobs = jobs.listIterator();
+
+		while (iJobs.hasNext()) {
+			DownloadJob j = iJobs.next();
+			if (j.getJobName().equalsIgnoreCase(name)) {
+				thisJob = j;
+				break;
+			}
+		}
+
+		return thisJob;
+
+	}
+
 }

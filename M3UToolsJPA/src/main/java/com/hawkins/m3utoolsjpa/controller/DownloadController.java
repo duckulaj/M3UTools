@@ -7,6 +7,10 @@ import java.util.LinkedList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 // import org.springframework.mobile.device.Device;
 // import org.springframework.mobile.device.site.SitePreference;
@@ -20,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.hawkins.dmanager.properties.DmProperties;
 import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.job.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UDownloadItem;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -28,6 +31,7 @@ import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.service.DownloadService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -128,4 +132,30 @@ public class DownloadController {
 		downloadService.interruptJob(model, name);
 	  return Constants.STATUS; 
 	}
+	
+	@PostMapping(value ="downloadLocal", params = { "name" })
+    public ResponseEntity<Resource> downloadLocal(@RequestParam String name, HttpServletRequest request) {
+        // Load file as Resource
+        Resource resource = downloadService.loadFileAsResource(name);
+
+        // Try to determine file's content type
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            log.info("Could not determine file type.");
+        }
+
+        // Fallback to the default content type if type could not be determined
+        if(contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+	
+	
 }

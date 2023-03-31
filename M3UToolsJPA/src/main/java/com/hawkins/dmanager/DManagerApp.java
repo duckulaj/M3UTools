@@ -427,17 +427,13 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 		}
 	}
 
-	public void restartDownload(String id) {
-		DownloadEntry ent = downloads.get(id);
-		if (ent.getState() == DManagerConstants.PAUSED || ent.getState() == DManagerConstants.FAILED
-				|| ent.getState() == DManagerConstants.FINISHED) {
-			ent.setState(DManagerConstants.PAUSED);
-			clearData(id);
-			resumeDownload(id, true);
-		} else {
-			return;
-		}
-	}
+	/*
+	 * public void restartDownload(String id) { DownloadEntry ent =
+	 * downloads.get(id); if (ent.getState() == DManagerConstants.PAUSED ||
+	 * ent.getState() == DManagerConstants.FAILED || ent.getState() ==
+	 * DManagerConstants.FINISHED) { ent.setState(DManagerConstants.PAUSED);
+	 * clearData(id); resumeDownload(id, true); } else { return; } }
+	 */
 
 	/*
 	 * synchronized public void addListener(ListChangeListener listener) {

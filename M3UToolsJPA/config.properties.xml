@@ -4,14 +4,14 @@
 <entry key="fileWatcher.location">/home/jonathan/.xteve/data</entry>
 <entry key="stream.channels">http://line.mytv-ultra.com/get.php?username=9CD702&amp;password=22C122&amp;type=m3u_plus&amp;output=mpegts</entry>
 <entry key="fileName">./config.properties</entry>
-<entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
+<entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
 <entry key="xteve.url">http://localhost:34400/api/</entry>
 <entry key="xteve.installed">true</entry>
 <entry key="emby.api">01f9cd6d610c499a82e5bc4a48401eec</entry>
 <entry key="moviedb.apikey">56744a89f97f5119fe2a2306794d29a3</entry>
-<entry key="downloadPath">./</entry>
+<entry key="downloadPath">/home/jonathan/M3UToolsJPA/Downloads/</entry>
 <entry key="epg.time.difference">+0200</entry>
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
 <entry key="emby.url">http://192.168.0.110:8096/emby/</entry>

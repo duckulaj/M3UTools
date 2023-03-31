@@ -9,7 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.hawkins.dmanager.Config;
 import com.hawkins.dmanager.DownloadEntry;
 import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
-import com.hawkins.m3utoolsjpa.job.DownloadJob;
+import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 public class DownloadListChannel{
 

@@ -141,7 +141,7 @@ public class EpgService {
 		for (XmltvChannel channel : selectedXmltvChannels) {
 			if (StringUtils.isNotEmpty(channel.getId())) {
 				
-				log.info("{} selectedXmltvProgrammes before mapping match", selectedXmltvProgrammes.size());
+				// log.info("{} selectedXmltvProgrammes before mapping match", selectedXmltvProgrammes.size());
 				// log.info("finding programmes for channel {}", channel.getId());
 				// Collection<XmltvProgramme> foundPrograms = programmesMap.get(channel.getId());
 				selectedXmltvProgrammes.addAll(programmesMap.get(channel.getId())); 
