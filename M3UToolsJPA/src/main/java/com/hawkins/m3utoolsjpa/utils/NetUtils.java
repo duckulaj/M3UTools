@@ -2,11 +2,18 @@ package com.hawkins.m3utoolsjpa.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.io.IOUtils;
 
 import com.hawkins.m3Utoolsjpa.network.http.ChunkedInputStream;
 import com.hawkins.m3Utoolsjpa.network.http.HeaderCollection;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class NetUtils {
 	public static byte[] getBytes(String str) {
 		return str.getBytes();
@@ -130,4 +137,51 @@ public class NetUtils {
 		}
 		return contentType;
 	}
+	
+	public static String getContentTypeFromUrl(URL url) {
+	    if (url == null) {
+	        return null;
+	    }// w ww  .j  a va 2 s . c om
+	    String contentType;
+	    InputStream input = null;
+	    try {
+	        URLConnection connection = url.openConnection();
+	        contentType = connection.getContentType();
+	        log.debug("Content type from headers: {}", contentType);
+	        if (contentType == null) {
+	            input = connection.getInputStream();
+	            contentType = URLConnection.guessContentTypeFromStream(input);
+	            log.debug("Content type from data: {}", contentType);
+	            if (contentType == null) {
+	                contentType = "application/octet-stream";
+	            }
+	        }
+	    } catch (IOException e) {
+	        log.debug("Failed to identify content type from URL: {}", e.getMessage());
+	        contentType = "application/octet-stream";
+	    } finally {
+	        IOUtils.closeQuietly(input);
+	    }
+	    return contentType;
+	}
+	
+	public static Long getContentSizeFromUrl(URL url) {
+	    if (url == null) {
+	        return null;
+	    }// w ww  .j  a va 2 s . c om
+	    Long contentSize = 0L;
+	    InputStream input = null;
+	    try {
+	        URLConnection connection = url.openConnection();
+	        contentSize = connection.getContentLengthLong();
+	        log.debug("Content size from headers: {}", contentSize);
+	    } catch (IOException e) {
+	        log.debug("Failed to identify content type from URL: {}", e.getMessage());
+	        contentSize = 0L;
+	    } finally {
+	        IOUtils.closeQuietly(input);
+	    }
+	    return contentSize;
+	}
+
 }

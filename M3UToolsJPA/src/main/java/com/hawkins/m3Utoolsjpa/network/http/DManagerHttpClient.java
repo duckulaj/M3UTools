@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import com.hawkins.dmanager.util.NetUtils;
 import com.hawkins.dmanager.util.StringUtils;
 import com.hawkins.m3Utoolsjpa.network.FixedRangeInputStream;
 import com.hawkins.m3Utoolsjpa.network.HostUnreachableException;
@@ -14,6 +13,7 @@ import com.hawkins.m3Utoolsjpa.network.KeepAliveConnectionCache;
 import com.hawkins.m3Utoolsjpa.network.NetworkException;
 import com.hawkins.m3Utoolsjpa.network.ParsedURL;
 import com.hawkins.m3Utoolsjpa.network.SocketFactory;
+import com.hawkins.m3utoolsjpa.utils.NetUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

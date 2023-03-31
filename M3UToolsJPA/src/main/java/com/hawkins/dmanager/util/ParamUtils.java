@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import com.hawkins.m3utoolsjpa.utils.NetUtils;
+
 public class ParamUtils {
 	public static void sendParam(Map<String, String> params) {
 		StringBuffer sb = new StringBuffer();

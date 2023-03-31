@@ -100,7 +100,7 @@ public class FileUtilsForM3UToolsJPA {
 
 			Files.isSameFile(copied, originalPath);
 
-			Files.deleteIfExists(copied);
+			// Files.deleteIfExists(copied);
 
 		} catch (IOException ioe) {
 			if (log.isDebugEnabled()) {

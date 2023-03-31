@@ -182,6 +182,14 @@ public class M3UItem {
 		this.selected = selected;
 	}
 
+	public void setChannelName(String channelName) {
+		this.channelName = channelName;
+	}
+
+	public void setTvgName(String tvgName) {
+		this.tvgName = tvgName;
+	}
+
 	
 
 }

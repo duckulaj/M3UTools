@@ -2,8 +2,8 @@ package com.hawkins.m3Utoolsjpa.downloaders;
 
 import com.hawkins.dmanager.DManagerConstants;
 import com.hawkins.dmanager.util.DManagerUtils;
-import com.hawkins.dmanager.util.NetUtils;
 import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
+import com.hawkins.m3utoolsjpa.utils.NetUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

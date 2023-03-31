@@ -4,8 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import com.hawkins.dmanager.util.DManagerUtils;
-import com.hawkins.dmanager.util.NetUtils;
 import com.hawkins.m3Utoolsjpa.network.http.HeaderCollection;
+import com.hawkins.m3utoolsjpa.utils.NetUtils;
 
 
 public class ParsedHookData {

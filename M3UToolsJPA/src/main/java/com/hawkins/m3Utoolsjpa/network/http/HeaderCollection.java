@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hawkins.dmanager.util.NetUtils;
+import com.hawkins.m3utoolsjpa.utils.NetUtils;
 
 public class HeaderCollection {
 	private List<HttpHeader> headers;

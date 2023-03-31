@@ -68,13 +68,13 @@ function update(newMessage){
             ' Stop Job' +
             '</button>' +
             '</form></td>' +
-            /*'<td><form name="pauseForm" action="/pause">' +
-            '<input type="hidden" value="'+newMessage.jobName+'" name="name" id="name" />' +
-            '<button id="btnPause" value="'+newMessage.jobName+'" type="submit" class="btn btn-outline-success">' +
+            '<td><form name="downloadLocalForm" action="/downloadLocal">' +
+            '<input type="hidden" value="'+newMessage.originalFileName+'" name="name" id="name" />' +
+            '<button id="btnPause" value="'+newMessage.originalFileName+'" type="submit" class="btn btn-outline-success">' +
             '<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>' +
-            ' Pause Job' +
+            ' Save to Local Disk' +
             '</button>' +
-            '</form></td>' +*/
+            '</form></td>' +
             '</tr>');
     }
     

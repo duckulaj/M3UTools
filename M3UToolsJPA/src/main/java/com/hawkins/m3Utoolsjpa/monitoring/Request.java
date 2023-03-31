@@ -3,8 +3,8 @@ package com.hawkins.m3Utoolsjpa.monitoring;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.hawkins.dmanager.util.NetUtils;
 import com.hawkins.m3Utoolsjpa.network.http.HeaderCollection;
+import com.hawkins.m3utoolsjpa.utils.NetUtils;
 
 
 public class Request {

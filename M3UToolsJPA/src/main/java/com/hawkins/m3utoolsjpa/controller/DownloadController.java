@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 // import org.springframework.mobile.device.Device;
@@ -31,6 +30,7 @@ import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.service.DownloadService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -99,6 +99,7 @@ public class DownloadController {
 				log.debug("File of type {} is {}", type, lengthString);
 			}
 
+			name = name.substring(name.lastIndexOf("|") + 1).trim();
 			M3UDownloadItem downloadItem = new M3UDownloadItem();
 			downloadItem.setUrl(url);
 			downloadItem.setName(
@@ -109,6 +110,7 @@ public class DownloadController {
 
 			jobNumber ++;
 			DownloadJob downloadJob = new DownloadJob(downloadItem.getUrl().toString(), "Job-" + jobNumber, downloadItem.getName(), template);
+			
 			downloadJob.setFileName(name + "." + Utils.getFileExtension(url.toString()));
 			downloadJob.setFolder(downloadProperties.getDownloadPath());
 			
@@ -133,16 +135,18 @@ public class DownloadController {
 	  return Constants.STATUS; 
 	}
 	
-	@PostMapping(value ="downloadLocal", params = { "name" })
+	@GetMapping(value ="downloadLocal", params = { "name" })
     public ResponseEntity<Resource> downloadLocal(@RequestParam String name, HttpServletRequest request) {
-        // Load file as Resource
-        Resource resource = downloadService.loadFileAsResource(name);
 
-        // Try to determine file's content type
-        String contentType = null;
+		Resource resource = downloadService.loadFileAsResource(name);
+		String contentType = null;
+        Long contentSize = 0L;
+        
         try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
+            URL url = resource.getURL();
+            contentType = NetUtils.getContentTypeFromUrl(url);
+            contentSize = NetUtils.getContentSizeFromUrl(url);
+        } catch (Exception ex) {
             log.info("Could not determine file type.");
         }
 
@@ -150,11 +154,15 @@ public class DownloadController {
         if(contentType == null) {
             contentType = "application/octet-stream";
         }
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
+        headers.add(HttpHeaders.CONTENT_LENGTH, contentSize.toString()); 
+        headers.add("Pragma", "no-cache");
+        headers.add("Cache-Control", "no-cache");
+        return ResponseEntity.ok().headers(headers).body(resource);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
     }
 	
 	
