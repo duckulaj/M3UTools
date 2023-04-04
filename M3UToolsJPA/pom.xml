@@ -140,16 +140,16 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			</dependency>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
 		</dependency>
 		<dependency>
-		  <groupId>org.slf4j</groupId>
-		  <artifactId>slf4j-api</artifactId>  
-		  </dependency>
+		  	<groupId>org.slf4j</groupId>
+		  	<artifactId>slf4j-api</artifactId>  
+		</dependency>
 </dependencies>
 	<build>
 		<plugins>

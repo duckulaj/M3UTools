@@ -1,5 +1,7 @@
 package com.hawkins.m3utoolsjpa.controller;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
+import com.hawkins.m3utoolsjpa.service.CompletableFutureService;
 import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Utils;
@@ -22,6 +25,9 @@ public class ManualController {
 	
 	@Autowired
 	EpgService epgService;
+	
+	@Autowired
+	CompletableFutureService completableFutureService;
 	
 	/*
 	 * This controller exists to allow the invocation on controller methods that
@@ -62,4 +68,14 @@ public class ManualController {
 		
 		return new ModelAndView("forward:/", model);
 	}
+
+	@GetMapping("completableFuture")
+	public ModelAndView completableFuture(ModelMap model) {
+		
+		completableFutureService.writeEPG();
+		
+		return new ModelAndView("forward:/", model);
+	}
+	
+	
 }

@@ -1,14 +1,18 @@
 package com.hawkins.m3utoolsjpa.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
@@ -38,15 +42,18 @@ public class Parser {
 		int lineNbr = 0;
 		String line;
 		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
-		
+		DownloadProperties dp = DownloadProperties.getInstance();
 		
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 		
-		Utils.copyUrlToFileUsingCommonsIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
+		// Utils.copyUrlToFileUsingCommonsIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		// Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		
+		
 		try (BufferedReader buffer = Files.newBufferedReader(Paths.get(m3uFile), StandardCharsets.UTF_8)) {
+		
+			FileUtils.copyURLToFile(new URL(dp.getStreamXMLUrl()), new File(m3uFile));
 			
 			line = buffer.readLine();
 			if (line == null) {
