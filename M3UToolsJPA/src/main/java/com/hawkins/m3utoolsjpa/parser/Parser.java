@@ -49,11 +49,16 @@ public class Parser {
 		
 		// Utils.copyUrlToFileUsingCommonsIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		// Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
-		
+		try {
+			FileUtils.copyURLToFile(new URL(dp.getStreamChannels()), new File(m3uFile));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try (BufferedReader buffer = Files.newBufferedReader(Paths.get(m3uFile), StandardCharsets.UTF_8)) {
 		
-			FileUtils.copyURLToFile(new URL(dp.getStreamXMLUrl()), new File(m3uFile));
+			
 			
 			line = buffer.readLine();
 			if (line == null) {
