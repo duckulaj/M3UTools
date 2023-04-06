@@ -135,6 +135,24 @@ public class Utils {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void copyUrlToFileUsingNIO(String url, String fileName) throws IOException {
+        URL nioUrl = new URL(url);
+        
+        // openStream(): Opens a connection to this URL and returns an InputStream for reading from that connection.
+        ReadableByteChannel byteChannel = Channels.newChannel(nioUrl.openStream());
+        
+        FileOutputStream outputStream = new FileOutputStream(fileName);
+        
+        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
+        // A constant holding the maximum value a long can have.
+        
+        // Closes this file output stream and releases any system resources associated with this stream. This file output stream may no longer be used for writing bytes.
+        outputStream.close();
+        
+        // Closes this channel. After a channel is closed, any further attempt to invoke I/O operations upon it will cause a ClosedChannelException to be thrown.
+        byteChannel.close();
+    }
 
 	public static URL getFinalLocation(String address) throws IOException {
 
@@ -215,6 +233,25 @@ public class Utils {
 		}
 		
 	}
+	
+	public static String normaliseSearch(String filmName) {
+
+		int startIndex = 0;
+
+		int endIndex = StringUtils.indexOfAny(filmName, new String[]{"SD", "FHD", "UHD", "HD", "4K"});
+
+		if (endIndex != -1) {
+			filmName = filmName.substring(startIndex, endIndex);
+		}
+
+		if (filmName.contains("(MULTISUB)")) {
+			return filmName.replace("(MULTISUB)", "").trim();
+		} else {
+			return filmName.trim();
+		}
+		
+	}
+
 	
 	public static String removeFromString(String originalString, Pattern pattern) {
 		

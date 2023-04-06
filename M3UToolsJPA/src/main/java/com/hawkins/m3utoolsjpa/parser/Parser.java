@@ -51,6 +51,7 @@ public class Parser {
 		// Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		try {
 			FileUtils.copyURLToFile(new URL(dp.getStreamChannels()), new File(m3uFile));
+			// Utils.copyUrlToFileUsingNIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -88,7 +89,7 @@ public class Parser {
 					entry.setChannelUri(line);
 					
 					if (entry.getType().equals(Constants.MOVIE)) {
-						entry.setSearch(Utils.normaliseName(entry.getChannelName()));
+						entry.setSearch(Utils.normaliseSearch(entry.getChannelName()));
 					}
 					
 					if (!RegexUtils.containsRegex(entry.getTvgName(), Patterns.HASH_REGEX) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
@@ -132,9 +133,11 @@ public class Parser {
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
 		channelName = Utils.removeFromString(channelName, Patterns.FISHEYE_CHARACTER);
 		tvgName = Utils.removeFromString(tvgName, Patterns.FISHEYE_CHARACTER);
+		tvgName = Utils.removeFromString(tvgName, Patterns.PIPED_COUNTRY);
+		channelName = Utils.removeFromString(channelName, Patterns.PIPED_COUNTRY);
 		
-		if (channelName.contains("EN ")) {
-			channelName = channelName.substring(3);
+		if (channelName.contains("|EN| ")) {
+			channelName = channelName.substring(5);
 		}
 		
 		// Remove |EN|

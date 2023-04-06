@@ -58,6 +58,7 @@ public class EpgService {
 		try {
 			log.info("Retrieving EPG from remote source");
 			FileUtils.copyURLToFile(new URL(dp.getStreamXMLUrl()), new File(epgFile));
+			// Utils.copyUrlToFileUsingNIO(dp.getStreamXMLUrl(), epgFile);
 			
 			log.info("Reading epg.xml");
 			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
