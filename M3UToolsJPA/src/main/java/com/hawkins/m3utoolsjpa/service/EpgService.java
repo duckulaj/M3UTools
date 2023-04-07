@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
@@ -55,18 +54,16 @@ public class EpgService {
 		// XmlMapper xm = new XmlMapper();
 		XmltvDoc doc = getXmlTvDoc();
 
-		try {
-			log.info("Retrieving EPG from remote source");
-			FileUtils.copyURLToFile(new URL(dp.getStreamXMLUrl()), new File(epgFile));
-			// Utils.copyUrlToFileUsingNIO(dp.getStreamXMLUrl(), epgFile);
-			
-			log.info("Reading epg.xml");
-			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
-		} catch (JsonParseException jpe) {
-			log.info("Error parsing {} , invalid xml format", epgFile);
-		} catch (IOException ioe) {
-			log.info("Error reading {}", epgFile);
-		}
+		/*
+		 * try { log.info("Retrieving EPG from remote source");
+		 * FileUtils.copyURLToFile(new URL(dp.getStreamXMLUrl()), new File(epgFile)); //
+		 * Utils.copyUrlToFileUsingNIO(dp.getStreamXMLUrl(), epgFile);
+		 * 
+		 * // log.info("Reading epg.xml"); // doc = xm.readValue(new File(epgFile),
+		 * XmltvDoc.class); } catch (JsonParseException jpe) {
+		 * log.info("Error parsing {} , invalid xml format", epgFile); } catch
+		 * (IOException ioe) { log.info("Error reading {}", epgFile); }
+		 */
 
 		// Now that we have the XmltvDoc we can extract the channels that we have selected
 
@@ -126,12 +123,14 @@ public class EpgService {
 		 
 		
 		MultiValuedMap<String, XmltvProgramme> programmesMap = programmeListToMap(xmltvProgrammes);
-		MultiValuedMap<String,XmltvChannel> channelsMap = channelListToMap(selectedXmltvChannels);
+		
 
 		
 
 
 		/*
+		 * MultiValuedMap<String,XmltvChannel> channelsMap = channelListToMap(selectedXmltvChannels);
+		 * 
 		 * for (M3UItem m3uItem : m3uItems) {
 		 * selectedXmltvChannels.addAll(channelsMap.get(m3uItem.getChannelName().trim())
 		 * ); }
@@ -213,7 +212,7 @@ public class EpgService {
 		
 		try {
 			log.info("Retrieving EPG from remote source");
-			Utils.copyUrlToFile(dp.getStreamXMLUrl(), epgFile);
+			FileUtils.copyURLToFile(new URL(dp.getStreamXMLUrl()), new File(epgFile));
 			log.info("Reading epg.xml");
 			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
 		} catch (JsonParseException jpe) {
