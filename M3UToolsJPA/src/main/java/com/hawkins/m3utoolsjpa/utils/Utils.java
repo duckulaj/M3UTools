@@ -25,6 +25,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.hawkins.m3utoolsjpa.data.M3UItem;
+import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
@@ -308,6 +310,33 @@ public class Utils {
 		return thisJob;
 
 	}
-	
-	
+
+	public static String getFileExtension(String url) {
+
+		return url.substring(url.length() - 3);
+
+	}
+
+	public static String getURLFromName(String filmName, M3UItemRepository m3uItemRepository) {
+
+		String url = null;
+
+		List<M3UItem> filmList = m3uItemRepository.findByTvgName(filmName);
+		
+
+		ListIterator<M3UItem> iFilters = filmList.listIterator();
+
+		while (iFilters.hasNext()) {
+			M3UItem m3uItem = iFilters.next();
+
+			if (m3uItem.getTvgName().equalsIgnoreCase(filmName)) {
+				url = m3uItem.getChannelUri();
+				break;
+			}
+
+		}
+
+		return url;
+
+	}
 }

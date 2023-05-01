@@ -31,7 +31,6 @@ import com.hawkins.m3Utoolsjpa.downloaders.metadata.DashMetadata;
 import com.hawkins.m3Utoolsjpa.downloaders.metadata.HdsMetadata;
 import com.hawkins.m3Utoolsjpa.downloaders.metadata.HlsMetadata;
 import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
-import com.hawkins.m3Utoolsjpa.monitoring.BrowserMonitor;
 import com.hawkins.m3Utoolsjpa.network.http.HttpContext;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 
@@ -113,8 +112,7 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 				expect = false;
 			}
 		}
-		log.info("starting monitoring...");
-		BrowserMonitor.getInstance().startMonitoring();
+		
 	}
 
 	private DManagerApp() {

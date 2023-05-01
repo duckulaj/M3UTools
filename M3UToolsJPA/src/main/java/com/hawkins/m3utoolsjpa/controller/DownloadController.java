@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hawkins.dmanager.properties.DmProperties;
 import com.hawkins.dmanager.util.Utils;
+import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.m3u.M3UDownloadItem;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
@@ -73,57 +76,16 @@ public class DownloadController {
 	public String download(Model model, @RequestParam String name, HttpServletResponse response,
 			HttpServletRequest request) {
 
-		if (downloadProperties == null) {
-			downloadProperties = DownloadProperties.getInstance();
-		}
+		DownloadJob downloadJob = downloadService.createDownloadJob(name);
 		
-		if (log.isDebugEnabled()) {
-			log.debug("download {}", name);
-		}
+		CompletableFuture<Boolean> downloadCompleted = CompletableFuture.supplyAsync(() -> 
 
-		try {
-			URL url = Utils.getFinalLocation(Utils.getURLFromName(name, m3uItemRepository));
+				downloadService.doWork(downloadJob)
 
-			URLConnection u = url.openConnection();
-
-			long length = 0L;
-			try {
-				length = Long.parseLong(u.getHeaderField("Content-Length"));
-			} catch (NumberFormatException nfe) {
-				log.debug(nfe.getMessage());
-			}
-			String type = u.getHeaderField("Content-Type");
-			String lengthString = Utils.format(length, 2);
-
-			if (log.isDebugEnabled()) {
-				log.debug("File of type {} is {}", type, lengthString);
-			}
-
-			name = name.substring(name.lastIndexOf("|") + 1).trim();
-			M3UDownloadItem downloadItem = new M3UDownloadItem();
-			downloadItem.setUrl(url);
-			downloadItem.setName(
-					downloadProperties.getDownloadPath() + name + "." + Utils.getFileExtension(url.toString()));
-			downloadItem.setFilmName(name);
-			downloadItem.setSearchPhrase("");
-			downloadItem.setSize(length);
-
-			jobNumber ++;
-			DownloadJob downloadJob = new DownloadJob(downloadItem.getUrl().toString(), "Job-" + jobNumber, downloadItem.getName(), template);
+					);
 			
-			downloadJob.setFileName(name + "." + Utils.getFileExtension(url.toString()));
-			downloadJob.setFolder(downloadProperties.getDownloadPath());
-			
-			downloadService.doWork(downloadJob);
-			
-			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
-			model.addAttribute(Constants.SELECTEDGROUP, new M3UGroupSelected());
-
-		} catch (IOException ioe) {
-			log.info(ioe.getMessage());
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
+		model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
+		model.addAttribute(Constants.SELECTEDGROUP, new M3UGroupSelected());
 
 		return Constants.STATUS;
 	}

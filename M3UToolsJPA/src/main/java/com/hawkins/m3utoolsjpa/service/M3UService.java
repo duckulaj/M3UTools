@@ -61,33 +61,17 @@ public class M3UService {
 	TvChannelRepository channelRepository;
 	
 	@Autowired
-	DatabaseUpdates databaseUpdates;
-	
+	CompletableFutureService completableFutureService;
 	
 	public void resetDatabase() {
 			
-		/*
-		 * StopWatch swM3UParser = new org.springframework.util.StopWatch();
-		 * swM3UParser.start();
-		 * 
-		 * M3uDoc m3uDoc = M3uParserService.parse();
-		 * 
-		 * swM3UParser.stop(); log.info("M3UParser took {}ms",
-		 * swM3UParser.getTotalTimeMillis());
-		 */		
-		
-		
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 
-		LinkedList<M3UItem> items = Parser.parse();
+		List<M3UItem> items = completableFutureService.reloadDatabase();
 		
 		if (items.size() > 0) {
 		
-			itemRepository.deleteAll();
-			groupRepository.deleteAll();
-			
-				
 			for (M3UItem item : items) {
 	
 				M3UGroup group = groupRepository.findByName(item.getGroupTitle());
