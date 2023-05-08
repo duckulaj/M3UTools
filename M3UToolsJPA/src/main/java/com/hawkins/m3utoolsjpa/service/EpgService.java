@@ -166,7 +166,7 @@ public class EpgService {
 		selectedXmltvDoc.setProgrammes(selectedXmltvProgrammes);
 
 		try {
-			XmlMapper xm = new XmlMapper();
+			XmlMapper xm = XmltvUtils.createMapper();
 			xm.writerWithDefaultPrettyPrinter();
 			xm.writeValue(new File("./generatedChannels.xml"), selectedXmltvDoc);
 			log.info("Written ./generatedChannels.xml");

@@ -1,10 +1,7 @@
 package com.hawkins.m3utoolsjpa.controller;
 
-import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hawkins.dmanager.properties.DmProperties;
-import com.hawkins.dmanager.util.Utils;
-import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.m3u.M3UDownloadItem;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
