@@ -30,8 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DownloadService {
 
-	private boolean stop = false;
-
 	private final Path fileStorageLocation;
 
 	@Autowired M3UItemRepository itemRepository;
@@ -40,7 +38,6 @@ public class DownloadService {
 	private SimpMessagingTemplate template;
 
 
-	@Autowired
 	public DownloadService() {
 		this.fileStorageLocation = Paths.get(DownloadProperties.getInstance().getDownloadPath()).toAbsolutePath().normalize();
 

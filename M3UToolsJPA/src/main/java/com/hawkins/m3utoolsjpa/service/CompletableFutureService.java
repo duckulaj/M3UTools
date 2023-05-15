@@ -66,10 +66,7 @@ public class CompletableFutureService {
 
 	public List<M3UItem> reloadDatabase() {
 		
-		log.info("Starting m3UItemsFromParser at {}", Utils.printNow());
-		CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
-		Parser.parse()
-				);
+		
 		
 		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
 		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
@@ -77,21 +74,24 @@ public class CompletableFutureService {
 			groupRepository.deleteAll();	
 		});
 		
-		log.info("Starting combinedFuture at {}", Utils.printNow());
-		CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(m3UItemsFromParser, cleanItemsAndGroups);
+		
 		
 		try {
-			log.info("Starting combinedFuture.get() at {}", Utils.printNow());
-			combinedFuture.get();
+			log.info("Starting cleanItemsAndGroups.get() at {}", Utils.printNow());
+			cleanItemsAndGroups.get();
 		} catch (InterruptedException | ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		if (combinedFuture.isDone()) log.info("combinedFuture.isDone() at {}", Utils.printNow());
+		if (cleanItemsAndGroups.isDone()) log.info("cleanItemsAndGroups.isDone() at {}", Utils.printNow());
 		log.info("CompletableFutures completed");
 		
 		try {
+			log.info("Starting m3UItemsFromParser at {}", Utils.printNow());
+			CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
+			Parser.parse()
+					);
 			return m3UItemsFromParser.get();
 		} catch (InterruptedException | ExecutionException e) {
 			// TODO Auto-generated catch block

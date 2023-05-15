@@ -425,21 +425,7 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 		}
 	}
 
-	/*
-	 * public void restartDownload(String id) { DownloadEntry ent =
-	 * downloads.get(id); if (ent.getState() == DManagerConstants.PAUSED ||
-	 * ent.getState() == DManagerConstants.FAILED || ent.getState() ==
-	 * DManagerConstants.FINISHED) { ent.setState(DManagerConstants.PAUSED);
-	 * clearData(id); resumeDownload(id, true); } else { return; } }
-	 */
-
-	/*
-	 * synchronized public void addListener(ListChangeListener listener) {
-	 * listChangeListeners.add(listener); }
-	 * 
-	 * synchronized public void removeListener(ListChangeListener listener) {
-	 * listChangeListeners.remove(listener); }
-	 */
+	
 	private void notifyListeners(String id) {
 		if (listChangeListeners != null) {
 			for (int i = 0; i < listChangeListeners.size(); i++)
@@ -452,17 +438,6 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 
 	public DownloadEntry getEntry(String id) {
 		return downloads.get(id);
-	}
-
-	private void clearData(String id) {
-		File folder = new File(Config.getInstance().getTemporaryFolder(), id);
-		File[] files = folder.listFiles();
-		if (files != null) {
-			for (int i = 0; i < files.length; i++) {
-				files[i].delete();
-			}
-		}
-		folder.delete();
 	}
 
 	@Override
@@ -548,13 +523,6 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 		} catch (Exception e) {
 			log.info(e.getMessage());
 		}
-	}
-
-	public void hidePrgWnd(String id) {
-		/*
-		 * DownloadWindow wnd = downloadWindows.get(id); if (wnd != null) {
-		 * downloadWindows.remove(id); wnd.close(XDMConstants.PAUSED, 0); }
-		 */
 	}
 
 	private synchronized int getActiveDownloadCount() {

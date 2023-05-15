@@ -21,7 +21,7 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
 
 	List<M3UItem> findByGroupTitle(String groupTitle);
 	
-	List<M3UItem> findByType(String type);
+	List<M3UItem> findByTypeOrderByTvgName(String type);
 
 	List<M3UItem> findByTvgName(String tvgName);
 	

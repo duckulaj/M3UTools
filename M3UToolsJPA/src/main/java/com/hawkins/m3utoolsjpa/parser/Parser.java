@@ -1,17 +1,13 @@
 package com.hawkins.m3utoolsjpa.parser;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
@@ -37,7 +33,6 @@ public class Parser {
 	 */
 	public static LinkedList<M3UItem> parse() {
 
-		String m3uFile = Constants.M3U_FILE;
 		int lineNbr = 0;
 		String line;
 		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
@@ -46,19 +41,8 @@ public class Parser {
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 		
-		// Utils.copyUrlToFileUsingCommonsIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
-		// Utils.copyUrlToFile(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
-		try {
-			FileUtils.copyURLToFile(new URL(dp.getStreamChannels()), new File(m3uFile));
-			// Utils.copyUrlToFileUsingNIO(DownloadProperties.getInstance().getStreamChannels(), m3uFile);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		try (BufferedReader buffer = Files.newBufferedReader(Paths.get(m3uFile), StandardCharsets.UTF_8)) {
-		
-			
+		try { URL m3uUrl = new  URL(dp.getStreamChannels());
+	        BufferedReader buffer = new BufferedReader(new InputStreamReader(m3uUrl.openStream()));		
 			
 			line = buffer.readLine();
 			if (line == null) {
@@ -71,8 +55,6 @@ public class Parser {
 			lineNbr++;
 			
 			checkStart(line);
-			
-			// String globalTvgShif = extract(line, Patterns.TVG_SHIFT_REGEX);
 
 			M3UItem entry = null;
 			while ((line = buffer.readLine()) != null) {

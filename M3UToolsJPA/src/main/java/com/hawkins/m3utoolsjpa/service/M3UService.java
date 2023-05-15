@@ -145,7 +145,7 @@ public class M3UService {
 
 	public List<M3UItem> getM3UItemsByType(String type) {
 
-		return IteratorUtils.toList(itemRepository.findByType(type).iterator());
+		return IteratorUtils.toList(itemRepository.findByTypeOrderByTvgName(type).iterator());
 
 	}
 

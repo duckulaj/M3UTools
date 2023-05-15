@@ -13,5 +13,5 @@ public interface FilterRepository extends JpaRepository<Filter, Long> {
 	
 	Filter findById(long id, Sort sort);
 
-	Filter save(Filter filter);
+	// Filter save(Filter filter);
 }

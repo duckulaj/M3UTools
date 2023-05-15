@@ -49,15 +49,11 @@ public class M3UtoStrmService {
 		 */
 
 		
-		List<M3UItem> playListItems = m3uService.getM3UItems();
 		
-		
-		List<M3UItem> movies = filterItems(playListItems, ofType(Constants.MOVIE));
+		List<M3UItem> movies = m3uService.getM3UItemsByType(Constants.MOVIE);
 		log.info("{} Movies", movies.size());
 		
-		 
-		 
-		List<M3UItem> tvshows = filterItems(playListItems, ofType(Constants.SERIES));
+		List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
 		log.info("{} TV Shows", tvshows.size());
 		
 		createTVshowFolders(tvshows);
