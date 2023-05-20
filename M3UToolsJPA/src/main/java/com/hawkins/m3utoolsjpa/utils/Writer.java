@@ -51,6 +51,7 @@ public class Writer {
             pw.flush();
         }
         pw.flush();
+        pw.close();
     }
 
     private static void appendIfNotNull(StringBuilder sb, String toWrite, String pattern) {

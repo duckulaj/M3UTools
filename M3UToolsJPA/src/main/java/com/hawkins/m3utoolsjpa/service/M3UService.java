@@ -296,7 +296,11 @@ public class M3UService {
 		try {
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile));
 			Writer.write(channels, bos);
+			bos.close();
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

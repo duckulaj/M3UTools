@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,20 +50,21 @@ public class M3UtoStrmService {
 		 * 7. Create a an strm file for each episode within a season
 		 */
 
+		CompletableFuture<Void> createMovies = CompletableFuture.runAsync(() -> {
+			List<M3UItem> movies = m3uService.getM3UItemsByType(Constants.MOVIE);
+			log.info("{} Movies", movies.size());
+			
+			createMovieFolders(movies, Constants.HD);
+			log.info("Created HD Movies folders");
+		});
 		
-		
-		List<M3UItem> movies = m3uService.getM3UItemsByType(Constants.MOVIE);
-		log.info("{} Movies", movies.size());
-		
-		List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
-		log.info("{} TV Shows", tvshows.size());
-		
-		createTVshowFolders(tvshows);
-		log.info("Created TV Shows folders");
-		
-		
-		createMovieFolders(movies, Constants.HD);
-		log.info("Created HD Movies folders");
+		CompletableFuture<Void> createTVShows = CompletableFuture.runAsync(() -> {
+			List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
+			log.info("{} TV Shows", tvshows.size());
+			
+			createTVshowFolders(tvshows);
+			log.info("Created TV Shows folders");
+		});
 		
 	}
 
@@ -81,7 +84,9 @@ public class M3UtoStrmService {
 		} else {
 			// Get the last three characters from the stream
 
-			if (stream.length() > 3) videoExtension = stream.substring(stream.length() - 3);
+			// TO-DO: The following line needs testing, then look at completeable futures for creating folders
+			
+			if (stream.length() > 3) videoExtension = stream.substring(stream.lastIndexOf(".") + 1);
 
 			if (Arrays.asList(videoTypes).contains(videoExtension)) {
 

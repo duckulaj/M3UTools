@@ -78,6 +78,9 @@ public class Parser {
 					}
 				}
 			}
+			
+			buffer.close();
+			
 		} catch (IOException e) {
 			throw new ParsingException(lineNbr, "Cannot read file", e);
 		} 
