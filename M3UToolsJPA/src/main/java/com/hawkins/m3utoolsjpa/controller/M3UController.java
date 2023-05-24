@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
+import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
@@ -40,7 +41,12 @@ public class M3UController {
 	public ModelAndView resetDatabase(ModelMap model) {
 
 		List<M3UItem> items = new ArrayList<M3UItem>();
-		m3uService.resetDatabase();
+		try {
+			m3uService.resetDatabase();
+		} catch (M3UItemsNotFoundException e) {
+			model.addAttribute("message", e.getMessage());
+			e.printStackTrace();
+		}
 		
 		model.addAttribute("groups", m3uService.getM3UGroups());
 		model.addAttribute("items", items);

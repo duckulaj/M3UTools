@@ -30,6 +30,7 @@ import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.data.TvChannel;
 import com.hawkins.m3utoolsjpa.data.TvChannelRepository;
+import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -61,12 +62,16 @@ public class M3UService {
 	@Autowired
 	CompletableFutureService completableFutureService;
 	
-	public void resetDatabase() {
+	public void resetDatabase() throws M3UItemsNotFoundException {
 			
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 
 		List<M3UItem> items = completableFutureService.reloadDatabase();
+		
+		if (items == null) {
+			throw new M3UItemsNotFoundException("No items found from M3UParser");
+		}
 		
 		if (items.size() > 0) {
 		

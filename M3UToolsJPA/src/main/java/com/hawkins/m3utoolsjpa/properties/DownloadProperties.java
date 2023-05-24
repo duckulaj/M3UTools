@@ -69,7 +69,7 @@ public class DownloadProperties implements Runnable {
 		this.setSearchPersonURL(props.getProperty("moviedb.searchPersonURL"));
 		this.setEpgFileName(props.getProperty("epg.filename"));
 		this.setEpgTimeDifference(props.getProperty("epg.time.difference"));
-		this.setFileWatcherLocation(props.getProperty("fileWatcher.location"));
+		// this.setFileWatcherLocation(props.getProperty("fileWatcher.location"));
 		// this.setFileWatcherPollingDuration(Long.parseLong(props.getProperty("filewatcher.pollingDuration")));
 		this.setEmbyInstalled(Boolean.parseBoolean(props.getProperty("emby.installed")));
 		this.setEmbyApi(props.getProperty("emby.api"));

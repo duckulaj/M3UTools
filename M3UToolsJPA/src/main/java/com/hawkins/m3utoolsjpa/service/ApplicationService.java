@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,7 +27,12 @@ public class ApplicationService {
 				swUpdateDatabase.start();
 				
 				log.info("Running m3uService.resetDatabase() at startup");
-				m3uService.resetDatabase();
+				try {
+					m3uService.resetDatabase();
+				} catch (M3UItemsNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				swUpdateDatabase.stop();
 				log.info("m3uService.resetDatabase() took {}ms", swUpdateDatabase.getTotalTimeMillis());
