@@ -70,7 +70,7 @@ public class M3UService {
 		List<M3UItem> items = completableFutureService.reloadDatabase();
 		
 		if (items == null) {
-			throw new M3UItemsNotFoundException("No items found from M3UParser");
+			throw new M3UItemsNotFoundException("No items found from M3UParser, an error occured connecting to streaming service or content is malformed");
 		}
 		
 		if (items.size() > 0) {
