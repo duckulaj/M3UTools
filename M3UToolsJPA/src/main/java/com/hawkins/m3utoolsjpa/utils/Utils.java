@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
@@ -128,18 +129,17 @@ public class Utils {
 	public static void copyUrlToFileUsingCommonsIO(String url, String fileName) {
 
 		try {
-			FileUtils.copyURLToFile(new URL(url), new File(fileName), 40000, 30000);
+			FileUtils.copyURLToFile(new URL(url), new File(fileName), 180000, 600000);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("MalformedURLException - {}", e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			log.info("IOException - {}", e.getMessage());
+		} 
 	}
 	
 	public static void copyUrlToFileUsingNIO(String url, String fileName) throws IOException {
         URL nioUrl = new URL(url);
+		log.info("Retrieving file from {}", nioUrl.toString());
         
         // openStream(): Opens a connection to this URL and returns an InputStream for reading from that connection.
         ReadableByteChannel byteChannel = Channels.newChannel(nioUrl.openStream());

@@ -78,9 +78,6 @@ public class Parser {
 					}
 				}
 			}
-			
-			buffer.close();
-			
 		} catch (IOException e) {
 			throw new ParsingException(lineNbr, "Cannot read file", e);
 		} 
@@ -109,6 +106,11 @@ public class Parser {
 		String duration = extract(line, Patterns.DURATION_REGEX);
 		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
 		String tvgName = Utils.removeFromString((extract(line, Patterns.TVG_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
+		tvgName = Utils.removeFromString(tvgName, Patterns.FISHEYE_CHARACTER);
+		if (tvgName.lastIndexOf("|") > 0) {
+			tvgName = tvgName.substring(tvgName.lastIndexOf("|") + 1).trim();
+		}
+				
 		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
 		String radio = extract(line, Patterns.RADIO_REGEX);
 		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
@@ -116,15 +118,13 @@ public class Parser {
 		Long groupId = -1L;
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
 		channelName = Utils.removeFromString(channelName, Patterns.FISHEYE_CHARACTER);
-		tvgName = Utils.removeFromString(tvgName, Patterns.FISHEYE_CHARACTER);
-		tvgName = Utils.removeFromString(tvgName, Patterns.PIPED_COUNTRY);
-		channelName = Utils.removeFromString(channelName, Patterns.PIPED_COUNTRY);
-		
-		if (channelName.contains("|EN| ")) {
-			channelName = channelName.substring(5);
+		if (channelName.lastIndexOf("|") > 0) {
+			channelName = channelName.substring(channelName.lastIndexOf("|") + 1).trim();
 		}
 		
-		// Remove |EN|
+		
+		
+		
 		return new M3UItem(
 				duration,
 				groupTitle,

@@ -2,15 +2,19 @@ package com.hawkins.m3utoolsjpa.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -220,16 +224,42 @@ public class EpgService {
 
 		XmlMapper xm = XmltvUtils.createMapper();
 		XmltvDoc doc = new XmltvDoc();
+		
+		File epgFileOnDisk = new File(epgFile);
+		
+		boolean getRemoteEPG = false;
+		try {
+		    BasicFileAttributes attr = Files.readAttributes(epgFileOnDisk.toPath(), BasicFileAttributes.class);
+		    FileTime fileTime = attr.creationTime();
+		    Instant now = Instant.now();
+		    
+		    long diff = System.currentTimeMillis() - fileTime.toMillis();
+		    
+		    long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+		    log.info("epg.xml is {} minutes old", String.valueOf(minutes));
+		    
+		    if (minutes > 30) {
+		    	getRemoteEPG = true;
+		    }
+		} catch (IOException ex) {
+			log.info("File {} does not exist", epgFile);
+			getRemoteEPG = true;
+		}
 
 		try {
-			log.info("Retrieving EPG from remote source");
-			FileUtils.copyURLToFile(new URL(dp.getStreamXMLUrl()), new File(epgFile));
+			if (getRemoteEPG) {
+				String url = dp.getStreamXMLUrl();
+				log.info("Retrieving EPG from {}", url);
+				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
+				// Utils.copyUrlToFileUsingNIO(dp.getStreamXMLUrl(), epgFile);
+			}
+			
 			log.info("Reading epg.xml");
 			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
 		} catch (JsonParseException jpe) {
 			log.info("Error parsing {} , invalid xml format", epgFile);
 		} catch (IOException ioe) {
-			log.info("Error reading {}", epgFile);
+			log.info("Error reading {} - {}", epgFile, ioe.getMessage());
 		}
 
 		return doc;

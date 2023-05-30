@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.properties.SortedProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -167,10 +168,12 @@ public class M3UService {
 
 	public static OrderedProperties getOrderProperties() {
 
+		SortedProperties sortedProperties = new SortedProperties();
 		OrderedProperties properties = new OrderedProperties();
 		try {
 			properties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
 			properties = OrderedProperties.copyOf(properties);
+			sortedProperties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
