@@ -13,7 +13,7 @@ public class XmltvChannel {
 
     @JacksonXmlProperty(localName = "icon")
     private XmltvIcon icon;
-
+    
     public XmltvChannel() {
     }
 
@@ -53,4 +53,5 @@ public class XmltvChannel {
         this.icon = icon;
         return this;
     }
+
 }

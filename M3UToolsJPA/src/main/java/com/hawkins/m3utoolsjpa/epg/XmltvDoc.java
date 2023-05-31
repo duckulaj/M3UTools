@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.epg;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -39,6 +40,17 @@ public class XmltvDoc {
     public List<XmltvChannel> getChannels() {
         return channels;
     }
+    
+    public XmltvChannel getChannelsById(String tvgId) {
+    	
+    	XmltvChannel selectedChannel = channels.stream()
+    			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
+    			.findFirst()
+    			.get();
+    			
+    			
+        return selectedChannel;
+    }
 
     public XmltvDoc setChannels(List<XmltvChannel> channels) {
         this.channels = channels;
@@ -48,6 +60,17 @@ public class XmltvDoc {
     public List<XmltvProgramme> getProgrammes() {
         return programmes;
     }
+    
+    public List<XmltvProgramme> getProgrammesById(String tvgId) {
+    	
+    	List<XmltvProgramme> selectedProgrammes = programmes.stream()
+    			.filter(programme -> tvgId.equalsIgnoreCase(programme.getChannel()))
+    			.toList();
+    			
+    			
+        return selectedProgrammes;
+    }
+
 
     public XmltvDoc setProgrammes(List<XmltvProgramme> programmes) {
         this.programmes = programmes;
