@@ -3,6 +3,7 @@ package com.hawkins.m3utoolsjpa.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,7 @@ public class SelectedChannelService {
 			SelectedChannel channel = new SelectedChannel();
 			channel.setId(item.getId());
 			channel.setTvgName(item.getTvgName());
+			channel.setTvgId(item.getTvgId());
 			channel.setSelected(item.isSelected());
 			channels.add(channel);
 		});
@@ -68,6 +70,7 @@ public class SelectedChannelService {
 			SelectedChannel selectedChannel = new SelectedChannel();
 			selectedChannel.setId(channel.getId());
 			selectedChannel.setTvgName(channel.getTvgName());
+			selectedChannel.setTvgId(channel.getTvgId());
 			selectedChannel.setSelected(true);
 			selectedChannels.add(selectedChannel);
 		});
@@ -81,8 +84,10 @@ public class SelectedChannelService {
 			
 			if (channel.isSelected()) log.info("Channel {} IS selected", channel.getTvgName());
 			
-			itemRepository.updateSelected(channel.getId(), channel.isSelected());
-			AddOrUpdateTvChannel(channel);
+			if (!StringUtils.isBlank(channel.getTvgId())) {
+				itemRepository.updateSelected(channel.getTvgId(), channel.isSelected());
+				AddOrUpdateTvChannel(channel);
+			}
 		});
 	}
 

@@ -4,6 +4,8 @@ public class SelectedChannel {
 
     private long id;
 
+    private String tvgId;
+    
     private String tvgName;
 
     private boolean selected;
@@ -31,5 +33,13 @@ public class SelectedChannel {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
+	public String getTvgId() {
+		return tvgId;
+	}
+
+	public void setTvgId(String tvgId) {
+		this.tvgId = tvgId;
+	}
 
 }

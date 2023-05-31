@@ -63,8 +63,8 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
 	
 	@Transactional
 	@Modifying
-	@Query("update M3UItem m0 set m0.selected = :selected where m0.id = :id")
-	void updateSelected(@Param(value = "id") long id, @Param(value = "selected") boolean selected);
+	@Query("update M3UItem m0 set m0.selected = :selected where m0.tvgId = :tvgId")
+	void updateSelected(@Param(value = "tvgId") String tvgId, @Param(value = "selected") boolean selected);
 	
 	@Transactional
 	@Modifying

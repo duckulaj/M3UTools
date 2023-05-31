@@ -70,6 +70,7 @@
 						<thead>
 						<tr>
 							<th> Id</th>
+							<th> Tvg-Id</th>
 							<th> Title</th>
 							<th> Selected</th>
 						</tr>
@@ -77,6 +78,7 @@
 						<tbody>
 						<tr th:each="channel, itemStat : ${form.channels}">
 							<td><input th:name="|channels[${itemStat.index}].id|" th:value="${channel.getId()}"/></td>
+							<td><input th:name="|channels[${itemStat.index}].tvgId|" th:value="${channel.getTvgId()}"/></td>
 							<td><input th:size="30" th:placeholder="Name + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].tvgName|" th:value="${channel.getTvgName()}"
 									   required /></td>
 							<td><input type = "checkbox" th:placeholder="Selected + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].selected|"
