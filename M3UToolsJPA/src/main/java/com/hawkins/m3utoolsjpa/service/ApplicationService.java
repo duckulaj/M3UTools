@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,7 @@ public class ApplicationService {
 				StopWatch swUpdateDatabase = new org.springframework.util.StopWatch();
 				swUpdateDatabase.start();
 				
-				log.info("Running m3uService.resetDatabase() at startup");
+				log.info("Running m3uService.resetDatabase() at {}", Utils.printNow());
 				try {
 					m3uService.resetDatabase();
 				} catch (M3UItemsNotFoundException e) {
@@ -42,7 +43,7 @@ public class ApplicationService {
 				StopWatch swReadEPG = new org.springframework.util.StopWatch();
 				swReadEPG.start();
 				
-				log.info("Running epgService.readEPG() at startup");
+				log.info("Running epgService.readEPG() at {}", Utils.printNow());
 				epgService.readEPG();
 				
 				swReadEPG.stop();

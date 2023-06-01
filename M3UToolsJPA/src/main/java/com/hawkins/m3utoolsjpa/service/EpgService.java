@@ -234,7 +234,7 @@ public class EpgService {
 		    long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
 		    log.info("epg.xml is {} minutes old", String.valueOf(minutes));
 		    
-		    if (minutes > 30) {
+		    if (minutes > 120) {
 		    	getRemoteEPG = true;
 		    }
 		} catch (IOException ex) {
@@ -247,7 +247,7 @@ public class EpgService {
 				String url = dp.getStreamXMLUrl();
 				log.info("Retrieving EPG from {}", url);
 				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
-				// Utils.copyUrlToFileUsingNIO(dp.getStreamXMLUrl(), epgFile);
+				// Utils.copyUrlToFileUsingNIO(url, epgFile);
 			}
 			
 			log.info("Reading epg.xml");

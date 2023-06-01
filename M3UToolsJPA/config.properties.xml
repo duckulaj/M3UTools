@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<entry key="stream.channels">http://line.mytv-ultra.com/get.php?username=9CD702&amp;password=22C122&amp;type=m3u_plus&amp;output=mpegts</entry>
+<entry key="stream.channels">http://line.rs6ott.com/get.php?username=67fd714f8e5b&amp;password=fa1262f6aaa7&amp;type=m3u_plus&amp;output=mpegts</entry>
 <entry key="fileName">./config.properties</entry>
-<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="fullM3U">./allChannels.m3u</entry>
+<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
 <entry key="xteve.url">http://localhost:34400/api/</entry>
 <entry key="xteve.installed">true</entry>
@@ -19,5 +19,5 @@
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="xteve.user">duckulaj</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
-<entry key="stream.playlist">http://line.mytv-ultra.com/xmltv.php?username=9CD702&amp;password=22C122</entry>
+<entry key="stream.playlist">http://line.rs6ott.com/xmltv.php?username=67fd714f8e5b&amp;password=fa1262f6aaa7</entry>
 </properties>

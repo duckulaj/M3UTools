@@ -40,7 +40,7 @@ public class ScheduledTasks {
 	}
 
 		
-	@Scheduled(cron = "0 0 0/4 ? * *") // Every four hours 
+	@Scheduled(cron = "0 0 0/6 ? * *") // Every four hours 
 	public void updateApplication() {
 
 		applicationService.runAtStartup();
