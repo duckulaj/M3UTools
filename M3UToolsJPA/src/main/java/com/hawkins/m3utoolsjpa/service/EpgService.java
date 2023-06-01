@@ -7,16 +7,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +48,6 @@ public class EpgService {
 
 		log.info("readEPG started at {}", Utils.printNow());
 
-		// String epgFile = Constants.EPG_XML;
-
 		List<XmltvChannel> selectedXmltvChannels = new ArrayList<XmltvChannel>();
 		List<XmltvProgramme> selectedXmltvProgrammes = new ArrayList<XmltvProgramme>();
 		XmltvDoc selectedXmltvDoc = new XmltvDoc();
@@ -76,28 +71,19 @@ public class EpgService {
 			log.info("Starting combinedFuture.get() at {}", Utils.printNow());
 			combinedFuture.get();
 		} catch (InterruptedException | ExecutionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		if (combinedFuture.isDone())
-
-
 			try {
 				doc = xmlTvDoc.get();
 				m3uItems = m3UItems.get();
 				log.info("Number of M3UItems = {}", m3UItems.get().size());
 			} catch (InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-
-
-
-
 		// Now that we have the XmltvDoc we can extract the channels that we have selected
-
 
 		List<XmltvChannel> xmltvChannels = doc.getChannels();
 		List<XmltvProgramme> xmltvProgrammes = doc.getProgrammes();
@@ -118,12 +104,10 @@ public class EpgService {
 			xmltvProgrammes = new ArrayList<XmltvProgramme>();
 		}
 
-
 		// We need to ensure that the tvg-id in the epg matches the tvg-id for the m3u Item
 		for (M3UItem m3uItem : m3uItems) {
 			
 			XmltvChannel foundByStream = doc.getChannelsById(m3uItem.getTvgId());
-						 
 			selectedXmltvChannels.add(foundByStream);
 			 
 		}
@@ -145,19 +129,6 @@ public class EpgService {
 			}
 		}
 
-
-		/*
-		 * MultiValuedMap<String, XmltvProgramme> programmesMap =
-		 * programmeListToMap(xmltvProgrammes);
-		 * 
-		 * for (XmltvChannel channel : selectedXmltvChannels) { if
-		 * (StringUtils.isNotEmpty(channel.getId())) {
-		 * 
-		 * selectedXmltvProgrammes.addAll(programmesMap.get(channel.getId()));
-		 * 
-		 * } }
-		 */
-
 		log.info("Found {} programmes", selectedXmltvProgrammes.size());
 
 		selectedXmltvDoc.setGeneratorName(doc.getGeneratorName());
@@ -176,7 +147,6 @@ public class EpgService {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			log.info("readEPG finished at {}", Utils.printNow());
@@ -260,6 +230,5 @@ public class EpgService {
 
 		return doc;
 	}
-
 
 }

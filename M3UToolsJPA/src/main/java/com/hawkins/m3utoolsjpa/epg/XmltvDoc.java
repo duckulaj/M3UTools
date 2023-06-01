@@ -64,7 +64,7 @@ public class XmltvDoc {
     public List<XmltvProgramme> getProgrammesById(String tvgId) {
     	
     	List<XmltvProgramme> selectedProgrammes = programmes.stream()
-    			.filter(programme -> tvgId.equalsIgnoreCase(programme.getChannel()))
+    			.filter(programme -> tvgId.equals(programme.getChannel()))
     			.toList();
     			
     			
