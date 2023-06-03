@@ -85,7 +85,7 @@ public class SelectedChannelService {
 			if (channel.isSelected()) log.info("Channel {} IS selected", channel.getTvgName());
 			
 			if (!StringUtils.isBlank(channel.getTvgId())) {
-				itemRepository.updateSelected(channel.getTvgId(), channel.isSelected());
+				itemRepository.updateSelected(channel.getTvgId(), channel.getTvgName(), channel.isSelected());
 				AddOrUpdateTvChannel(channel);
 			}
 		});
@@ -95,11 +95,11 @@ public class SelectedChannelService {
 
 		Long newChannelNumber;
 
-		log.debug("Finding channel(M3UItem) {}", channel.getTvgName());
+		log.debug("Finding channel(M3UItem) {}", channel.getTvgId());
 
 		try {
-			List<M3UItem> items = itemRepository.findListByChannelName(channel.getTvgName());
-
+			List<M3UItem> items = itemRepository.findByTvgIdAndTvgName(channel.getTvgId(), channel.getTvgName());
+			
 			if (items.size() > 0) {
 				M3UItem thisItem = items.get(0);
 
@@ -116,16 +116,19 @@ public class SelectedChannelService {
 							thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(),
 							thisItem.getChannelUri());
 					tvChannelRepository.save(newChannel);
-					thisItem.setTvgChNo(newChannel.getTvgChNo());
-					thisItem.setSelected(true);
-					itemRepository.save(thisItem);
+					// itemRepository.updateTvgChNo(thisItem.getId(), newChannel.getTvgChNo());
+					// thisItem.setTvgChNo(newChannel.getTvgChNo());
+					// thisItem.setSelected(true);
+					// itemRepository.save(thisItem);
 				} else {
 					if (!channel.isSelected()) {
 						if (tvChannel != null) {
+							itemRepository.updateTvgChNo(thisItem.getId(), "");
+							itemRepository.updateSelected(tvChannel.getTvgId(), tvChannel.getTvgName(), false);
 							tvChannelRepository.delete(tvChannel);
-							thisItem.setTvgChNo("");
-							thisItem.setSelected(false);
-							itemRepository.save(thisItem);
+							// thisItem.setTvgChNo("");
+							// thisItem.setSelected(false);
+							// itemRepository.save(thisItem);
 						}
 					}
 				}

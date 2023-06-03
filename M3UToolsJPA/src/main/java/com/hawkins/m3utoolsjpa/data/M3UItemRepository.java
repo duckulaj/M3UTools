@@ -25,6 +25,10 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
 
 	List<M3UItem> findByTvgName(String tvgName);
 	
+	List<M3UItem> findByTvgId(String tvgId);
+	
+	List<M3UItem> findByTvgIdAndTvgName(String tvgId, String tvgName);
+	
 	Page<M3UItem> findByGroupTitle(String groupTitle, Pageable pageable);
 
 	Page<M3UItem> findByGroupId(Long groupId, Pageable pageable);
@@ -63,8 +67,8 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
 	
 	@Transactional
 	@Modifying
-	@Query("update M3UItem m0 set m0.selected = :selected where m0.tvgId = :tvgId")
-	void updateSelected(@Param(value = "tvgId") String tvgId, @Param(value = "selected") boolean selected);
+	@Query("update M3UItem m0 set m0.selected = :selected where m0.tvgId = :tvgId and m0.tvgName = :tvgName")
+	void updateSelected(@Param(value = "tvgId") String tvgId, @Param(value = "tvgName") String tvgName, @Param(value = "selected") boolean selected);
 	
 	@Transactional
 	@Modifying
