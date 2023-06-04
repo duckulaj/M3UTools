@@ -41,15 +41,25 @@ public class XmltvDoc {
         return channels;
     }
     
-    public XmltvChannel getChannelsById(String tvgId) {
+    public XmltvChannel getChannelsByIdAndName(String tvgId, String tvgName) {
     	
     	XmltvChannel selectedChannel = channels.stream()
     			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
+    			.filter(channel -> tvgName.equals(normalisedDisplayName(channel)))
     			.findFirst()
     			.get();
     			
     			
         return selectedChannel;
+    }
+    
+    private String normalisedDisplayName(XmltvChannel channel) {
+    	
+    	String normalisedName = channel.getDisplayNames().get(0).getText();
+    	int pipePosition = normalisedName.lastIndexOf("|");
+    	normalisedName = normalisedName.substring(pipePosition + 1).trim();
+    	
+    	return normalisedName;
     }
 
     public XmltvDoc setChannels(List<XmltvChannel> channels) {

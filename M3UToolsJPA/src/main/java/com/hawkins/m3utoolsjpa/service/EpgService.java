@@ -107,7 +107,7 @@ public class EpgService {
 		// We need to ensure that the tvg-id in the epg matches the tvg-id for the m3u Item
 		for (M3UItem m3uItem : m3uItems) {
 			
-			XmltvChannel foundByStream = doc.getChannelsById(m3uItem.getTvgId());
+			XmltvChannel foundByStream = doc.getChannelsByIdAndName(m3uItem.getTvgId(), m3uItem.getTvgName());
 			selectedXmltvChannels.add(foundByStream);
 			 
 		}
