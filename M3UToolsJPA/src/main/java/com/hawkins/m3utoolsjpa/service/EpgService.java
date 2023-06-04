@@ -108,7 +108,8 @@ public class EpgService {
 		for (M3UItem m3uItem : m3uItems) {
 			
 			XmltvChannel foundByStream = doc.getChannelsByIdAndName(m3uItem.getTvgId(), m3uItem.getTvgName());
-			selectedXmltvChannels.add(foundByStream);
+			
+			if (foundByStream != null) selectedXmltvChannels.add(foundByStream);
 			 
 		}
 

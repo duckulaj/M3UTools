@@ -1,7 +1,7 @@
 package com.hawkins.m3utoolsjpa.epg;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -43,14 +43,21 @@ public class XmltvDoc {
     
     public XmltvChannel getChannelsByIdAndName(String tvgId, String tvgName) {
     	
-    	XmltvChannel selectedChannel = channels.stream()
-    			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
-    			.filter(channel -> tvgName.equals(normalisedDisplayName(channel)))
-    			.findFirst()
-    			.get();
+    	try {
+	    	XmltvChannel selectedChannel = channels.stream()
+	    			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
+	    			.filter(channel -> tvgName.equals(normalisedDisplayName(channel)))
+	    			.findFirst()
+	    			.get();
+	    	
+	    	return selectedChannel;
+	    	
+    	} catch (NoSuchElementException nsee) {
+    		
+    		return null;
+    	}
     			
-    			
-        return selectedChannel;
+        
     }
     
     private String normalisedDisplayName(XmltvChannel channel) {
