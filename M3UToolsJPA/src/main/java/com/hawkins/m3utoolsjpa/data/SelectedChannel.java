@@ -6,6 +6,8 @@ public class SelectedChannel {
 
     private String tvgId;
     
+    private String groupId;
+    
     private String tvgName;
 
     private boolean selected;
@@ -40,6 +42,14 @@ public class SelectedChannel {
 
 	public void setTvgId(String tvgId) {
 		this.tvgId = tvgId;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 }

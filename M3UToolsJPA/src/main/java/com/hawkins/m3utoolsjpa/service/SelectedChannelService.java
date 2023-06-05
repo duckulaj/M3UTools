@@ -50,6 +50,7 @@ public class SelectedChannelService {
 		items.forEach(item -> {
 			SelectedChannel channel = new SelectedChannel();
 			channel.setId(item.getId());
+			channel.setGroupId(String.valueOf(item.getGroupId()));
 			channel.setTvgName(item.getTvgName());
 			channel.setTvgId(item.getTvgId());
 			channel.setSelected(item.isSelected());
@@ -69,6 +70,7 @@ public class SelectedChannelService {
 		channels.forEach(channel -> {
 			SelectedChannel selectedChannel = new SelectedChannel();
 			selectedChannel.setId(channel.getId());
+			selectedChannel.setGroupId(String.valueOf(channel.getGroupId()));
 			selectedChannel.setTvgName(channel.getTvgName());
 			selectedChannel.setTvgId(channel.getTvgId());
 			selectedChannel.setSelected(true);
@@ -85,7 +87,7 @@ public class SelectedChannelService {
 			if (channel.isSelected()) log.info("Channel {} IS selected", channel.getTvgName());
 			
 			if (!StringUtils.isBlank(channel.getTvgId())) {
-				itemRepository.updateSelected(channel.getTvgId(), channel.getTvgName(), channel.isSelected());
+				itemRepository.updateSelected(channel.getTvgId(), channel.getGroupId(), channel.getTvgName(), channel.isSelected());
 				AddOrUpdateTvChannel(channel);
 			}
 		});
@@ -112,7 +114,7 @@ public class SelectedChannelService {
 						newChannelNumber = tvChannelRepository.getMaxChannelNumber() + 1L;
 					}
 
-					TvChannel newChannel = new TvChannel(newChannelNumber, newChannelNumber.toString(),
+					TvChannel newChannel = new TvChannel(newChannelNumber, thisItem.getGroupId(), newChannelNumber.toString(),
 							thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(),
 							thisItem.getChannelUri());
 					tvChannelRepository.save(newChannel);
@@ -124,7 +126,7 @@ public class SelectedChannelService {
 					if (!channel.isSelected()) {
 						if (tvChannel != null) {
 							itemRepository.updateTvgChNo(thisItem.getId(), "");
-							itemRepository.updateSelected(tvChannel.getTvgId(), tvChannel.getTvgName(), false);
+							itemRepository.updateSelected(tvChannel.getTvgId(), String.valueOf(tvChannel.getGroupId()), tvChannel.getTvgName(), false);
 							tvChannelRepository.delete(tvChannel);
 							// thisItem.setTvgChNo("");
 							// thisItem.setSelected(false);

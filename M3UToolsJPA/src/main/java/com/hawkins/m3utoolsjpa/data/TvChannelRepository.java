@@ -18,6 +18,8 @@ public interface TvChannelRepository extends JpaRepository<TvChannel, Long> {
 	
 	List<TvChannel> findAll();
 	
+	List<TvChannel> findByGroupId(String groupId);
+	
 
 	@Transactional(readOnly = true)
 	@Query("SELECT MAX(m0.channelID) FROM TvChannel m0")

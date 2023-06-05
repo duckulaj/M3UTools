@@ -24,6 +24,7 @@ public class TvChannel {
 	@GeneratedValue(generator = "tvChannelSequenceGenerator")
 	private Long id;
 	public Long channelID;
+	public Long groupId;
 	public String tvgChNo;
 	public String tvgName;
 	public String tvgId;
@@ -37,10 +38,11 @@ public class TvChannel {
 		super();
 	}
 
-	public TvChannel(Long channelID, String tvgChNo, String tvgName, String tvgId, String tvgLogo, String groupTitle,
+	public TvChannel(Long channelID, Long groupId, String tvgChNo, String tvgName, String tvgId, String tvgLogo, String groupTitle,
 			String tvgUrl) {
 		super();
 		this.channelID = channelID;
+		this.groupId = groupId;
 		this.tvgChNo = tvgChNo;
 		this.tvgName = tvgName;
 		this.tvgId = tvgId;
@@ -63,6 +65,14 @@ public class TvChannel {
 
 	public void setChannelID(Long channelID) {
 		this.channelID = channelID;
+	}
+
+	public Long getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Long groupId) {
+		this.groupId = groupId;
 	}
 
 	public String getTvgChNo() {
@@ -115,7 +125,7 @@ public class TvChannel {
 
 	@Override
 	public String toString() {
-		return "TvChannel [channelID=" + channelID + ", tvgChNo=" + tvgChNo + ", tvgName=" + tvgName + ", tvgId="
+		return "TvChannel [channelID=" + channelID + ", groupId=" + groupId + ", tvgChNo=" + tvgChNo + ", tvgName=" + tvgName + ", tvgId="
 				+ tvgId + ", tvgLogo=" + tvgLogo + ", groupTitle=" + groupTitle + ", tvgUrl=" + tvgUrl + "]";
 	}
 	

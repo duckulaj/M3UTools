@@ -43,6 +43,8 @@ public class XmltvDoc {
     
     public XmltvChannel getChannelsByIdAndName(String tvgId, String tvgName) {
     	
+    	if (this.channels != null && channels.isEmpty()) return null;
+    	
     	try {
 	    	XmltvChannel selectedChannel = channels.stream()
 	    			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
