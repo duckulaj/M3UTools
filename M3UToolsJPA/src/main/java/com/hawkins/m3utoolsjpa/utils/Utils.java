@@ -225,7 +225,7 @@ public class Utils {
 
 		startIndex = filmName.indexOf(':');
 		if (startIndex != -1) {
-			filmName = filmName.substring(startIndex + 1).trim();
+			filmName = filmName.replace(":", " ");
 		}
 
 		if (filmName.contains("(MULTISUB)")) {
