@@ -50,22 +50,19 @@ public class M3UtoStrmService {
 		 * 7. Create a an strm file for each episode within a season
 		 */
 
-		CompletableFuture<Void> createMovies = CompletableFuture.runAsync(() -> {
-			List<M3UItem> movies = m3uService.getM3UItemsByType(Constants.MOVIE);
-			log.info("{} Movies", movies.size());
+		List<M3UItem> movies = m3uService.getM3UItemsByType(Constants.MOVIE);
+		log.info("{} Movies", movies.size());
 			
-			createMovieFolders(movies, Constants.HD);
-			log.info("Created HD Movies folders");
-		});
-		
-		CompletableFuture<Void> createTVShows = CompletableFuture.runAsync(() -> {
-			List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
-			log.info("{} TV Shows", tvshows.size());
+		createMovieFolders(movies);
+		log.info("Created HD Movies folders");
+				
+		List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
+		log.info("{} TV Shows", tvshows.size());
 			
-			createTVshowFolders(tvshows);
-			log.info("Created TV Shows folders");
-		});
+		createTVshowFolders(tvshows);
+		log.info("Created TV Shows folders");
 		
+				
 	}
 
 
@@ -130,7 +127,7 @@ public class M3UtoStrmService {
 		return items.stream().filter( predicate ).collect(Collectors.<M3UItem>toList());
 	}
 
-	public static void createMovieFolders (List<M3UItem> movies, String type) {
+	public static void createMovieFolders (List<M3UItem> movies) {
 
 		if (log.isDebugEnabled()) {
 			log.debug("Starting createMovieFolders");
@@ -143,16 +140,16 @@ public class M3UtoStrmService {
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Processing {} movies of type {}", movies.size(),type);
+			log.debug("Processing {} movies", movies.size());
 		}
-		makeMovieFolders(movies, type);
+		makeMovieFolders(movies);
 
 	}
 
 	public static void createTVshowFolders (List<M3UItem> tvshows) {
 
 		if (log.isDebugEnabled()) {
-			log.debug("Starting createMovieFolders");
+			log.debug("Starting createTVshowFolders");
 		}
 
 		deleteFolder(Constants.FOLDER_TVSHOWS);
@@ -228,9 +225,9 @@ public class M3UtoStrmService {
 
 		File newDirectory = new File(baseDirectory + folder);
 
-		if (newDirectory.exists()) {
-			deleteFolder(newDirectory.getAbsolutePath());
-		}
+		// if (newDirectory.exists()) {
+		// 	deleteFolder(newDirectory.getAbsolutePath());
+		// }
 
 		newDirectory.mkdir();
 
@@ -256,7 +253,7 @@ public class M3UtoStrmService {
 		
 	}
 
-	public static void makeMovieFolders(List<M3UItem> movies, String type) {
+	public static void makeMovieFolders(List<M3UItem> movies) {
 
 		String movieFolder = createFolder(Constants.FOLDER_MOVIES) + File.separator;
 		
