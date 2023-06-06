@@ -1,7 +1,6 @@
 package com.hawkins.m3utoolsjpa.controller;
 
 import java.net.URL;
-import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 // import org.springframework.mobile.device.Device;
 // import org.springframework.mobile.device.site.SitePreference;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -43,12 +41,6 @@ public class DownloadController {
 	@Qualifier("taskExecutor")
 	@Autowired
 	private ThreadPoolTaskExecutor myExecutor;
-
-	@Autowired
-	private SimpMessagingTemplate template;
-
-	private int jobNumber;
-	private LinkedList<DownloadJob> myDownloadList = new LinkedList<DownloadJob>();
 
 	@Autowired
 	private DownloadService downloadService;

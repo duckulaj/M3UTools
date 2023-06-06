@@ -3,9 +3,6 @@ package com.hawkins.m3utoolsjpa.regex;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class RegexUtils {
 
 public static boolean containsRegex(String stringToTest, Pattern pattern) {

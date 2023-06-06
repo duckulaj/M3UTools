@@ -3,6 +3,7 @@ package com.hawkins.m3utoolsjpa.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -41,9 +42,15 @@ public class Parser {
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 		
-		try { URL m3uUrl = new  URL(dp.getStreamChannels());
-	        BufferedReader buffer = new BufferedReader(new InputStreamReader(m3uUrl.openStream()));		
-			
+		URL m3uUrl = null;
+		try {
+			m3uUrl = new  URL(dp.getStreamChannels());
+		} catch (MalformedURLException e) {
+			throw new ParsingException(lineNbr, "Cannot open URL", e);
+		}
+		
+		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(m3uUrl.openStream()))) {
+			 
 			line = buffer.readLine();
 			if (line == null) {
 				throw new ParsingException(0, "Empty stream");

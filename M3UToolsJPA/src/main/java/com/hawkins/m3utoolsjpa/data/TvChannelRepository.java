@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.data;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface TvChannelRepository extends JpaRepository<TvChannel, Long> {
 
-	TvChannel findById(String id);
+	Optional<TvChannel> findById(Long id);
 	
 	TvChannel findByTvgName(String tvgName);
 	
@@ -18,7 +19,7 @@ public interface TvChannelRepository extends JpaRepository<TvChannel, Long> {
 	
 	List<TvChannel> findAll();
 	
-	List<TvChannel> findByGroupId(String groupId);
+	List<TvChannel> findByGroupId(Long groupId);
 	
 
 	@Transactional(readOnly = true)

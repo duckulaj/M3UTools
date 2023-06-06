@@ -5,15 +5,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -154,35 +151,7 @@ public class EpgService {
 		}
 	}
 
-	private MultiValuedMap<String, XmltvChannel> channelListToMap(List<XmltvChannel> xmltvChannels) {
-
-		MultiValuedMap<String, XmltvChannel> xmltvChannelsMap = new ArrayListValuedHashMap<>();
-
-		if (xmltvChannels != null) {
-			for (XmltvChannel channel : xmltvChannels) {
-
-				xmltvChannelsMap.put(channel.getId(), channel);
-			}
-
-		}
-
-		return xmltvChannelsMap;
-	}
-
-	private MultiValuedMap<String, XmltvProgramme> programmeListToMap(List<XmltvProgramme> xmltvProgrammes) {
-
-		MultiValuedMap<String, XmltvProgramme> xmltvProgrammesMap = new ArrayListValuedHashMap<>();
-
-		if (xmltvProgrammes != null) {
-			for (XmltvProgramme programme : xmltvProgrammes) {
-
-				xmltvProgrammesMap.put(programme.getChannel(), programme);
-			}
-		}
-
-		return xmltvProgrammesMap;
-	}
-
+	
 	public XmltvDoc getXmlTvDoc() {
 
 		// Make the call to this a CompletableFuture
@@ -198,8 +167,7 @@ public class EpgService {
 		try {
 		    BasicFileAttributes attr = Files.readAttributes(epgFileOnDisk.toPath(), BasicFileAttributes.class);
 		    FileTime fileTime = attr.creationTime();
-		    Instant now = Instant.now();
-		    
+		    		    
 		    long diff = System.currentTimeMillis() - fileTime.toMillis();
 		    
 		    long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);

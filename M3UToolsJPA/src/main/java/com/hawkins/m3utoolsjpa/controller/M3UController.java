@@ -28,9 +28,7 @@ import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Controller
 public class M3UController {
 

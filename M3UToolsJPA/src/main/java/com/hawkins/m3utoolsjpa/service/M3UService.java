@@ -101,7 +101,7 @@ public class M3UService {
 		log.info("Found {} selected TvChannels", IterableUtils.size(tvChannels));
 		
 		for (TvChannel tvChannel : tvChannels) {
-			List<M3UItem> theseItems = itemRepository.findByTvgName(tvChannel.getTvgName());
+			List<M3UItem> theseItems = itemRepository.findByTvgIdAndTvgName(tvChannel.getTvgId(), tvChannel.getTvgName());
 			for (M3UItem item : theseItems) {
 				if (item != null) {
 					item.setSelected(true);
