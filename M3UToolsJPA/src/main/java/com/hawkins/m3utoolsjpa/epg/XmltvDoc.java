@@ -82,6 +82,8 @@ public class XmltvDoc {
     
     public List<XmltvProgramme> getProgrammesById(String tvgId) {
     	
+    	if (this.programmes == null) return null;
+    	
     	List<XmltvProgramme> selectedProgrammes = programmes.stream()
     			.filter(programme -> tvgId.equals(programme.getChannel()))
     			.toList();

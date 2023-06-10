@@ -116,14 +116,17 @@ public class EpgService {
 			for (XmltvChannel channel : selectedXmltvChannels) {
 				
 				List<XmltvProgramme> foundByStream = doc.getProgrammesById(channel.getId());
-				for (XmltvProgramme xmltvProgramme : foundByStream) { 
-					xmltvProgramme.setChannel(channel.getId()); 
-					xmltvProgramme.setIcon(new XmltvIcon("", "", "")); xmltvProgramme.setCredits("");
-					xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
-					xmltvProgramme.setStart(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString()));
-					xmltvProgramme.setStop(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString())); 
-					selectedXmltvProgrammes.add(xmltvProgramme); 
-				} 
+				
+				if (foundByStream != null) {
+					for (XmltvProgramme xmltvProgramme : foundByStream) { 
+						xmltvProgramme.setChannel(channel.getId()); 
+						xmltvProgramme.setIcon(new XmltvIcon("", "", "")); xmltvProgramme.setCredits("");
+						xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
+						xmltvProgramme.setStart(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString()));
+						xmltvProgramme.setStop(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString())); 
+						selectedXmltvProgrammes.add(xmltvProgramme); 
+					} 
+				}
 			}
 		}
 
