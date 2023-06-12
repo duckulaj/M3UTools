@@ -176,7 +176,7 @@ public class EpgService {
 		    long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
 		    log.info("epg.xml is {} minutes old", String.valueOf(minutes));
 		    
-		    if (minutes > 120) {
+		    if (minutes > 720) {
 		    	getRemoteEPG = true;
 		    }
 		} catch (IOException ex) {

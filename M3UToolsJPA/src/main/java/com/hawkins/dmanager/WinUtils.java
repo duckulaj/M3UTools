@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.hawkins.dmanager.util.DManagerUtils;
-import com.hawkins.dmanager.win32.NativeMethods;
+import com.hawkins.m3utoolsjpa.utils.NativeMethods;
 
 import lombok.extern.slf4j.Slf4j;
 
