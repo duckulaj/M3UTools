@@ -13,12 +13,16 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
@@ -337,5 +341,23 @@ public class Utils {
 
 		return url;
 
+	}
+	
+	public static boolean fileOlderThan(File fileName, int ageInMinutes) throws IOException {
+		
+		BasicFileAttributes attr = Files.readAttributes(fileName.toPath(), BasicFileAttributes.class);
+	    FileTime fileTime = attr.creationTime();
+	    		    
+	    long diff = System.currentTimeMillis() - fileTime.toMillis();
+	    
+	    long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+	    log.info("{} is {} minutes old", fileName.toString(), String.valueOf(minutes));
+	    
+	    if (minutes > ageInMinutes) {
+	    	return true;
+	    } else {
+	    	return false;
+	    }
+	    
 	}
 }

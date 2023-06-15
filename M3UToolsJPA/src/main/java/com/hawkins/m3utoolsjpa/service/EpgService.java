@@ -168,17 +168,7 @@ public class EpgService {
 		
 		boolean getRemoteEPG = false;
 		try {
-		    BasicFileAttributes attr = Files.readAttributes(epgFileOnDisk.toPath(), BasicFileAttributes.class);
-		    FileTime fileTime = attr.creationTime();
-		    		    
-		    long diff = System.currentTimeMillis() - fileTime.toMillis();
-		    
-		    long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
-		    log.info("epg.xml is {} minutes old", String.valueOf(minutes));
-		    
-		    if (minutes > 720) {
-		    	getRemoteEPG = true;
-		    }
+		    getRemoteEPG = Utils.fileOlderThan(epgFileOnDisk, 720);
 		} catch (IOException ex) {
 			log.info("File {} does not exist", epgFile);
 			getRemoteEPG = true;

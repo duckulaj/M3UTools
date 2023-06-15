@@ -1,6 +1,8 @@
 package com.hawkins.m3utoolsjpa.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -42,14 +44,28 @@ public class Parser {
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 		
+		boolean getRemoteM3U = false;
 		URL m3uUrl = null;
+		File m3uFileOnDisk = new File(Constants.M3U_FILE);
+		
 		try {
 			m3uUrl = new  URL(dp.getStreamChannels());
+			
+			try {
+			    getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, 720);
+			} catch (IOException ex) {
+				log.info("File {} does not exist", m3uFileOnDisk);
+				getRemoteM3U = true;
+			}
 		} catch (MalformedURLException e) {
 			throw new ParsingException(lineNbr, "Cannot open URL", e);
 		}
 		
-		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(m3uUrl.openStream()))) {
+		if (getRemoteM3U) {
+			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
+		}
+		
+		try (BufferedReader buffer = new BufferedReader(new FileReader(m3uFileOnDisk))) {
 			 
 			line = buffer.readLine();
 			if (line == null) {
