@@ -168,7 +168,7 @@ public class EpgService {
 		
 		boolean getRemoteEPG = false;
 		try {
-		    getRemoteEPG = Utils.fileOlderThan(epgFileOnDisk, 720);
+		    getRemoteEPG = Utils.fileOlderThan(epgFileOnDisk, dp.getFileAgeEPG());
 		} catch (IOException ex) {
 			log.info("File {} does not exist", epgFile);
 			getRemoteEPG = true;

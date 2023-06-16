@@ -52,7 +52,7 @@ public class Parser {
 			m3uUrl = new  URL(dp.getStreamChannels());
 			
 			try {
-			    getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, 720);
+			    getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
 			} catch (IOException ex) {
 				log.info("File {} does not exist", m3uFileOnDisk);
 				getRemoteM3U = true;

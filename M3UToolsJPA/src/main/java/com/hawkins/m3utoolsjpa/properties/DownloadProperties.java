@@ -45,6 +45,8 @@ public class DownloadProperties implements Runnable {
 	private String fileName = null;
 	private String streamXMLUrl = null;
 	private String streamChannels = null;
+	private int fileAgeM3U = 1;
+	private int fileAgeEPG = 1;
 	
 	public DownloadProperties() {
 
@@ -80,7 +82,8 @@ public class DownloadProperties implements Runnable {
 		this.setFileName(props.getProperty("fileName"));
 		this.setStreamXMLUrl(props.getProperty(Constants.STREAM_PLAYLIST));
 		this.setStreamChannels(props.getProperty(Constants.STREAM_CHANNELS));
-		
+		this.setFileAgeEPG(Integer.valueOf(props.getProperty("fileAge.epg")));
+		this.setFileAgeM3U(Integer.valueOf(props.getProperty("fileAge.m3u")));
 		
 	}
 
@@ -323,6 +326,22 @@ public class DownloadProperties implements Runnable {
 
 	public void setStreamChannels(String streamChannels) {
 		this.streamChannels = streamChannels;
+	}
+
+	public int getFileAgeM3U() {
+		return fileAgeM3U;
+	}
+
+	public void setFileAgeM3U(int fileAgeM3U) {
+		this.fileAgeM3U = fileAgeM3U;
+	}
+
+	public int getFileAgeEPG() {
+		return fileAgeEPG;
+	}
+
+	public void setFileAgeEPG(int fileAgeEPG) {
+		this.fileAgeEPG = fileAgeEPG;
 	}
 	
 	

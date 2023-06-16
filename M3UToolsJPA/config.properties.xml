@@ -3,8 +3,9 @@
 <properties>
 <entry key="stream.channels">http://line.rs6ott.com/get.php?username=67fd714f8e5b&amp;password=fa1262f6aaa7&amp;type=m3u_plus&amp;output=mpegts</entry>
 <entry key="fileName">./config.properties</entry>
-<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
+<entry key="fileAge.epg">1</entry>
 <entry key="fullM3U">./allChannels.m3u</entry>
+<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
 <entry key="xteve.url">http://localhost:34400/api/</entry>
 <entry key="xteve.installed">true</entry>
@@ -13,6 +14,7 @@
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/Downloads/</entry>
 <entry key="epg.time.difference">+0200</entry>
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
+<entry key="fileAge.m3u">60</entry>
 <entry key="emby.url">http://192.168.0.110:8096/emby/</entry>
 <entry key="moviedb.searchURL">https://api.themoviedb.org/3/search/movie</entry>
 <entry key="emby.installed">true</entry>
