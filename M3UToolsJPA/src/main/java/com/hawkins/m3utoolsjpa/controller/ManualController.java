@@ -10,6 +10,7 @@ import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.service.CompletableFutureService;
 import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
+import com.hawkins.m3utoolsjpa.utils.LoggerUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,14 @@ public class ManualController {
 	public ModelAndView completableFuture(ModelMap model) {
 		
 		completableFutureService.writeEPG();
+		
+		return new ModelAndView("forward:/", model);
+	}
+	
+	@GetMapping("setLogLevel")
+	public ModelAndView setLogLevel(ModelMap model) {
+		
+		LoggerUtils.updateLogLevel("debug");
 		
 		return new ModelAndView("forward:/", model);
 	}
