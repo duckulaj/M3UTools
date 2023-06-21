@@ -79,7 +79,7 @@ public class ManualController {
 	@GetMapping("setLogLevel")
 	public ModelAndView setLogLevel(ModelMap model) {
 		
-		LoggerUtils.updateLogLevel("debug");
+		LoggerUtils.updateLogLevel("info");
 		
 		return new ModelAndView("forward:/", model);
 	}

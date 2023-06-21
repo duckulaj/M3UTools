@@ -50,9 +50,13 @@ public class EpgReader {
 		 * log.info("DateTimeParserEception for String {}", timeString); timeString =
 		 * defaultZonedDateTime.toString(); }
 		 */
-		int plusPos = timeString.lastIndexOf("+");
-
-		timeString = timeString.substring(0, plusPos) + epgTimeDifference;
+		int position = timeString.lastIndexOf("+");
+		
+		if  (position < 0) position = timeString.lastIndexOf("-");
+		
+		if (position < 0) return timeString;
+		
+		timeString = timeString.substring(0, position) + epgTimeDifference;
 		
 		// String updatedTimeString = timeString.replace("+0000", epgTimeDifference);
 		
