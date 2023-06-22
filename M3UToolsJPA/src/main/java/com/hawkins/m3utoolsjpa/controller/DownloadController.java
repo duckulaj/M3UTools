@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 // import org.springframework.mobile.device.Device;
@@ -25,7 +26,9 @@ import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.service.DownloadService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileDownloadUtil;
 import com.hawkins.m3utoolsjpa.utils.NetUtils;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -84,16 +87,28 @@ public class DownloadController {
 	}
 	
 	@GetMapping(value ="downloadLocal", params = { "name" })
-    public ResponseEntity<Resource> downloadLocal(@RequestParam String name, HttpServletRequest request) {
-
-		Resource resource = downloadService.loadFileAsResource(name);
+    // public ResponseEntity<Resource> downloadLocal(@RequestParam String name, HttpServletRequest request, HttpServletResponse response) {
+		public void downloadLocal(@RequestParam String name, HttpServletRequest request, HttpServletResponse response) {
+		// Resource resource = downloadService.loadFileAsResource(name);
+		
+		
+		String savedFileName = name;
+		// remove any file extension
+		name = name.substring(0, name.lastIndexOf("."));
+		
+		
 		String contentType = null;
         Long contentSize = 0L;
+        Resource resource  = null;
         
         try {
-            URL url = resource.getURL();
-            contentType = NetUtils.getContentTypeFromUrl(url);
+            // URL url = resource.getURL();
+        	URL url = new URL(Utils.getURLFromName(name, m3uItemRepository));
+        	resource = new UrlResource(url.toURI());
+        	contentType = NetUtils.getContentTypeFromUrl(url);
             contentSize = NetUtils.getContentSizeFromUrl(url);
+            
+            FileDownloadUtil.downloadFile(response, url, savedFileName, contentType);
         } catch (Exception ex) {
             log.info("Could not determine file type.");
         }
@@ -104,13 +119,17 @@ public class DownloadController {
         }
         
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, contentType);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
+        // headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/x-download");
+        
+        // headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + savedFileName + "\"");
         headers.add(HttpHeaders.CONTENT_LENGTH, contentSize.toString()); 
         headers.add("Pragma", "no-cache");
         headers.add("Cache-Control", "no-cache");
-        return ResponseEntity.ok().headers(headers).body(resource);
+        // return ResponseEntity.ok().headers(headers).body(resource);
 
+        
     }
 	
 	
