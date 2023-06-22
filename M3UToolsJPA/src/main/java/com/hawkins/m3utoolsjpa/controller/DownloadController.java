@@ -108,7 +108,7 @@ public class DownloadController {
         	contentType = NetUtils.getContentTypeFromUrl(url);
             contentSize = NetUtils.getContentSizeFromUrl(url);
             
-            FileDownloadUtil.downloadFile(response, url, savedFileName, contentType);
+            FileDownloadUtil.downloadFile(response, url, savedFileName, contentType, contentSize);
         } catch (Exception ex) {
             log.info("Could not determine file type.");
         }
@@ -130,6 +130,42 @@ public class DownloadController {
         // return ResponseEntity.ok().headers(headers).body(resource);
 
         
+    }
+	
+	@GetMapping(value ="downloadDirect", params = { "name" })
+	public String downloadDirect(@RequestParam String name, HttpServletRequest request, HttpServletResponse response) {
+
+		String savedFileName = name;
+		// remove any file extension
+		// name = name.substring(0, name.lastIndexOf("."));
+				
+		String contentType = null;
+                
+        try {
+           	URL url = new URL(Utils.getURLFromName(name, m3uItemRepository));
+           	String fileExtension = url.toString().substring(url.toString().lastIndexOf("."));
+           	savedFileName = savedFileName + fileExtension;
+            contentType = NetUtils.getContentTypeFromUrl(url);
+            
+            FileDownloadUtil.downloadFile(response, url, savedFileName, contentType, NetUtils.getContentSizeFromUrl(url));
+        } catch (Exception ex) {
+            log.info("Could not determine file type.");
+        }
+
+        // Fallback to the default content type if type could not be determined
+		/*
+		 * if(contentType == null) { contentType = "application/octet-stream"; }
+		 * 
+		 * HttpHeaders headers = new HttpHeaders();
+		 * headers.add(HttpHeaders.CONTENT_TYPE, "application/x-download");
+		 * headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+		 * savedFileName + "\""); headers.add(HttpHeaders.CONTENT_LENGTH,
+		 * contentSize.toString()); headers.add("Pragma", "no-cache");
+		 * headers.add("Cache-Control", "no-cache");
+		 */
+        
+        return Constants.ITEMS;
+                
     }
 	
 	
