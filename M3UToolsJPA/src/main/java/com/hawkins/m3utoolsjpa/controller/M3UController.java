@@ -25,6 +25,7 @@ import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
+import com.hawkins.m3utoolsjpa.utils.LoggerUtils;
 import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import jakarta.validation.Valid;
@@ -91,6 +92,7 @@ public class M3UController {
 		model.addAttribute("properties", M3UService.getOrderedPropertiesEntrySet());
 		model.addAttribute("configProperty", new ConfigProperty());
 		model.addAttribute("propertyFile", M3UService.getConfigFileName());
+		model.addAttribute("logLevels", LoggerUtils.getLogLevelsAsList());
 		return Constants.PROPERTIES;
 	}
 

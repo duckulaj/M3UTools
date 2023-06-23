@@ -6,21 +6,15 @@ public class SearchFactory {
 
 	public Search createSearch(String searchType) {
 		
-		switch (searchType ) {
-		case Constants.ACTOR_SEARCH:
-			
-			return new SearchByActor();
-			
-		case Constants.TITLE_SEARCH:
-			
-			return new SearchByTitle();
-			
-		case Constants.YEAR_SEARCH:
-			
-			return new SearchByYear();
+		Search thisSearchType = null;
 		
-		default :
-			throw new IllegalArgumentException("Unknown searchType " + searchType);
+		switch (searchType ) {
+			case Constants.ACTOR_SEARCH -> thisSearchType =  new SearchByActor();
+			case Constants.TITLE_SEARCH -> thisSearchType = new SearchByTitle();
+			case Constants.YEAR_SEARCH -> thisSearchType = new SearchByYear();
+			default -> throw new IllegalArgumentException("Unknown searchType " + searchType);
 		}
+		
+		return thisSearchType;
 	}
 }

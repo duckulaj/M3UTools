@@ -46,6 +46,14 @@
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
+		
+		<p align="center" style="font-style: italic;">Change Log Level</p>
+		<div>
+			<select class="form-control" id="dropDownList">
+    			<option th:each="level : ${logLevels}" th:value="${level}" th:text="${level}"></option>
+			</select>
+		</div>
+		<p></p>
 
 		<div th:if="${properties.size() > 0}">
 			<table id="table" class="table table-hover table-responsive-xl">

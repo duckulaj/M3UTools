@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
@@ -77,9 +78,9 @@ public class ManualController {
 	}
 	
 	@GetMapping("setLogLevel")
-	public ModelAndView setLogLevel(ModelMap model) {
+	public ModelAndView setLogLevel(ModelMap model, @RequestParam(required = true, defaultValue = "info") String level) {
 		
-		LoggerUtils.updateLogLevel("info");
+		LoggerUtils.updateLogLevel(level);
 		
 		return new ModelAndView("forward:/", model);
 	}
