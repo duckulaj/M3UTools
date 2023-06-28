@@ -1,4 +1,4 @@
-package com.hawkins.m3Utoolsjpa.downloaders;
+package com.hawkins.m3utoolsjpa.downloaders;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import com.hawkins.dmanager.DownloadListener;
 import com.hawkins.dmanager.util.FormatUtilities;
 import com.hawkins.dmanager.util.HttpDateParser;
 import com.hawkins.dmanager.util.StringUtils;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.HttpMetadata;
 import com.hawkins.messages.JobprogressMessage;
 
 import lombok.extern.slf4j.Slf4j;

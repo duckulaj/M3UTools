@@ -1,4 +1,4 @@
-package com.hawkins.m3uttoolsjpa.jobs;
+package com.hawkins.m3utoolsjpa.jobs;
 
 import java.io.IOException;
 import java.net.URL;
@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.hawkins.dmanager.DManagerApp;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.HttpMetadata;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 
 import lombok.extern.slf4j.Slf4j;

@@ -48,13 +48,16 @@ public class SelectedChannelService {
 		List<SelectedChannel> channels = new ArrayList<SelectedChannel>();
 
 		items.forEach(item -> {
-			SelectedChannel channel = new SelectedChannel();
-			channel.setId(item.getId());
-			channel.setGroupId(String.valueOf(item.getGroupId()));
-			channel.setTvgName(item.getTvgName());
-			channel.setTvgId(item.getTvgId());
-			channel.setSelected(item.isSelected());
-			channels.add(channel);
+			
+			if (item.getTvgId() != null && !item.getTvgId().isEmpty()) {
+				SelectedChannel channel = new SelectedChannel();
+				channel.setId(item.getId());
+				channel.setGroupId(String.valueOf(item.getGroupId()));
+				channel.setTvgName(item.getTvgName());
+				channel.setTvgId(item.getTvgId());
+				channel.setSelected(item.isSelected());
+				channels.add(channel);
+			}
 		});
 
 		return channels;
@@ -70,6 +73,7 @@ public class SelectedChannelService {
 		channels.forEach(channel -> {
 			
 			if (channel.getTvgId() != null && !channel.getTvgId().isEmpty()) {
+
 				SelectedChannel selectedChannel = new SelectedChannel();
 				selectedChannel.setId(channel.getId());
 				selectedChannel.setGroupId(String.valueOf(channel.getGroupId()));

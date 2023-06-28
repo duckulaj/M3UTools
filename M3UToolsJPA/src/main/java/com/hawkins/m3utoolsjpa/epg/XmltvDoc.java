@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.hawkins.m3utoolsjpa.utils.StringUtils;
 
 @JacksonXmlRootElement(localName = "tv")
 public class XmltvDoc {
@@ -48,7 +49,7 @@ public class XmltvDoc {
     	try {
 	    	XmltvChannel selectedChannel = channels.stream()
 	    			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
-	    			.filter(channel -> tvgName.equals(normalisedDisplayName(channel)))
+	    			.filter(channel -> tvgName.equals(StringUtils.cleanTextContent(normalisedDisplayName(channel))))
 	    			.findFirst()
 	    			.get();
 	    	

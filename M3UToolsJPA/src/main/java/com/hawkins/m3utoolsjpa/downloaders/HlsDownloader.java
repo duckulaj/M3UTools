@@ -1,4 +1,4 @@
-package com.hawkins.m3Utoolsjpa.downloaders;
+package com.hawkins.m3utoolsjpa.downloaders;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,12 +15,12 @@ import com.hawkins.dmanager.DManagerConstants;
 import com.hawkins.dmanager.util.DManagerUtils;
 import com.hawkins.dmanager.util.FormatUtilities;
 import com.hawkins.dmanager.util.StringUtils;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.HlsMetadata;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.manifests.M3U8Manifest;
 import com.hawkins.m3Utoolsjpa.mediaconversion.FFmpeg;
 import com.hawkins.m3Utoolsjpa.mediaconversion.MediaConversionListener;
 import com.hawkins.m3Utoolsjpa.mediaconversion.MediaFormats;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.HlsMetadata;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.HttpMetadata;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.manifests.M3U8Manifest;
 
 import lombok.extern.slf4j.Slf4j;
 

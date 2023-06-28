@@ -1,4 +1,4 @@
-package com.hawkins.m3Utoolsjpa.downloaders;
+package com.hawkins.m3utoolsjpa.downloaders;
 import java.util.Comparator;
 
 public class SegmentComparator implements Comparator<Segment> {

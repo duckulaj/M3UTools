@@ -8,8 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hawkins.dmanager.Config;
 import com.hawkins.dmanager.DownloadEntry;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
-import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.HttpMetadata;
+import com.hawkins.m3utoolsjpa.jobs.DownloadJob;
 
 public class DownloadListChannel{
 

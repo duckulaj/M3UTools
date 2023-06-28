@@ -1,4 +1,4 @@
-package com.hawkins.m3Utoolsjpa.downloaders;
+package com.hawkins.m3utoolsjpa.downloaders;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -17,7 +17,7 @@ import com.hawkins.dmanager.Config;
 import com.hawkins.dmanager.DManagerConstants;
 import com.hawkins.dmanager.util.FormatUtilities;
 import com.hawkins.dmanager.util.StringUtils;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.DashMetadata;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.DashMetadata;
 
 import lombok.extern.slf4j.Slf4j;
 

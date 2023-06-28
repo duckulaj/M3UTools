@@ -1,4 +1,4 @@
-package com.hawkins.m3Utoolsjpa.downloaders;
+package com.hawkins.m3utoolsjpa.downloaders;
 
 public class SegmentInfo {
 	private long start, length, downloaded;

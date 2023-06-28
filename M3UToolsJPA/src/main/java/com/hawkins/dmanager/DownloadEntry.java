@@ -1,7 +1,7 @@
 package com.hawkins.dmanager;
 
 import com.hawkins.dmanager.util.FormatUtilities;
-import com.hawkins.m3Utoolsjpa.downloaders.metadata.HttpMetadata;
+import com.hawkins.m3utoolsjpa.downloaders.metadata.HttpMetadata;
 
 
 public class DownloadEntry {

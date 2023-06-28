@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hawkins.dmanager.DManagerApp;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.jobs.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UDownloadItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
-import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import lombok.extern.slf4j.Slf4j;
 

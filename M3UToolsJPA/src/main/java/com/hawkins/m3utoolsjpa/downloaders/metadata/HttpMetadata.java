@@ -1,4 +1,4 @@
-package com.hawkins.m3Utoolsjpa.downloaders.metadata;
+package com.hawkins.m3utoolsjpa.downloaders.metadata;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.hawkins.m3Utoolsjpa.downloaders.metadata.manifests;
+package com.hawkins.m3utoolsjpa.downloaders.metadata.manifests;
 
 import java.io.FileReader;
 import java.net.URL;

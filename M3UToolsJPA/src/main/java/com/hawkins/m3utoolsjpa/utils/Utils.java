@@ -31,9 +31,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.jobs.DownloadJob;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
-import com.hawkins.m3uttoolsjpa.jobs.DownloadJob;
 
 import lombok.extern.slf4j.Slf4j;
 
