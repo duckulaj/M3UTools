@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +65,7 @@ public class Parser {
 			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
 		}
 		
-		try (BufferedReader buffer = new BufferedReader(new FileReader(m3uFileOnDisk))) {
+		try (var buffer = Files.newBufferedReader(m3uFileOnDisk.toPath())) {
 			 
 			line = buffer.readLine();
 			if (line == null) {
@@ -140,11 +141,13 @@ public class Parser {
 		Long groupId = -1L;
 		String channelName = Utils.removeFromString((extract(line, Patterns.CHANNEL_NAME_REGEX)), Patterns.VALID_CHANNEL_NAME);
 		channelName = Utils.removeFromString(channelName, Patterns.FISHEYE_CHARACTER);
+		
+		
 		if (channelName.lastIndexOf("|") > 0) {
 			channelName = channelName.substring(channelName.lastIndexOf("|") + 1).trim();
 		}
 		
-		
+		channelName = channelName.replaceAll("[^a-zA-Z0-9]", " ");  
 		
 		
 		return new M3UItem(
