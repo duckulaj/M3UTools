@@ -1,5 +1,6 @@
 package com.hawkins.m3utoolsjpa.service;
 
+import java.awt.print.Book;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +17,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.properties.SortedProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,6 +65,9 @@ public class M3UService {
 	@Autowired
 	CompletableFutureService completableFutureService;
 	
+	@Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
+    private static int batchSize;
+	
 	public void resetDatabase() throws M3UItemsNotFoundException {
 			
 		StopWatch sw = new org.springframework.util.StopWatch();
@@ -87,9 +92,13 @@ public class M3UService {
 				}
 			}
 	
-			itemRepository.saveAll(items);
+			StopWatch swSave = new org.springframework.util.StopWatch();
+			swSave.start();
+			itemRepository.saveAllAndFlush(items);
+			// saveAllUsingBatch(items);
 			
-			log.info("Saved {} M3UItem(s)", items.size());
+			swSave.stop();
+			log.info("Saved {} M3UItem(s) in {} milliseconds", items.size(), swSave.getTotalTimeMillis());
 		}
 		
 		/*
@@ -316,6 +325,22 @@ public class M3UService {
 		log.info("Updated m3u file written to {}", outputFile);
 		
 		
+	}
+	
+	public void saveAllUsingBatch(List<M3UItem> items) {
+		
+		batchSize = 1000;
+		int totalObjects = items.size();
+		for (int i = 0; i < totalObjects; i += batchSize) {
+	        if( i+ batchSize > totalObjects){
+	            List<M3UItem> items1 = items.subList(i, totalObjects - 1);
+	            itemRepository.saveAll(items1);
+	            break;
+	        }
+	        List<M3UItem> items1 = items.subList(i, i + batchSize);
+	        itemRepository.saveAll(items1);
+	    }
+
 	}
 
 }

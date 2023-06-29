@@ -125,19 +125,14 @@ public class SelectedChannelService {
 							thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(),
 							thisItem.getChannelUri());
 					tvChannelRepository.save(newChannel);
-					// itemRepository.updateTvgChNo(thisItem.getId(), newChannel.getTvgChNo());
-					// thisItem.setTvgChNo(newChannel.getTvgChNo());
-					// thisItem.setSelected(true);
-					// itemRepository.save(thisItem);
+					
 				} else {
+					
 					if (!channel.isSelected()) {
 						if (tvChannel != null) {
 							itemRepository.updateTvgChNo(thisItem.getId(), "");
 							itemRepository.updateSelected(tvChannel.getTvgId(), String.valueOf(tvChannel.getGroupId()), tvChannel.getTvgName(), false);
 							tvChannelRepository.delete(tvChannel);
-							// thisItem.setTvgChNo("");
-							// thisItem.setSelected(false);
-							// itemRepository.save(thisItem);
 						}
 					}
 				}

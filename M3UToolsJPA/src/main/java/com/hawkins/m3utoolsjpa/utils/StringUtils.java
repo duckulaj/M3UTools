@@ -54,4 +54,12 @@ public class StringUtils {
 
 		return text.trim();
 	}
+	
+	public static String removeCountryAndDelimiter(String name, String delimiter) {
+		
+		if (name.lastIndexOf(delimiter) > 0) {
+			name = name.substring(name.lastIndexOf(delimiter) + 1).trim();
+		}
+		return name;
+	}
 }

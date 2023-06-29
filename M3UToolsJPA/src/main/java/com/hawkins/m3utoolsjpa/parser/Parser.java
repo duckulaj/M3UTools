@@ -62,6 +62,7 @@ public class Parser {
 		}
 
 		if (getRemoteM3U) {
+			log.info("Retrieving {} from {}", m3uFileOnDisk.toString(), dp.getStreamChannels());
 			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
 		}
 
@@ -131,27 +132,22 @@ public class Parser {
 		String tvgName = extract(line, Patterns.TVG_NAME_REGEX);
 
 		if (tvgName.startsWith("#####")) return null;
-
+		tvgName = StringUtils.removeCountryAndDelimiter(tvgName, "|");
+		tvgName = StringUtils.cleanTextContent(tvgName);
+		
+		String channelName = extract(line, Patterns.CHANNEL_NAME_REGEX);
+		channelName = StringUtils.removeCountryAndDelimiter(channelName, "|");
+		channelName = StringUtils.cleanTextContent(channelName);
+		
 		String duration = extract(line, Patterns.DURATION_REGEX);
 		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
-
-
-		if (tvgName.lastIndexOf("|") > 0) {
-			tvgName = tvgName.substring(tvgName.lastIndexOf("|") + 1).trim();
-		}
-		tvgName = StringUtils.cleanTextContent(tvgName);
-
 		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
 		String radio = extract(line, Patterns.RADIO_REGEX);
 		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
 		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
-		String channelName = extract(line, Patterns.CHANNEL_NAME_REGEX);
-
-		if (channelName.lastIndexOf("|") > 0) {
-			channelName = channelName.substring(channelName.lastIndexOf("|") + 1).trim();
-		}
-		channelName = StringUtils.cleanTextContent(channelName);
+		
+		
 
 		return new M3UItem(
 				duration,

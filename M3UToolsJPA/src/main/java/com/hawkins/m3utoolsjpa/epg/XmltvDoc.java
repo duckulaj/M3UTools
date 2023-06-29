@@ -66,8 +66,7 @@ public class XmltvDoc {
     private String normalisedDisplayName(XmltvChannel channel) {
     	
     	String normalisedName = channel.getDisplayNames().get(0).getText();
-    	int pipePosition = normalisedName.lastIndexOf("|");
-    	normalisedName = normalisedName.substring(pipePosition + 1).trim();
+    	normalisedName = StringUtils.removeCountryAndDelimiter(normalisedName, "|");
     	
     	return normalisedName;
     }

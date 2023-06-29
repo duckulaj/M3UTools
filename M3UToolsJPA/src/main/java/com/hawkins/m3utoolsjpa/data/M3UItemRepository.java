@@ -2,6 +2,7 @@ package com.hawkins.m3utoolsjpa.data;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 
 
+
+
 public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
+	
+	@Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
+    public static int batchSize = 1000;
 
 	M3UItem findById(long id);
 	
@@ -75,5 +81,7 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
 	@Query("update M3UItem m0 set m0.tvgChNo = :tvgChNo where m0.id = :id")
 	void updateTvgChNo(@Param(value = "id") long id, @Param(value = "tvgChNo") String tvgChNo);
 
+	
+	
 	
 }

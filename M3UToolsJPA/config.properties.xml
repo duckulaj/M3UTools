@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<entry key="stream.channels">http://line.rs6ott.com/get.php?username=67fd714f8e5b&amp;password=fa1262f6aaa7&amp;type=m3u_plus&amp;output=mpegts</entry>
+<entry key="stream.channels">http://reload41860.cdngold.me/get.php?username=377f87f5f5&amp;password=234180c7a2&amp;type=m3u_plus&amp;output=ts</entry>
 <entry key="fileName">./config.properties</entry>
 <entry key="fileAge.epg">1</entry>
 <entry key="fullM3U">./allChannels.m3u</entry>
@@ -21,5 +21,5 @@
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="xteve.user">duckulaj</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
-<entry key="stream.playlist">http://epg.protv.cc/xmltv.php?username=67fd714f8e5b&amp;password=fa1262f6aaa7</entry>
+<entry key="stream.playlist">http://reload41860.cdngold.me/xmltv.php?username=377f87f5f5&amp;password=234180c7a2&amp;type=m3u_plus&amp;output=ts</entry>
 </properties>

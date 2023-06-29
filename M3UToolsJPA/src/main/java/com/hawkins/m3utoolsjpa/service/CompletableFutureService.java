@@ -70,8 +70,10 @@ public class CompletableFutureService {
 		
 		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
 		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
-			itemRepository.deleteAll();
-			groupRepository.deleteAll();	
+			itemRepository.deleteAllInBatch();
+			itemRepository.flush();
+			groupRepository.deleteAllInBatch();
+			groupRepository.flush();
 		});
 		
 		
