@@ -34,6 +34,7 @@ import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.jobs.DownloadJob;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.regex.Patterns;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -246,12 +247,13 @@ public class Utils {
 		int endIndex = StringUtils.indexOfAny(filmName, new String[]{"SD", "FHD", "UHD", "HD", "4K"});
 
 		if (endIndex != -1) {
-			filmName = filmName.substring(startIndex, endIndex);
+			filmName = filmName.substring(startIndex, endIndex - 1); // Exclude left bracket (
 		}
 
 		if (filmName.contains("(MULTISUB)")) {
 			return filmName.replace("(MULTISUB)", "").trim();
 		} else {
+			filmName = Utils.removeFromString(filmName, Patterns.STRIP_COUNTRY_IDENTIFIER);
 			return filmName.trim();
 		}
 		

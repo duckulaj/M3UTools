@@ -85,6 +85,7 @@ public class Parser {
 				lineNbr++;
 				if (isExtInfo(line)) {
 					entry = extractExtInfo(line);
+					// entry = extractExtInfoRaw(line);
 				} else {
 					if (entry != null) {
 						String type = Utils.deriveGroupTypeByUrl(line);
@@ -95,9 +96,10 @@ public class Parser {
 							entry.setSearch(Utils.normaliseSearch(entry.getChannelName()));
 						}
 
-						if (!RegexUtils.containsRegex(entry.getTvgName(), Patterns.HASH_REGEX) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
-							entries.add(entry);
-						}
+						// if (!RegexUtils.containsRegex(entry.getTvgName(), Patterns.HASH_REGEX) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
+						
+						entries.add(entry);
+						// }
 
 					}
 
@@ -175,6 +177,51 @@ public class Parser {
 		return null;
 	}
 
+
+	private static M3UItem extractExtInfoRaw(String line) {
+
+		String tvgName = extract(line, Patterns.TVG_NAME_REGEX);
+
+		
+		if (tvgName.startsWith("#####")) return null;
+		
+		String duration = extract(line, Patterns.DURATION_REGEX);
+		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
+		Long groupId = -1L;
+		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
+		String tvgChNo = extract(line, Patterns.TVG_CHANNEL_NUMBER);
+		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
+		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
+		String radio = extract(line, Patterns.RADIO_REGEX);
+		String channelUri = "";
+		String channelName = extract(line, Patterns.CHANNEL_NAME_REGEX);
+		String type = "";
+		String search = channelName;
+		boolean selected = false;
+		
+		
+		
+		
+		
+		
+
+		return new M3UItem(
+				duration,
+				groupTitle,
+				groupId,
+				tvgId,
+				tvgName,
+				tvgChNo,
+				tvgLogo,
+				tvgShift,
+				radio,
+				channelUri,
+				channelName,
+				type,
+				search,
+				selected);
+
+	}
 
 
 

@@ -32,7 +32,7 @@ public class StringUtils {
 
 	public static String removeCountryIdentifier(String toParse) {
 
-		Matcher matcher = Patterns.STRIP_COUNTRY_IDETIFIER.matcher(toParse);
+		Matcher matcher = Patterns.STRIP_COUNTRY_IDENTIFIER.matcher(toParse);
 
 		if(matcher.find()) {
 			toParse = matcher.replaceFirst("");
