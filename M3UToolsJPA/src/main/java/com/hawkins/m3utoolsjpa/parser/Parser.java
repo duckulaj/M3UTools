@@ -11,11 +11,10 @@ import java.util.regex.Pattern;
 
 import org.springframework.util.StopWatch;
 
-import com.ctc.wstx.util.StringUtil;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
-import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
@@ -80,21 +79,24 @@ public class Parser {
 
 			checkStart(line);
 
+			PatternMatcher patternMatcher = PatternMatcher.getInstance();
 			M3UItem entry = null;
 			while ((line = buffer.readLine()) != null) {
 				lineNbr++;
 				if (isExtInfo(line)) {
-					entry = extractExtInfo(line);
-					// entry = extractExtInfoRaw(line);
+					entry = extractExtInfo(patternMatcher, line);
+					// entry = extractExtInfoRaw(patternMatcher, line);
 				} else {
 					if (entry != null) {
 						String type = Utils.deriveGroupTypeByUrl(line);
 						entry.setType(type);
 						entry.setChannelUri(line);
 
+						/*
 						if (entry.getType().equals(Constants.MOVIE)) {
 							entry.setSearch(Utils.normaliseSearch(entry.getChannelName()));
 						}
+						*/
 
 						// if (!RegexUtils.containsRegex(entry.getTvgName(), Patterns.HASH_REGEX) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
 						
@@ -129,24 +131,24 @@ public class Parser {
 		return line.contains(Patterns.M3U_INFO_MARKER);
 	}
 
-	private static M3UItem extractExtInfo(String line) {
+	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line) {
 
-		String tvgName = extract(line, Patterns.TVG_NAME_REGEX);
+		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
 
 		if (tvgName.startsWith("#####")) return null;
 		tvgName = StringUtils.removeCountryAndDelimiter(tvgName, "|");
 		tvgName = StringUtils.cleanTextContent(tvgName);
 		
-		String channelName = extract(line, Patterns.CHANNEL_NAME_REGEX);
+		String channelName = patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX);
 		channelName = StringUtils.removeCountryAndDelimiter(channelName, "|");
 		channelName = StringUtils.cleanTextContent(channelName);
 		
-		String duration = extract(line, Patterns.DURATION_REGEX);
-		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
-		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
-		String radio = extract(line, Patterns.RADIO_REGEX);
-		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
-		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
+		String duration = patternMatcher.extract(line, Patterns.DURATION_REGEX);
+		String tvgId = patternMatcher.extract(line, Patterns.TVG_ID_REGEX);
+		String tvgShift = patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX);
+		String radio = patternMatcher.extract(line, Patterns.RADIO_REGEX);
+		String tvgLogo = patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX);
+		String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
 		
 		
@@ -178,23 +180,23 @@ public class Parser {
 	}
 
 
-	private static M3UItem extractExtInfoRaw(String line) {
+	private static M3UItem extractExtInfoRaw(PatternMatcher patternMatcher, String line) {
 
 		String tvgName = extract(line, Patterns.TVG_NAME_REGEX);
 
 		
 		if (tvgName.startsWith("#####")) return null;
 		
-		String duration = extract(line, Patterns.DURATION_REGEX);
-		String groupTitle = extract(line, Patterns.GROUP_TITLE_REGEX);
+		String duration = patternMatcher.extract(line, Patterns.DURATION_REGEX);
+		String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
-		String tvgId = extract(line, Patterns.TVG_ID_REGEX);
-		String tvgChNo = extract(line, Patterns.TVG_CHANNEL_NUMBER);
-		String tvgLogo = extract(line, Patterns.TVG_LOGO_REGEX);
-		String tvgShift = extract(line, Patterns.TVG_SHIFT_REGEX);
-		String radio = extract(line, Patterns.RADIO_REGEX);
+		String tvgId = patternMatcher.extract(line, Patterns.TVG_ID_REGEX);
+		String tvgChNo = patternMatcher.extract(line, Patterns.TVG_CHANNEL_NUMBER);
+		String tvgLogo = patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX);
+		String tvgShift = patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX);
+		String radio = patternMatcher.extract(line, Patterns.RADIO_REGEX);
 		String channelUri = "";
-		String channelName = extract(line, Patterns.CHANNEL_NAME_REGEX);
+		String channelName = patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX);
 		String type = "";
 		String search = channelName;
 		boolean selected = false;
