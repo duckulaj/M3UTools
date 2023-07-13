@@ -91,7 +91,7 @@ public class SelectedChannelService {
 
 		channels.forEach(channel -> {
 			
-			if (channel.isSelected()) log.info("Channel {} IS selected", channel.getTvgName());
+			if (channel.isSelected()) log.debug("Channel {} IS selected", channel.getTvgName());
 			
 			if (!StringUtils.isBlank(channel.getTvgId())) {
 				itemRepository.updateSelected(channel.getTvgId(), channel.getGroupId(), channel.getTvgName(), channel.isSelected());

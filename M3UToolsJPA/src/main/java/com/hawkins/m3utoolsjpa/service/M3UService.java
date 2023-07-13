@@ -1,6 +1,5 @@
 package com.hawkins.m3utoolsjpa.service;
 
-import java.awt.print.Book;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,7 +16,6 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.properties.SortedProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -65,9 +63,6 @@ public class M3UService {
 	@Autowired
 	CompletableFutureService completableFutureService;
 	
-	@Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
-    private static int batchSize;
-	
 	public void resetDatabase() throws M3UItemsNotFoundException {
 			
 		StopWatch sw = new org.springframework.util.StopWatch();
@@ -109,17 +104,25 @@ public class M3UService {
 		Iterable<TvChannel> tvChannels = channelRepository.findAll(); 
 		log.info("Found {} selected TvChannels", IterableUtils.size(tvChannels));
 		
+		List<M3UItem> selectedItems = new ArrayList<M3UItem>();
+		
 		for (TvChannel tvChannel : tvChannels) {
 			List<M3UItem> theseItems = itemRepository.findByTvgIdAndTvgName(tvChannel.getTvgId(), tvChannel.getTvgName());
+		
 			for (M3UItem item : theseItems) {
 				if (item != null) {
 					item.setSelected(true);
 					item.setTvgChNo(tvChannel.getTvgChNo());
-					itemRepository.save(item);
+					// itemRepository.save(item);
+					selectedItems.add(item);
 				}
 			}
 		}
 		
+		if (selectedItems.size() > 0) {
+			log.debug("Saving {} selected items", selectedItems.size());
+			itemRepository.saveAll(selectedItems);
+		}
 		sw.stop();
 
 		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
@@ -325,22 +328,6 @@ public class M3UService {
 		log.info("Updated m3u file written to {}", outputFile);
 		
 		
-	}
-	
-	public void saveAllUsingBatch(List<M3UItem> items) {
-		
-		batchSize = 1000;
-		int totalObjects = items.size();
-		for (int i = 0; i < totalObjects; i += batchSize) {
-	        if( i+ batchSize > totalObjects){
-	            List<M3UItem> items1 = items.subList(i, totalObjects - 1);
-	            itemRepository.saveAll(items1);
-	            break;
-	        }
-	        List<M3UItem> items1 = items.subList(i, i + batchSize);
-	        itemRepository.saveAll(items1);
-	    }
-
 	}
 
 }
