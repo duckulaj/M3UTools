@@ -6,16 +6,23 @@ import org.hibernate.annotations.Parameter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "M3UITEM", indexes = {@Index(name = "IDX_M3UGROUP_ID", columnList = "groupId" ), 
+		@Index(name = "IDX_M3UITEM_TVGID", columnList = "tvgId")}
+)
 public class M3UItem {
+
+	
 	
 	@GenericGenerator(
 	        name = "itemSequenceGenerator",
-	        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+	        type = org.hibernate.id.enhanced.SequenceStyleGenerator.class,
 	        parameters = {
 	                @Parameter(name = "sequence_name", value = "itemSequence"),
 	                @Parameter(name = "initial_value", value = "1"),

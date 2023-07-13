@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Table;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +16,7 @@ public class M3UGroup {
 
 	@GenericGenerator(
 	        name = "groupSequenceGenerator",
-	        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+	        type = org.hibernate.id.enhanced.SequenceStyleGenerator.class,
 	        parameters = {
 	                @Parameter(name = "sequence_name", value = "groupSequence"),
 	                @Parameter(name = "initial_value", value = "1"),

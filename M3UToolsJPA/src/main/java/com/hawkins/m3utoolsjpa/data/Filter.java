@@ -15,7 +15,7 @@ public class Filter {
 
 	@GenericGenerator(
 	        name = "filterSequenceGenerator",
-	        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+	        type = org.hibernate.id.enhanced.SequenceStyleGenerator.class,
 	        parameters = {
 	                @Parameter(name = "sequence_name", value = "filterSequence"),
 	                @Parameter(name = "initial_value", value = "1"),

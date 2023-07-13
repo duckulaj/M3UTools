@@ -6,13 +6,20 @@ import org.hibernate.annotations.Parameter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "TVCHANNEL", 
+	indexes = {@Index(name = "IDX_TVCHANNEL_GROUPID", columnList = "groupId"),
+			@Index(name = "IDX_TVCHANNEL_TVGID", columnList = "tvgId"),
+	}
+)
 public class TvChannel {
 	
 	@GenericGenerator(
 	        name = "tvChannelSequenceGenerator",
-	        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+	        type = org.hibernate.id.enhanced.SequenceStyleGenerator.class,
 	        parameters = {
 	                @Parameter(name = "sequence_name", value = "tvChannelSequence"),
 	                @Parameter(name = "initial_value", value = "1"),

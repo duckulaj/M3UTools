@@ -226,6 +226,11 @@ public class M3UService {
 			pageItems = itemRepository.findByGroupId(groupId, paging);
 		}
 
+		if (pageItems.getSize() > 0) {
+			for (M3UItem item : pageItems) {
+				item.setSearch(Utils.normaliseSearch(item.getSearch()));
+			}
+		}
 		return pageItems;
 	}
 	
