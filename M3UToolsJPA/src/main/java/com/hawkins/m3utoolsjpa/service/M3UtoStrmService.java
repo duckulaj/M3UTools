@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
@@ -31,12 +32,13 @@ public class M3UtoStrmService {
 
 	@Autowired
 	M3UService m3uService;
-	
+
 	private static String[] videoTypes = {Constants.AVI, Constants.MKV, Constants.MP4};
 	// private static String[] viewingDefinitions = {"[SD]", "[FHD]", "[UHD]", "[HD]", "[4K]", "[8K]"};
 	private static String tvShowRegex = "[S]{1}[0-9]{2} [E]{1}[0-9]{2}";
 	private static String seasonRegex = "[S]{1}[0-9]{2}";
-	
+	private static String[] excludedCountries = {"AL","AR","DE","DK","ES","EX","FR","GR","IN","IR","IT","KU","MT","NF","NL","PL","PT","RO","SC","SE","SOC","SOM","TOP","TR"};
+
 	public void convertM3UtoStream() {
 
 		/*
@@ -52,20 +54,20 @@ public class M3UtoStrmService {
 		CompletableFuture<Void> createMovies = CompletableFuture.runAsync(() -> {
 			List<M3UItem> movies = m3uService.getM3UItemsByType(Constants.MOVIE);
 			log.info("{} Movies", movies.size());
-			
+
 			createMovieFolders(movies);
 			log.info("Created HD Movies folders");
 		});
-		
+
 		CompletableFuture<Void> createTVShows = CompletableFuture.runAsync(() -> {
 			List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
 			log.info("{} TV Shows", tvshows.size());
-			
+
 			createTVshowFolders(tvshows);
 			log.info("Created TV Shows folders");
 		});
 
-				
+
 	}
 
 
@@ -76,7 +78,7 @@ public class M3UtoStrmService {
 		String stream = item.getChannelUri();
 		String name = item.getChannelName();
 
-		
+
 		if (item.getType().equalsIgnoreCase(Constants.LIVE) || item.getType().equals("") ) {
 
 			streamType = Constants.LIVE;
@@ -85,7 +87,7 @@ public class M3UtoStrmService {
 			// Get the last three characters from the stream
 
 			// TO-DO: The following line needs testing, then look at completeable futures for creating folders
-			
+
 			if (stream.length() > 3) videoExtension = stream.substring(stream.lastIndexOf(".") + 1);
 
 			if (Arrays.asList(videoTypes).contains(videoExtension)) {
@@ -167,43 +169,49 @@ public class M3UtoStrmService {
 		}
 
 		tvshows.forEach(tvShow -> {
-			String tvShowName = tvShow.getChannelName();
-			tvShowName = Utils.replaceForwardSlashWithSpace(tvShowName);
-			tvShowName = Utils.removeFromString(tvShowName, Patterns.SQUARE_BRACKET_REGEX);
-			tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPES_REGEX);
-			tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPE_REGEX);
-			
-			if (tvShowName.contains("EN ")) {
-				tvShowName = tvShowName.substring(3);
-			}
-					
-			Pattern seasonPattern = Pattern.compile(seasonRegex, Pattern.CASE_INSENSITIVE);
-			Matcher seasonMatcher = seasonPattern.matcher(tvShowName);
-			boolean seasonMatchFound = seasonMatcher.find();
 
-			if (seasonMatchFound) {
-				String season = seasonMatcher.group();
-				int seasonStartIndex = seasonMatcher.start();
-				/*
-				 * Create the TV Show folder
-				 */
-				String folder = tvShowName.substring(0, seasonStartIndex - 1).trim();
-				File tvShowSeasonFolder = new File(tvShowFolder + folder);
-				if (!tvShowSeasonFolder.exists()) tvShowSeasonFolder.mkdir();
-				/*
-				 * Create the Season folder
-				 */
-				File seasonFolder = new File(tvShowSeasonFolder.getAbsolutePath() + File.separator + season);
-				if (!seasonFolder.exists()) seasonFolder.mkdir();
+			int endIndex = StringUtils.indexOfAny(tvShow.getChannelName(), excludedCountries);
 
-				File thisFile = new File(seasonFolder.getAbsolutePath() + File.separator + tvShowName + ".strm"); 
-				try {
-					writeToFile(thisFile, tvShow.getChannelUri());
-				} catch (IOException e) {
-					e.printStackTrace();
+			if (endIndex == -1) {
+
+				String tvShowName = tvShow.getChannelName();
+				tvShowName = Utils.replaceForwardSlashWithSpace(tvShowName);
+				tvShowName = Utils.removeFromString(tvShowName, Patterns.SQUARE_BRACKET_REGEX);
+				tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPES_REGEX);
+				tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPE_REGEX);
+				tvShowName = Utils.removeFromString(tvShowName, Patterns.HYPHEN_REGEX);
+
+				if (tvShowName.contains("EN ")) {
+					tvShowName = tvShowName.substring(3);
+				}
+
+				Pattern seasonPattern = Pattern.compile(seasonRegex, Pattern.CASE_INSENSITIVE);
+				Matcher seasonMatcher = seasonPattern.matcher(tvShowName);
+				boolean seasonMatchFound = seasonMatcher.find();
+
+				if (seasonMatchFound) {
+					String season = seasonMatcher.group();
+					int seasonStartIndex = seasonMatcher.start();
+					/*
+					 * Create the TV Show folder
+					 */
+					String folder = tvShowName.substring(0, seasonStartIndex - 1).trim();
+					File tvShowSeasonFolder = new File(tvShowFolder + folder);
+					if (!tvShowSeasonFolder.exists()) tvShowSeasonFolder.mkdir();
+					/*
+					 * Create the Season folder
+					 */
+					File seasonFolder = new File(tvShowSeasonFolder.getAbsolutePath() + File.separator + season);
+					if (!seasonFolder.exists()) seasonFolder.mkdir();
+
+					File thisFile = new File(seasonFolder.getAbsolutePath() + File.separator + tvShowName + ".strm"); 
+					try {
+						writeToFile(thisFile, tvShow.getChannelUri());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
-
 		});
 	}
 
@@ -211,11 +219,11 @@ public class M3UtoStrmService {
 
 		Path pathToBeDeleted = new File(folder).toPath();
 
-		
+
 		try {
-			
+
 			FileSystemUtils.deleteRecursively(pathToBeDeleted);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -252,59 +260,66 @@ public class M3UtoStrmService {
 		writer.write(content);
 
 		writer.close();
-		
-		
+
+
 	}
 
 	public static void makeMovieFolders(List<M3UItem> movies) {
 
 		String movieFolder = createFolder(Constants.FOLDER_MOVIES) + File.separator;
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("Created {}", movieFolder);
 		}
-		
+
 		movies.forEach(movie -> {
 
-			String groupTitle = movie.getGroupTitle();
-			
-			String folder = movie.getChannelName();
-			folder = Utils.replaceForwardSlashWithSpace(folder);
-			folder = Utils.removeFromString(folder, Patterns.SQUARE_BRACKET_REGEX);
-			folder = Utils.removeFromString(folder, Patterns.PIPES_REGEX);
-			folder = Utils.removeFromString(folder, Patterns.PIPE_REGEX);
-			
-			folder = folder.replace("/", " ").trim();
-			
-			if (folder.contains("EN ")) {
-				folder = folder.substring(3);
-			}
+			int endIndex = StringUtils.indexOfAny(movie.getChannelName(), excludedCountries);
 
-			String url = movie.getChannelUri();
+			if (endIndex == -1) {
 
-			try {
-				if (!RegexUtils.containsRegex(groupTitle, Patterns.ADULT_REGEX)) {
 
-					// String newFolder = Utils.normaliseName(folder);
-					String newFolder = folder;
-					String newFolderPath = createFolder(Constants.FOLDER_MOVIES + File.separator + newFolder);
-					
-					if (log.isDebugEnabled()) {
-						log.debug("Created {}", newFolderPath);
-					}
-					
-					File thisFile = new File(newFolderPath + File.separator + folder + ".strm"); 
-					writeToFile(thisFile, url);
-					
-					if (log.isDebugEnabled()) {
-						log.debug("Written - {}", thisFile.getAbsolutePath());
-					}
 
+				String groupTitle = movie.getGroupTitle();
+
+				String folder = movie.getChannelName();
+				folder = Utils.replaceForwardSlashWithSpace(folder);
+				folder = Utils.removeFromString(folder, Patterns.SQUARE_BRACKET_REGEX);
+				folder = Utils.removeFromString(folder, Patterns.PIPES_REGEX);
+				folder = Utils.removeFromString(folder, Patterns.PIPE_REGEX);
+				folder = Utils.removeFromString(folder, Patterns.HYPHEN_REGEX);
+
+				folder = folder.replace("/", " ").trim();
+
+				if (folder.contains("EN ")) {
+					folder = folder.substring(3);
 				}
-			} catch (IOException ioe) {
-				ioe.getMessage();
-			}
 
+				String url = movie.getChannelUri();
+
+				try {
+					if (!RegexUtils.containsRegex(groupTitle, Patterns.ADULT_REGEX)) {
+
+						// String newFolder = Utils.normaliseName(folder);
+						String newFolder = folder;
+						String newFolderPath = createFolder(Constants.FOLDER_MOVIES + File.separator + newFolder);
+
+						if (log.isDebugEnabled()) {
+							log.debug("Created {}", newFolderPath);
+						}
+
+						File thisFile = new File(newFolderPath + File.separator + folder + ".strm"); 
+						writeToFile(thisFile, url);
+
+						if (log.isDebugEnabled()) {
+							log.debug("Written - {}", thisFile.getAbsolutePath());
+						}
+
+					}
+				} catch (IOException ioe) {
+					ioe.getMessage();
+				}
+			}
 		});
 	}
 }

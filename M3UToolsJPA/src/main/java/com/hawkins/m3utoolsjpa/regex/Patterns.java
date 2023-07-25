@@ -25,4 +25,6 @@ public class Patterns {
 	public static final Pattern STRIP_COUNTRY_IDENTIFIER = Pattern.compile(".{2,} - *");
 	public static final Pattern FISHEYE_CHARACTER = Pattern.compile("[^\\x1F-\\x7F]+");
 	public static final Pattern PIPED_COUNTRY = Pattern.compile("\\|.{2,}\\| ");
+	public static final Pattern HYPHEN_REGEX = Pattern.compile("\\-.*?", Pattern.CASE_INSENSITIVE);
+	public static final Pattern SKYCINEMA_REGEX = Pattern.compile("\\SC.*?");
 }
