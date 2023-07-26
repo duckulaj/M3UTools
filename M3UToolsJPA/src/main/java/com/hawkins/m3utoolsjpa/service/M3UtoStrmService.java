@@ -33,12 +33,12 @@ public class M3UtoStrmService {
 	@Autowired
 	M3UService m3uService;
 
+	private static DownloadProperties dp = DownloadProperties.getInstance();
 	private static String[] videoTypes = {Constants.AVI, Constants.MKV, Constants.MP4};
 	// private static String[] viewingDefinitions = {"[SD]", "[FHD]", "[UHD]", "[HD]", "[4K]", "[8K]"};
 	private static String tvShowRegex = "[S]{1}[0-9]{2} [E]{1}[0-9]{2}";
 	private static String seasonRegex = "[S]{1}[0-9]{2}";
-	private static String[] excludedCountries = {"AL","AR","DE","DK","ES","EX","FR","GR","IN","IR","IT","KU","MT","NF","NL","PL","PT","RO","SC","SE","SOC","SOM","TOP","TR"};
-
+	
 	public void convertM3UtoStream() {
 
 		/*
@@ -170,7 +170,7 @@ public class M3UtoStrmService {
 
 		tvshows.forEach(tvShow -> {
 
-			int endIndex = StringUtils.indexOfAny(tvShow.getChannelName(), excludedCountries);
+			int endIndex = StringUtils.indexOfAny(tvShow.getChannelName(), dp.getExcludedCountries());
 
 			if (endIndex == -1) {
 
@@ -274,7 +274,7 @@ public class M3UtoStrmService {
 
 		movies.forEach(movie -> {
 
-			int endIndex = StringUtils.indexOfAny(movie.getChannelName(), excludedCountries);
+			int endIndex = StringUtils.indexOfAny(movie.getChannelName(), dp.getExcludedCountries());
 
 			if (endIndex == -1) {
 

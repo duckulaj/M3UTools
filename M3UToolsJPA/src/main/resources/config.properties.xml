@@ -22,4 +22,5 @@
 <entry key="stream.playlist">http://epg.protv.cc/xmltv.php?username=67fd714f8e5b&amp;password=fa1262f6aaa7</entry>
 <entry key="fileAge.epg">1</entry>
 <entry key="fileAge.m3u">60</entry>
+<entry key="excludedCountries">AL,AR,DE,DK,ES,EX,FR,GR,IN,IR,IT,KU,MT,NF,NL,PL,PT,RO,SC,SE,SOC,SOM,TOP,TR</entry>
 </properties>

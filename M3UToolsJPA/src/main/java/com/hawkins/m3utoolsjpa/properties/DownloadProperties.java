@@ -47,14 +47,15 @@ public class DownloadProperties implements Runnable {
 	private String streamChannels = null;
 	private int fileAgeM3U = 1;
 	private int fileAgeEPG = 1;
-	
+	private String[] excludedCountries = null;
+
 	public DownloadProperties() {
 
 		this.props = Utils.readProperties(Constants.CONFIGPROPERTIES);
 
 		// this.setChannels(props.getProperty("channels"));
-		
-		
+
+
 		if (SystemUtils.IS_OS_WINDOWS) {
 			this.setDownloadPath(System.getProperty("user.home"));
 			this.setFullM3U(this.getDownloadPath() + File.separator + "allChannels.m3u");
@@ -62,7 +63,7 @@ public class DownloadProperties implements Runnable {
 			this.setFullM3U(props.getProperty("fullM3U"));
 			this.setDownloadPath(props.getProperty("downloadPath"));
 		}
-		
+
 		this.setFilter(props.getProperty("filter"));
 		this.setMovieDbAPI(props.getProperty("moviedb.apikey"));
 		this.setMovieDbURL(props.getProperty("moviedb.searchURL"));
@@ -84,7 +85,7 @@ public class DownloadProperties implements Runnable {
 		this.setStreamChannels(props.getProperty(Constants.STREAM_CHANNELS));
 		this.setFileAgeEPG(Integer.valueOf(props.getProperty("fileAge.epg")));
 		this.setFileAgeM3U(Integer.valueOf(props.getProperty("fileAge.m3u")));
-		
+		this.setExcludedCountries(props.getProperty("excludedCountries").split(","));
 	}
 
 	public static synchronized DownloadProperties getInstance()
@@ -118,9 +119,9 @@ public class DownloadProperties implements Runnable {
 		}
 
 		Utils.saveProperties(configProperty);
-		
+
 		thisInstance = new DownloadProperties();
-		
+
 		return thisInstance;
 
 	}
@@ -297,9 +298,9 @@ public class DownloadProperties implements Runnable {
 	public void setMovieDbDiscoverURL(String movieDbDiscoverURL) {
 		this.movieDbDiscoverURL = movieDbDiscoverURL;
 	}
-	
+
 	public Properties getProps() {
-		
+
 		return this.props;
 
 	}
@@ -343,8 +344,16 @@ public class DownloadProperties implements Runnable {
 	public void setFileAgeEPG(int fileAgeEPG) {
 		this.fileAgeEPG = fileAgeEPG;
 	}
-	
-	
 
-	
+	public String[] getExcludedCountries() {
+		return excludedCountries;
+	}
+
+	public void setExcludedCountries(String[] excludedCountries) {
+		this.excludedCountries = excludedCountries;
+	}
+
+
+
+
 }
