@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +31,16 @@ public class JavaHttpClient extends HttpClient {
 	public void connect() throws IOException {
 		HttpContext.getInstance().init();
 		WebProxy webproxy = ProxyResolver.resolve(_url);
-		URL url = new URL(_url);
+		URL url = null;
+		try {
+			url = new URI(_url).toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.realURL = url;
 		if (webproxy != null) {
 			Proxy proxy = new Proxy(webproxy.isSocks() ? Proxy.Type.SOCKS : Proxy.Type.HTTP,

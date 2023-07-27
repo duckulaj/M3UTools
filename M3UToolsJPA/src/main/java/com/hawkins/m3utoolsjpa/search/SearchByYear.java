@@ -2,6 +2,7 @@ package com.hawkins.m3utoolsjpa.search;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class SearchByYear implements Search {
 			// parameters.put("release_date.gte", year + "-01-01");
 			// parameters.put("release_date.lte", year + "-12-31");
 
-			URL url = new URL(discoverURL + "?" + Utils.getParamsString(parameters));
+			URL url = new URI(discoverURL + "?" + Utils.getParamsString(parameters)).toURL();
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setRequestProperty("Content-Type", "application/json");

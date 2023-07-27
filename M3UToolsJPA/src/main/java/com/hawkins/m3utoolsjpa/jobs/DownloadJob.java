@@ -1,6 +1,8 @@
 package com.hawkins.m3utoolsjpa.jobs;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -113,7 +115,7 @@ public class DownloadJob implements DetailedJob {
 		
 		long fileLength = 0L;
 		try {
-			URL thisUrl = new URL(url);
+			URL thisUrl = new URI(url).toURL();
 
 			URLConnection u = thisUrl.openConnection();
 
@@ -122,6 +124,9 @@ public class DownloadJob implements DetailedJob {
 			if (log.isDebugEnabled()) {
 				log.debug(nfe.getMessage());
 			}
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return fileLength;

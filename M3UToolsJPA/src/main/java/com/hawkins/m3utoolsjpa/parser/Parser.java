@@ -3,6 +3,8 @@ package com.hawkins.m3utoolsjpa.parser;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -48,7 +50,7 @@ public class Parser {
 		File m3uFileOnDisk = new File(Constants.M3U_FILE);
 
 		try {
-			m3uUrl = new  URL(dp.getStreamChannels());
+			m3uUrl = new  URI(dp.getStreamChannels()).toURL();
 
 			try {
 				getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
@@ -58,6 +60,9 @@ public class Parser {
 			}
 		} catch (MalformedURLException e) {
 			throw new ParsingException(lineNbr, "Cannot open URL", e);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		if (getRemoteM3U) {

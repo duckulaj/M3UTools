@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Table;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

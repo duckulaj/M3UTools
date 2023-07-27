@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.downloaders.metadata.manifests;
 
 import java.io.FileReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -143,7 +144,7 @@ public class F4MManifest {
 		baseUrl = xpath.evaluate("/ns:manifest/ns:baseURL", doc);
 		if (StringUtils.isNullOrEmptyOrBlank(baseUrl)) {
 			try {
-				URL url = new URL(surl);
+				URL url = new URI(surl).toURL();
 				StringBuilder sb = new StringBuilder();
 				sb.append(url.getProtocol());
 				sb.append("://");

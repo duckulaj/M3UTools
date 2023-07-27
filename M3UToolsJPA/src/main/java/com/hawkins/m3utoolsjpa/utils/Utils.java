@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
@@ -114,7 +116,7 @@ public class Utils {
 		long start = System.currentTimeMillis();
 
 		try (FileOutputStream fileOS = new FileOutputStream(fileName);
-				ReadableByteChannel readChannel = Channels.newChannel((new URL(url)).openStream());) {
+				ReadableByteChannel readChannel = Channels.newChannel((new URI(url).toURL()).openStream())) {
 
 			fileOS.getChannel().transferFrom(readChannel, 0L, Long.MAX_VALUE);
 
@@ -122,6 +124,9 @@ public class Utils {
 			if (log.isDebugEnabled()) {
 				log.debug(ioe.getMessage());
 			}
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		long end = System.currentTimeMillis();
@@ -133,16 +138,28 @@ public class Utils {
 	public static void copyUrlToFileUsingCommonsIO(String url, String fileName) {
 
 		try {
-			FileUtils.copyURLToFile(new URL(url), new File(fileName), 180000, 600000);
+			FileUtils.copyURLToFile(new URI(url).toURL(), new File(fileName), 180000, 600000);
 		} catch (MalformedURLException e) {
 			log.info("MalformedURLException - {}", e.getMessage());
 		} catch (IOException e) {
 			log.info("IOException - {}", e.getMessage());
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} 
 	}
 	
 	public static void copyUrlToFileUsingNIO(String url, String fileName) throws IOException {
-        URL nioUrl = new URL(url);
+        URL nioUrl = null;
+		try {
+			nioUrl = new URI(url).toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		log.info("Retrieving file from {}", nioUrl.toString());
         
         // openStream(): Opens a connection to this URL and returns an InputStream for reading from that connection.
@@ -165,7 +182,16 @@ public class Utils {
 		long start = System.currentTimeMillis();
 		String originalURL = address;
 
-		URL url = new URL(address);
+		URL url = null;
+		try {
+			url = new URI(address).toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		int status = conn.getResponseCode();
 		if (status != HttpURLConnection.HTTP_OK) {
@@ -182,8 +208,19 @@ public class Utils {
 		if (log.isDebugEnabled()) {
 			log.debug("getFinalLocation took {} ms", (System.currentTimeMillis() - start));
 		}
-
-		return new URL(address);
+		
+		URL thisUrl = null;
+		try {
+			thisUrl = new URI(address).toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return thisUrl;
 	}
 
 	public static String format(double bytes, int digits) {

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -109,7 +111,7 @@ public class Utils {
 
 		try (
 				FileOutputStream fileOS = new FileOutputStream(fileName);
-				ReadableByteChannel readChannel = Channels.newChannel((new URL(url)).openStream());	
+				ReadableByteChannel readChannel = Channels.newChannel((new URI(url)).toURL().openStream());	
 				){
 
 			fileOS.getChannel().transferFrom(readChannel, 0L, Long.MAX_VALUE);
@@ -124,6 +126,9 @@ public class Utils {
 			if (log.isDebugEnabled()) {
 				log.debug(ioe.getMessage());
 			}
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return new File(fileName); 
 
@@ -133,11 +138,14 @@ public class Utils {
 	public static void copyUrlToFileUsingCommonsIO(String url, String fileName) {
 
 		try {
-			FileUtils.copyURLToFile(new URL(url), new File(fileName), 40000, 30000);
+			FileUtils.copyURLToFile(new URI(url).toURL(), new File(fileName), 40000, 30000);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -148,7 +156,13 @@ public class Utils {
 		long start = System.currentTimeMillis();
 		String originalURL = address;
 
-		URL url = new URL(address);
+		URL url = null;
+		try {
+			url = new URI(address).toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 		int status = conn.getResponseCode();
 		if (status != HttpURLConnection.HTTP_OK) 
@@ -168,7 +182,17 @@ public class Utils {
 			log.debug("getFinalLocation took {} ms", (System.currentTimeMillis() - start));
 		}
 
-		return new URL(address);
+		try {
+			return new URI(address).toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	public static String format(double bytes, int digits) {
@@ -313,7 +337,7 @@ public class Utils {
 		
 		URL url;
 		try {
-			url = new URL(src);
+			url = new URI(src).toURL();
 			ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
 			FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 			
@@ -328,6 +352,9 @@ public class Utils {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (URISyntaxException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		} 
 		return new File(fileName);
 		

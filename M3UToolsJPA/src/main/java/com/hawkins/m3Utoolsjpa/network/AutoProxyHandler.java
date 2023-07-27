@@ -3,6 +3,9 @@ package com.hawkins.m3Utoolsjpa.network;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.StringTokenizer;
@@ -19,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AutoProxyHandler {
-	
+
 
 	private ScriptEngine engine;
 	private boolean init;
@@ -47,7 +50,7 @@ public class AutoProxyHandler {
 	public WebProxy getProxyForUrl(String url) {
 		log.info("Calling getProxyForUrl('" + url + "')");
 		try {
-			URL u = new URL(url);
+			URL u = new URI(url).toURL();
 			ProxyInfo info = findProxyForUrl(url, u.getHost());
 			if (info == null || info.isDirect()) {
 				return null;
@@ -104,17 +107,35 @@ public class AutoProxyHandler {
 
 	private String loadPacScript() throws IOException {
 		log.info("Loading PAC script");
-		InputStream pacStram = new URL(pacUrl).openStream();
+		InputStream pacStram;
 		StringBuilder sb = new StringBuilder();
-		byte[] buf = new byte[512];
-		while (true) {
-			int x = pacStram.read(buf);
-			if (x == -1) {
-				break;
-			}
+		int x = 0;
+
+		try {
+			pacStram = new URI(pacUrl).toURL().openStream();
+
+			byte[] buf = new byte[512];
+			while (true) {
+				x = pacStram.read(buf);
+				if (x == -1) {
+					break;
+				}
+			}		
 			sb.append(new String(buf, 0, x));
+			log.info("Done loading PAC script");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		log.info("Done loading PAC script");
+
+
+
 		return sb.toString();
 	}
 
@@ -147,7 +168,7 @@ public class AutoProxyHandler {
 		this.autoProxyScript.append("function dnsResolve(host){\n return String(obj.dnsResolve(host));\n }");
 		this.autoProxyScript.append("function isResolvable(host){\nreturn (dnsResolve(host) != ''); }");
 		this.autoProxyScript
-				.append("function localHostOrDomainIs(host, hostdom){\nreturn shExpMatch(hostdom, host + '*'); }");
+		.append("function localHostOrDomainIs(host, hostdom){\nreturn shExpMatch(hostdom, host + '*'); }");
 		this.autoProxyScript.append(
 				"function dnsDomainLevels(host){\nvar s = host + '';\nfor (var i=0, j=0; i < s.length; i++)\nif (s.charAt(i) == '.')\nj++;\nreturn j; }");
 		this.autoProxyScript.append("function myIpAddress(){\nreturn '");

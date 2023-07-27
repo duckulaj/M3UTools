@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.StringTokenizer;
@@ -71,7 +72,7 @@ public abstract class AbstractAutoProxyHandler implements ProxyHandler {
 		this.autoProxyScript.append(" function alert() {} ");
 		URL localURL1 = null;
 		try {
-			localURL1 = new URL(this.bpi.getAutoConfigURL());
+			localURL1 = new URI(this.bpi.getAutoConfigURL()).toURL();
 		} catch (MalformedURLException localMalformedURLException) {
 			throw new Exception("Auto config URL is malformed");
 		}
@@ -116,7 +117,7 @@ public abstract class AbstractAutoProxyHandler implements ProxyHandler {
 				}
 				while (str2.charAt(++i) == '/') {
 				}
-				URL localURL = new URL("file:/" + str2.substring(i));
+				URL localURL = new URI("file:/" + str2.substring(i)).toURL();
 				localURLConnection = localURL.openConnection();
 			} else {
 				try {
@@ -144,7 +145,7 @@ public abstract class AbstractAutoProxyHandler implements ProxyHandler {
 					.getInputStream());
 			str = localINIFile.readString("URL", "AutoConfigJSURL");
 			if (str != null) {
-				localURL = new URL(str);
+				localURL = new URI(str).toURL();
 			} else {
 				throw new Exception(
 						"Unable to locate 'AutoConfigJSURL' in INS file");

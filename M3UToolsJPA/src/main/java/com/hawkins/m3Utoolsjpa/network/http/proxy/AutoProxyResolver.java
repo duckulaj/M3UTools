@@ -1,5 +1,6 @@
 package com.hawkins.m3Utoolsjpa.network.http.proxy;
 
+import java.net.URI;
 import java.net.URL;
 
 public class AutoProxyResolver {
@@ -21,7 +22,7 @@ public class AutoProxyResolver {
 				init(pacURL);
 			}
 
-			URL url = new URL(ustr);
+			URL url = new URI(ustr).toURL();
 			ProxyInfo[] ps = handler.getProxyInfo(url);
 			if (ps == null || ps.length == 0) {
 				return null;

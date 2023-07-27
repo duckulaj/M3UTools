@@ -1,5 +1,6 @@
 package com.hawkins.m3utoolsjpa.controller;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
@@ -100,7 +101,7 @@ public class DownloadController {
         
         try {
             // URL url = resource.getURL();
-        	URL url = new URL(Utils.getURLFromName(name, m3uItemRepository));
+        	URL url = new URI(Utils.getURLFromName(name, m3uItemRepository)).toURL();
         	resource = new UrlResource(url.toURI());
         	contentType = NetUtils.getContentTypeFromUrl(url);
             contentSize = NetUtils.getContentSizeFromUrl(url);
@@ -139,7 +140,7 @@ public class DownloadController {
 		String contentType = null;
                 
         try {
-           	URL url = new URL(Utils.getURLFromName(name, m3uItemRepository));
+           	URL url = new URI(Utils.getURLFromName(name, m3uItemRepository)).toURL();
            	String fileExtension = url.toString().substring(url.toString().lastIndexOf("."));
            	savedFileName = savedFileName + fileExtension;
             contentType = NetUtils.getContentTypeFromUrl(url);

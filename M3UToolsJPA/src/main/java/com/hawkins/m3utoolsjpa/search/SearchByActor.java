@@ -2,6 +2,7 @@ package com.hawkins.m3utoolsjpa.search;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class SearchByActor implements Search {
 			parameters.put("api_key", api);
 			parameters.put("query", actor);
 
-			URL url = new URL(searchPersonURL + "?" + Utils.getParamsString(parameters));
+			URL url = new URI(searchPersonURL + "?" + Utils.getParamsString(parameters)).toURL();
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setRequestProperty("Content-Type", "application/json");
