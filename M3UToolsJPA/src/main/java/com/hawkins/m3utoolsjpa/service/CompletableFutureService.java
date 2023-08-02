@@ -29,6 +29,9 @@ public class CompletableFutureService {
 	@Autowired 
 	EpgService epgService;
 
+	@Autowired
+	DatabaseService databaseService;
+	
 	public void writeEPG() {
 
 		CompletableFuture<List<M3UItem>> m3UItems = CompletableFuture.supplyAsync(() -> 
@@ -70,10 +73,11 @@ public class CompletableFutureService {
 		
 		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
 		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
-			itemRepository.deleteAllInBatch();
-			itemRepository.flush();
-			groupRepository.deleteAllInBatch();
-			groupRepository.flush();
+			// itemRepository.deleteAllInBatch();
+			databaseService.DeleteItemsAndGroups();
+			// itemRepository.flush();
+			// groupRepository.deleteAllInBatch();
+			// groupRepository.flush();
 		});
 		
 		
