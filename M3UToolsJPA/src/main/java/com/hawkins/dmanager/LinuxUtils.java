@@ -24,7 +24,7 @@ public class LinuxUtils {
 
 	public static void initShutdown() {
 		for (int i = 0; i < shutdownCmds.length; i++) {
-			String cmd = shutdownCmds[0];
+			String[] cmd = shutdownCmds;
 			try {
 				Process proc = Runtime.getRuntime().exec(cmd);
 				int ret = proc.waitFor();

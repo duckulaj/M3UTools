@@ -12,7 +12,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
