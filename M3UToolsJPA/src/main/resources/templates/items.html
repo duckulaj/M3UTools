@@ -84,11 +84,11 @@
 			</button>
 		</div>
 
-		<div class="my-3">
+		<div class="container">
 			<form th:action="@{/}" id="searchForm">
-				<div class="row d-flex">
-					<div class="col-md-6 mt-2">
-						<div class="col-md-3 input-group mt-2">
+				<div class="row align-items-start">
+					<div class="col">
+						<div class="input-group mt-2">
 							<div class="input-group-prepend">
 								<label class="input-group-text" for="${group.id}">Channel
 									Group:</label> <select form="searchForm" name="groupId"
@@ -100,7 +100,8 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3 input-group mt-2">
+					<div class="col">
+					<div class="input-group mt-2">
 						<div class="input-group-prepend">
 							<label class="input-group-text" for="pageSize">Items per
 								page:</label> <select form="searchForm" name="size"
@@ -111,7 +112,7 @@
 							</select>
 						</div>
 					</div>
-
+					</div>
 				</div>
 			</form>
 		</div>

@@ -1,4 +1,5 @@
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
@@ -6,9 +7,9 @@
 	<script th:src="@{webjars/jquery/jquery.min.js}"></script>
 	<script th:src="@{webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 	<script th:src="@{webjars/font-awesome/5.8.2/js/all.js}"></script>
-	<link rel="stylesheet" th:href="@{webjars/font-awesome/5.8.2/css/all.css}"/>
+	<link rel="stylesheet" th:href="@{webjars/font-awesome/5.8.2/css/all.css}" />
 	<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
-	
+
 	<script type="text/javascript">
 		function groupChange(selectObj) {
 			var idx = selectObj.selectedIndex;
@@ -18,81 +19,92 @@
 				selectObj.form.submit(which);
 			}
 		}
-	</script>	
+	</script>
 </head>
+
 <body>
-<div th:replace="~{fragments/header :: header}"></div>
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<h1> Tv Channels </h1>
-		</div>
-	</div>
-	
-	<div class="my-3">
-		<form th:action="@{/tvChannels}" id="searchForm">
-			<div class="row d-flex">
-				<div class="col-md-6 mt-2">
-					<div class="col-md-3 input-group mt-2">
-						<div class="input-group-prepend">
-							<label class="input-group-text" for="${group.id}">Channel
-								Group:</label> <select form="searchForm" name="groupId"
-								th:onchange="'groupChange(this)'";>
-								<option th:each="group : ${groups}" th:value="${group.id}"
-									th:text="${group.name}"
-									th:selected="${group.id==selectedGroup.id}">Groups
-								</option>
-							</select>
-							&nbsp;
-							<label class="input-group-text">Show All</label>
-							&nbsp;
-							<input type = "checkbox" th:name="showAll" th:checked="false"  th:onclick="|window.location.href='/showAllSelected'|"/>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div class="container-fluid">
+		<h2 class="text-center">Tv Channels</h2>
+
+		<div class="container">
+			<form th:action="@{/tvChannels}" id="searchForm">
+				<div class="row align-items-center">
+					<div class="col">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<label class="input-group-text" for="${group.id}">Channel Group:</label>
+								<select form="searchForm" name="groupId" th:onchange="'groupChange(this)'" ;>
+									<option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}"
+										th:selected="${group.id==selectedGroup.id}">Groups
+									</option>
+								</select>
+							</div>
 						</div>
-						
+					</div>
+					<div class="col">
+						<div class="input-group">
+
+							<input class="form-check-input" type="checkbox" th:name="showAll" th:checked="false"
+								th:onclick="|window.location.href='/showAllSelected'|">
+							<label class="form-check-label" for="flexCheckDefault">
+								&nbsp;Show All
+							</label>
+
+
+						</div>
 					</div>
 				</div>
-			</div>
+		
 		</form>
 	</div>
-					
-	<div class="row">
-		<div class="col-md-6">
-			<form action="#" class="form-horizontal"
-				  th:action="@{/saveTvChannels}"
-				  th:object="${form}"
-				  method="post">
+	</div>
+
+
+	</div>
+
+<div class="container">
+	<div class="row align-items-center">
+		<div class="col">
+			<form action="#" class="form-horizontal" th:action="@{/saveTvChannels}" th:object="${form}" method="post">
 				<fieldset>
-					<span class="float-right">
-						    <input type="submit" id="submitButton" class="btn btn-success" th:value="Save">
-						    <input type="reset" id="resetButton" class="btn btn-danger" th:value="Reset"/>
-					</span>
+					<div class="col">
+						<input type="submit" id="submitButton" class="btn btn-success" th:value="Save">
+						<input type="reset" id="resetButton" class="btn btn-danger" th:value="Reset" />
+					</div>
 					<table class="table">
 						<thead>
-						<tr>
-							<th> Id</th>
-							<th> Tvg-Id</th>
-							<th> GroupId</th>
-							<th> Title</th>
-							<th> Selected</th>
-						</tr>
+							<tr>
+								<th> Id</th>
+								<th> Tvg-Id</th>
+								<th> GroupId</th>
+								<th> Title</th>
+								<th> Selected</th>
+							</tr>
 						</thead>
 						<tbody>
-						<tr th:each="channel, itemStat : ${form.channels}">
-							<td><input th:name="|channels[${itemStat.index}].id|" th:value="${channel.getId()}"/></td>
-							<td><input th:name="|channels[${itemStat.index}].tvgId|" th:value="${channel.getTvgId()}"/></td>
-							<td><input th:name="|channels[${itemStat.index}].groupId|" th:value="${channel.getGroupId()}"/></td>
-							<td><input th:size="30" th:placeholder="Name + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].tvgName|" th:value="${channel.getTvgName()}"
-									   required /></td>
-							<td><input type = "checkbox" th:placeholder="Selected + ' ' + ${itemStat.count}" th:name="|channels[${itemStat.index}].selected|"
-									   th:checked="${channel.isSelected()}"/></td>
-						</tr>
+							<tr th:each="channel, itemStat : ${form.channels}">
+								<td><input th:name="|channels[${itemStat.index}].id|" th:value="${channel.getId()}" />
+								</td>
+								<td><input th:name="|channels[${itemStat.index}].tvgId|"
+										th:value="${channel.getTvgId()}" /></td>
+								<td><input th:name="|channels[${itemStat.index}].groupId|"
+										th:value="${channel.getGroupId()}" /></td>
+								<td><input th:size="30" th:placeholder="Name + ' ' + ${itemStat.count}"
+										th:name="|channels[${itemStat.index}].tvgName|"
+										th:value="${channel.getTvgName()}" required /></td>
+								<td><input type="checkbox" th:placeholder="Selected + ' ' + ${itemStat.count}"
+										th:name="|channels[${itemStat.index}].selected|"
+										th:checked="${channel.isSelected()}" /></td>
+							</tr>
 						</tbody>
 					</table>
 				</fieldset>
 			</form>
 		</div>
 	</div>
-</div>
-<div th:replace="~{fragments/footer :: footer}"></div>
+	</div>
+	<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
+
 </html>
