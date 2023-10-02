@@ -75,18 +75,31 @@ public class M3UService {
 		}
 		
 		if (items.size() > 0) {
-		
+			
+			List<M3UGroup> groups = new ArrayList<M3UGroup>();
+				
+			M3UGroup group = null;
+			
 			for (M3UItem item : items) {
 	
-				M3UGroup group = groupRepository.findByName(item.getGroupTitle());
+				
+				if (groups.size() > 0) {
+					group = groups.stream()
+							  .filter(thisGroup -> item.getGroupTitle().equals(thisGroup.getName()))
+							  .findFirst()
+							  .orElse(null);
+					// M3UGroup group = groupRepository.findByName(item.getGroupTitle());
+				}
 				if (group == null) {
 					M3UGroup newGroup = groupRepository.save(new M3UGroup(item.getGroupTitle(), item.getType()));
+					groups.add(newGroup);
 					item.setGroupId(newGroup.getId());
 				} else {
 					item.setGroupId(group.getId());
-				}
+				
 			}
 	
+			}
 			StopWatch swSave = new org.springframework.util.StopWatch();
 			swSave.start();
 			itemRepository.saveAllAndFlush(items);
