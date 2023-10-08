@@ -298,7 +298,7 @@ public class M3UtoStrmService {
 				String url = movie.getChannelUri();
 
 				try {
-					if (!RegexUtils.containsRegex(groupTitle, Patterns.ADULT_REGEX)) {
+					// if (!RegexUtils.containsRegex(groupTitle, Patterns.ADULT_REGEX)) {
 
 						// String newFolder = Utils.normaliseName(folder);
 						String newFolder = folder;
@@ -315,7 +315,7 @@ public class M3UtoStrmService {
 							log.debug("Written - {}", thisFile.getAbsolutePath());
 						}
 
-					}
+					// }
 				} catch (IOException ioe) {
 					ioe.getMessage();
 				}
