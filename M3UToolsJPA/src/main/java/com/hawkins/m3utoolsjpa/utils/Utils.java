@@ -399,4 +399,9 @@ public class Utils {
 	    }
 	    
 	}
+	
+	public static int indexOfAny(String search, String[] items) {
+		
+		return StringUtils.indexOfAny(search, items);
+	}
 }
