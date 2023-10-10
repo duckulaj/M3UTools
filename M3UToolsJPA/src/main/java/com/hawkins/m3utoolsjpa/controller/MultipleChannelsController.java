@@ -42,7 +42,8 @@ public class MultipleChannelsController {
 
         model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
         model.addAttribute("groupId", groupId);
-        model.addAttribute("groups", m3uService.getM3UGroups());
+        // model.addAttribute("groups", m3uService.getM3UGroups());
+        model.addAttribute("groups", m3uService.getM3UGroupsByType(Constants.LIVE));
         model.addAttribute("form", new SelectedChannelsCreationDto(channels));
 
         return Constants.EDIT_CHANNELS;
