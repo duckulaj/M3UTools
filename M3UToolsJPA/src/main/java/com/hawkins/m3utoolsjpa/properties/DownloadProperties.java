@@ -39,15 +39,12 @@ public class DownloadProperties implements Runnable {
 	private boolean embyInstalled = false;
 	private String embyApi = null;
 	private String embyUrl = null;
-	private boolean xteveInstalled = false;
-	private String xteveUser = null;
-	private String xteveUrl = null;
 	private String fileName = null;
 	private String streamXMLUrl = null;
 	private String streamChannels = null;
 	private int fileAgeM3U = 1;
 	private int fileAgeEPG = 1;
-	private String[] excludedCountries = null;
+	private String[] includedCountries = null;
 
 	public DownloadProperties() {
 
@@ -77,15 +74,12 @@ public class DownloadProperties implements Runnable {
 		this.setEmbyInstalled(Boolean.parseBoolean(props.getProperty("emby.installed")));
 		this.setEmbyApi(props.getProperty("emby.api"));
 		this.setEmbyUrl(props.getProperty("emby.url"));
-		this.setXteveInstalled(Boolean.parseBoolean(props.getProperty("xteve.installed")));
-		this.setXteveUser(props.getProperty("xteve.user"));
-		this.setXteveUrl(props.getProperty("xteve.url"));
 		this.setFileName(props.getProperty("fileName"));
 		this.setStreamXMLUrl(props.getProperty(Constants.STREAM_PLAYLIST));
 		this.setStreamChannels(props.getProperty(Constants.STREAM_CHANNELS));
 		this.setFileAgeEPG(Integer.valueOf(props.getProperty("fileAge.epg")));
 		this.setFileAgeM3U(Integer.valueOf(props.getProperty("fileAge.m3u")));
-		this.setExcludedCountries(props.getProperty("excludedCountries").split(","));
+		this.setIncludedCountries(props.getProperty("includedCountries").split(","));
 	}
 
 	public static synchronized DownloadProperties getInstance()
@@ -259,30 +253,6 @@ public class DownloadProperties implements Runnable {
 		this.epgTimeDifference = epgTimeDifference;
 	}
 
-	public boolean isXteveInstalled() {
-		return xteveInstalled;
-	}
-
-	public void setXteveInstalled(boolean xteveInstalled) {
-		this.xteveInstalled = xteveInstalled;
-	}
-
-	public String getXteveUser() {
-		return xteveUser;
-	}
-
-	public void setXteveUser(String xteveUser) {
-		this.xteveUser = xteveUser;
-	}
-
-	public String getXteveUrl() {
-		return xteveUrl;
-	}
-
-	public void setXteveUrl(String xteveUrl) {
-		this.xteveUrl = xteveUrl;
-	}
-
 	public String getSearchPersonURL() {
 		return searchPersonURL;
 	}
@@ -345,12 +315,12 @@ public class DownloadProperties implements Runnable {
 		this.fileAgeEPG = fileAgeEPG;
 	}
 
-	public String[] getExcludedCountries() {
-		return excludedCountries;
+	public String[] getIncludedCountries() {
+		return includedCountries;
 	}
 
-	public void setExcludedCountries(String[] excludedCountries) {
-		this.excludedCountries = excludedCountries;
+	public void setIncludedCountries(String[] includedCountries) {
+		this.includedCountries = includedCountries;
 	}
 
 
