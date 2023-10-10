@@ -173,7 +173,7 @@ public class EpgService {
 		try {
 			if (getRemoteEPG) {
 				String url = dp.getStreamXMLUrl();
-				log.info("Retrieving EPG from {}", url);
+				log.info("Retrieving EPG from remote server");
 				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
 				// Utils.copyUrlToFileUsingNIO(url, epgFile);
 			}
