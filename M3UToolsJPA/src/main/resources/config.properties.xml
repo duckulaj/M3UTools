@@ -7,8 +7,6 @@
 <entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
-<entry key="xteve.url">http://localhost:34400/api/</entry>
-<entry key="xteve.installed">false</entry>
 <entry key="emby.api">01f9cd6d610c499a82e5bc4a48401eec</entry>
 <entry key="moviedb.apikey">56744a89f97f5119fe2a2306794d29a3</entry>
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/Downloads</entry>
@@ -17,10 +15,9 @@
 <entry key="fileAge.m3u">240</entry>
 <entry key="emby.url">http://192.168.0.110:8096/emby/</entry>
 <entry key="moviedb.searchURL">https://api.themoviedb.org/3/search/movie</entry>
-<entry key="excludedCountries">AL,AR,DE,DK,ES,EX,FR,GR,IN,IR,IT,KU,MT,NF,NL,PL,PT,RO,SC,SE,SOC,SOM,TOP,TR</entry>
+<entry key="includedCountries">EN,UK,US</entry>
 <entry key="emby.installed">true</entry>
 <entry key="filewatcher.pollingDuration">10000</entry>
-<entry key="xteve.user">duckulaj</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
 <entry key="stream.playlist">http://dome13667.cdngold.me/xmltv.php?username=ba201db620&amp;password=21ffd018d2</entry>
 </properties>
