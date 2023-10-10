@@ -35,6 +35,9 @@ public class Parser {
 	 * @param stream pointing to your m3u file
 	 * @return Linked List of m3uItems found within the supplied m3uFile
 	 */
+	
+	private static DownloadProperties dp = DownloadProperties.getInstance();
+	
 	public static LinkedList<M3UItem> parse() {
 
 		int lineNbr = 0;
@@ -66,7 +69,7 @@ public class Parser {
 		}
 
 		if (getRemoteM3U) {
-			log.info("Retrieving {} from {}", m3uFileOnDisk.toString(), dp.getStreamChannels());
+			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
 			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
 		}
 
@@ -141,6 +144,11 @@ public class Parser {
 		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
 
 		if (tvgName.startsWith("#####")) return null;
+		
+		int endIndex = Utils.indexOfAny(tvgName.substring(0, 2), dp.getIncludedCountries());
+		
+		if (endIndex == -1) return null;
+		
 		tvgName = StringUtils.removeCountryAndDelimiter(tvgName, "|");
 		tvgName = StringUtils.cleanTextContent(tvgName);
 		
