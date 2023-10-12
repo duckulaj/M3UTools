@@ -27,4 +27,5 @@ public class Patterns {
 	public static final Pattern PIPED_COUNTRY = Pattern.compile("\\|.{2,}\\| ");
 	public static final Pattern HYPHEN_REGEX = Pattern.compile("\\-.*?", Pattern.CASE_INSENSITIVE);
 	public static final Pattern SKYCINEMA_REGEX = Pattern.compile("\\SC.*?");
+	public static final Pattern BRACKETS_AND_CONTENT = Pattern.compile("\\(.*?\\)");
 }
