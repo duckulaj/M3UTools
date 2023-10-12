@@ -11,7 +11,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 
 
 public class JsonToList {
@@ -83,6 +85,7 @@ public class JsonToList {
 
 		if (m3uitems.size() > 0) {
 
+			String searchString = "";
 			for (String m3uItem : m3uitems) {
 
 				List<M3UItem> filmList = itemRepository.findByChannelName(Constants.MOVIE,"%" + m3uItem + "%");
@@ -90,6 +93,8 @@ public class JsonToList {
 
 				while (iFilters.hasNext()) {
 					M3UItem m3uItemFromDb = iFilters.next();
+					searchString = m3uItemFromDb.getChannelName();
+					m3uItemFromDb.setSearch(Utils.removeFromString(searchString, Patterns.BRACKETS_AND_CONTENT));
 					foundItems.add(m3uItemFromDb);
 				}
 
