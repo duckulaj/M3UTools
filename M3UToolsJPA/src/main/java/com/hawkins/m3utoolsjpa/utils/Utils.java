@@ -288,11 +288,13 @@ public class Utils {
 		}
 
 		if (filmName.contains("(MULTISUB)")) {
-			return filmName.replace("(MULTISUB)", "").trim();
-		} else {
-			filmName = Utils.removeFromString(filmName, Patterns.STRIP_COUNTRY_IDENTIFIER);
-			return filmName.trim();
+			filmName =  filmName.replace("(MULTISUB)", "").trim();
 		}
+		
+		filmName = Utils.removeFromString(filmName, Patterns.STRIP_COUNTRY_IDENTIFIER);
+		filmName = Utils.removeFromString(filmName, Patterns.BRACKETS_AND_CONTENT);
+		return filmName.trim();
+		
 		
 	}
 
