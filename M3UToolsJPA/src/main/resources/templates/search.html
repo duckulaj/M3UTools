@@ -16,6 +16,7 @@
 
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 
+
 <script>
 function openInformationModal(row) { // begin function
 
@@ -51,6 +52,7 @@ function openInformationModal(row) { // begin function
                     $("#modalTitleH4").html(data.title);
                     $("#modalBodyDiv").html(data.overview);
                     $("#releaseDate").html(data.release_date);
+                    document.getElementById("posterPath").style.backgroundImage = "url('https://image.tmdb.org/t/p/original" + data.poster_path + "')"
                     $("#informationModal").modal("show");
                 }
         	})
