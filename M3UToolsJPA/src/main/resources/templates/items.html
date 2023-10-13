@@ -14,6 +14,7 @@
 <link rel="stylesheet" th:href="@{webjars/font-awesome/5.8.2/css/all.css}"/>
 <link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
 
+
 <script type="text/javascript">
 	function groupChange(selectObj) {
 		var idx = selectObj.selectedIndex;
@@ -23,50 +24,8 @@
 			selectObj.form.submit(which);
 		}
 	}
-	
-	function openInformationModal(row) { // begin function
-
-    	var val = row.getAttribute("value");
-    	var api = document.getElementById("moviedbapi").value;
-    	var url = document.getElementById("moviedbsearchURL").value;
-    	var movieurl = document.getElementById("moviedbsearchMovieURL").value;
-    	
-    	$.ajax({ // begin ajax
-        	url: url,
-            data: {
-                api_key: api,
-                language: "en-GB",
-                query: val
-            },
-            dataType : 'json',
-            context : this,
-            success: function(data) {
-            	$.ajax({
-                	url: movieurl + "/" + data.results[0].id,
-    	            data: {
-    	                api_key: api,
-    	                language: "en-GB"
-    	            },
-    	            dataType : 'json',
-    	            context : this,
-    	            error: function() {
-    	            	alert("No information available");
-    	            },
-                    success: function(data) {
-                    	console.log(data);
-                        console.log(data.overview);
-                        $("#modalTitleH4").html(data.title);
-                        $("#modalBodyDiv").html(data.overview);
-                        $("#releaseDate").html("Release Date : " + data.release_date);
-                        document.getElementById("posterPath").style.backgroundImage = "url('https://image.tmdb.org/t/p/original" + data.poster_path + "')"
-                        $("#informationModal").modal("show");
-                    }
-            	})
-            }
-        }) //end ajax
-    } // end function
-
-    </script>
+</script>
+<div th:replace="~{fragments/informationModalScript :: script}"></div>
 </head>
 
 <body>
@@ -152,8 +111,8 @@
 			</table>
 		</div>
 
-		<div th:unless="${items.size() > 0}">
-			<span>No Titles found!</span>
+		<div th:unless="${items.size() > 0}" style="color: crimson;">
+			<p style="text-align:center">No Titles found!</p>
 		</div>
 
 		<nav aria-label="Pagination" th:if="${totalPages > 0}">

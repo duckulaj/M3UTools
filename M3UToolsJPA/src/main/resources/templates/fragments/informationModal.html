@@ -1,20 +1,19 @@
-<div th:fragment="informationModal"  id="informationModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<!-- Modal content-->
-			<div class="modal-content"  style="mix-blend-mode: difference;">
-				<div class="bg-image" id="posterPath" style="background-image: url(); background-size: cover;">
-					<div class="modal-header">
-	<!-- 					<button type="button" class="close" data-dismiss="modal">&times;</button> -->
-						<h4 class="modal-title" id="modalTitleH4"></h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body" id="modalBodyDiv"></div>
-					<div class="modal-body" id="releaseDate"></div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					</div>
+<div th:fragment="informationModal" id="informationModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="bg-image" id="posterPath" style="background-image: url(); background-size: cover;">
+				<div class="modal-header">
+					<!-- 					<button type="button" class="close" data-dismiss="modal">&times;</button> -->
+					<h4 class="modal-title" id="modalTitleH4"></h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" style="mix-blend-mode:hard-light;" id="modalBodyDiv"></div>
+				<div class="modal-body" id="releaseDate"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+</div>

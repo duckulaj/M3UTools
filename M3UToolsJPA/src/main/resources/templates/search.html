@@ -16,52 +16,7 @@
 
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 
-
-<script>
-function openInformationModal(row) { // begin function
-
-	var val = row.getAttribute("value");
-	var api = document.getElementById("moviedbapi").value;
-	var url = document.getElementById("moviedbsearchURL").value;
-	var movieurl = document.getElementById("moviedbsearchMovieURL").value;
-	
-	$.ajax({ // begin ajax
-    	url: url,
-        data: {
-            api_key: api,
-            language: "en-GB",
-            query: val
-        },
-        dataType : 'json',
-        context : this,
-        success: function(data) {
-        	$.ajax({
-            	url: movieurl + "/" + data.results[0].id,
-	            data: {
-	                api_key: api,
-	                language: "en-GB"
-	            },
-	            dataType : 'json',
-	            context : this,
-	            error: function() {
-	            	alert("No information available");
-	            },
-                success: function(data) {
-                	console.log(data);
-                    console.log(data.overview);
-                    $("#modalTitleH4").html(data.title);
-                    $("#modalBodyDiv").html(data.overview);
-                    $("#releaseDate").html(data.release_date);
-                    document.getElementById("posterPath").style.backgroundImage = "url('https://image.tmdb.org/t/p/original" + data.poster_path + "')"
-                    $("#informationModal").modal("show");
-                }
-        	})
-        }
-    }) //end ajax
-} // end function
-
-
-</script>
+<div th:replace="~{fragments/informationModalScript :: script}"></div>
 </head>
 <body>
 
