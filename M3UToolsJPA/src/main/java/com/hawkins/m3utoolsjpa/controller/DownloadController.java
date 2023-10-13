@@ -1,5 +1,10 @@
 package com.hawkins.m3utoolsjpa.controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
@@ -14,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.hawkins.dmanager.properties.DmProperties;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
@@ -131,7 +139,7 @@ public class DownloadController {
     }
 	
 	@GetMapping(value ="downloadDirect", params = { "name" })
-	public String downloadDirect(@RequestParam String name, HttpServletRequest request, HttpServletResponse response) {
+	public StreamingResponseBody downloadDirect(@RequestParam String name, HttpServletRequest request, HttpServletResponse response) {
 
 		String savedFileName = name;
 		// remove any file extension
@@ -145,26 +153,24 @@ public class DownloadController {
            	savedFileName = savedFileName + fileExtension;
             contentType = NetUtils.getContentTypeFromUrl(url);
             
-            FileDownloadUtil.downloadFile(response, url, savedFileName, contentType, NetUtils.getContentSizeFromUrl(url));
+            // FileDownloadUtil.downloadFile(response, url, savedFileName, contentType, NetUtils.getContentSizeFromUrl(url));
+            
+            response.setContentType("application/pdf");
+    		response.setHeader("Content-Disposition", "attachment; filename=" + savedFileName + "");
+    		InputStream inputStream = new BufferedInputStream(url.openStream());
+    		return outputStream -> {
+    		    int nRead;
+    		    byte[] data = new byte[1024];
+    		    while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+    		        System.out.println("Writing some bytes of file...");
+    		        outputStream.write(data, 0, nRead);
+    		    }
+    		};
+       
         } catch (Exception ex) {
             log.info("Could not determine file type.");
         }
-
-        // Fallback to the default content type if type could not be determined
-		/*
-		 * if(contentType == null) { contentType = "application/octet-stream"; }
-		 * 
-		 * HttpHeaders headers = new HttpHeaders();
-		 * headers.add(HttpHeaders.CONTENT_TYPE, "application/x-download");
-		 * headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-		 * savedFileName + "\""); headers.add(HttpHeaders.CONTENT_LENGTH,
-		 * contentSize.toString()); headers.add("Pragma", "no-cache");
-		 * headers.add("Cache-Control", "no-cache");
-		 */
         
-        return Constants.ITEMS;
-                
+     return null;           
     }
-	
-	
-}
+	}
