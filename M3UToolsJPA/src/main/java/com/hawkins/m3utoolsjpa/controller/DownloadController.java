@@ -1,9 +1,6 @@
 package com.hawkins.m3utoolsjpa.controller;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -19,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -131,6 +126,7 @@ public class DownloadController {
         // headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + savedFileName + "\"");
         headers.add(HttpHeaders.CONTENT_LENGTH, contentSize.toString()); 
+        headers.add(HttpHeaders.CONNECTION, "keep-alive");
         headers.add("Pragma", "no-cache");
         headers.add("Cache-Control", "no-cache");
         // return ResponseEntity.ok().headers(headers).body(resource);
@@ -146,17 +142,19 @@ public class DownloadController {
 		// name = name.substring(0, name.lastIndexOf("."));
 				
 		String contentType = null;
-                
+		Long contentSize = 0L;
+		
         try {
            	URL url = new URI(Utils.getURLFromName(name, m3uItemRepository)).toURL();
            	String fileExtension = url.toString().substring(url.toString().lastIndexOf("."));
            	savedFileName = savedFileName + fileExtension;
             contentType = NetUtils.getContentTypeFromUrl(url);
-            
+            contentSize = NetUtils.getContentSizeFromUrl(url);
             // FileDownloadUtil.downloadFile(response, url, savedFileName, contentType, NetUtils.getContentSizeFromUrl(url));
             
-            response.setContentType("application/pdf");
+            response.setContentType(contentType);
     		response.setHeader("Content-Disposition", "attachment; filename=" + savedFileName + "");
+    		response.addHeader(HttpHeaders.CONNECTION, "keep-alive");
     		InputStream inputStream = new BufferedInputStream(url.openStream());
     		return outputStream -> {
     		    int nRead;

@@ -10,8 +10,8 @@
 <script th:src="@{webjars/jquery/jquery.min.js}"></script>
 <!-- <script th:src="@{webjars/bootstrap/js/bootstrap.min.js}"></script> -->
 <script th:src="@{webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{webjars/font-awesome/5.8.2/js/all.js}"></script>
-<link rel="stylesheet" th:href="@{webjars/font-awesome/5.8.2/css/all.css}"/>
+<script th:src="@{webjars/font-awesome/6.4.2/js/all.js}"></script>
+<link rel="stylesheet" th:href="@{webjars/font-awesome/6.4.2/css/all.css}"/>
 <link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
 
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
@@ -58,18 +58,27 @@
 						<th scope="col">Title</th>
 						<th scope="col"></th>
 						<th scope="col"></th>
+						<th scope="col"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="item : ${items}">
 						<th hidden="true" scope="row">[[${item.id}]]</th>
 						<td>[[${item.tvgName}]]</td>
-						<form action="#" th:action="@{/download}" method="post">
+						<form action="#" th:action="@{/newDownload}" method="get">
 					<td><input type="hidden" th:value="${item.tvgName}"
 						name="name" id="name" />
 						<button type="submit" class="btn btn-default btn-sm" name="action"
 							id="btndownload" value="download">
 							<i class="fa fa-download fa-lg"></i>
+						</button></td>
+				</form>
+				<form action="#" th:action="@{/stream}" method="get">
+					<td><input type="hidden" th:value="${item.tvgName}"
+						name="name" id="name" />
+						<button type="submit" class="btn btn-default btn-sm" name="action"
+							id="btnstream" value="stream">
+							<i class="fa fa-video-camera  fa-lg"></i>
 						</button></td>
 				</form>
 				<td><input type="hidden" th:value="${item.search}"
