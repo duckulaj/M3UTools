@@ -77,49 +77,8 @@
 			</form>
 		</div>
 
-		<div th:if="${items.size() > 0}">
-			<table class="table table-striped">
-				<thead class="table-dark">
-					<tr>
-						<th hidden="true" scope="col">Id</th>
-						<th scope="col">Title</th>
-						<th scope="col"></th>
-						<th scope="col"></th>
-						<th scope="col"></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="item : ${items}">
-						<th hidden="true" scope="row">[[${item.id}]]</th>
-						<td>[[${item.tvgName}]]</td>
-						<form action="#" th:action="@{/newDownload}" method="get">
-					<td><input type="hidden" th:value="${item.tvgName}"
-						name="name" id="name" />
-						<button type="submit" class="btn btn-default btn-sm" name="action"
-							id="btndownload" value="download">
-							<i class="fa fa-download fa-lg"></i>
-						</button></td>
-				</form>
-				<form action="#" th:action="@{/stream}" method="get">
-					<td><input type="hidden" th:value="${item.tvgName}"
-						name="name" id="name" />
-						<button type="submit" class="btn btn-default btn-sm" name="action"
-							id="btnstream" value="stream">
-							<i class="fa fa-video-camera  fa-lg"></i>
-						</button></td>
-				</form>
-				<td><input type="hidden" th:value="${item.search}"
-					name="searchInfo" id="searchInfo" />
-					<button type="submit" class="btn btn-default btn-sm"
-						name="btninformation" id="btninformation"
-						th:onclick="openInformationModal(this);" th:value="${item.search}">
-						<i class="fa fa-info-circle fa-lg"></i>
-					</button></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
+		<div th:replace="~{fragments/itemsTable :: itemsTable}"></div>
+		
 		<div th:unless="${items.size() > 0}" style="color: crimson;">
 			<p style="text-align:center">No Titles found!</p>
 		</div>
@@ -158,29 +117,6 @@
 		</nav>
 	</div>
 
-	<div class="modal fade text-center" id="confirmModal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Delete Confirmation</h5>
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-
-				<div class="modal-body">
-					<span id="confirmText"></span>
-				</div>
-
-				<div class="modal-footer">
-					<a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
-					<button type="button" class="btn btn-secondary"
-						data-dismiss="modal">No</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
 	<div th:replace="~{fragments/informationModal :: informationModal}"></div>
 	
 	<div th:replace="~{fragments/movieDbApi :: movieDbApi}"></div>
