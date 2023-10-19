@@ -32,7 +32,7 @@
 	<div th:replace="~{fragments/header :: header}"></div>
 
 	<div class="container-fluid" style="max-width: 1024px; margin: 0 auto;">
-		<h2 class="text-center">Channels</h2>
+		<h3 class="text-center">Films</h3>
 
 		<div th:if="${message != null}"
 			class="alert alert-success alert-dismissible fade show text-center message"
@@ -50,8 +50,8 @@
 					<div class="col">
 						<div class="input-group mt-2">
 							<div class="input-group-prepend">
-								<label class="input-group-text" for="${group.id}">Channel
-									Group:</label> <select form="searchForm" name="groupId"
+								<label class="input-group-text" for="${group.id}">Category</label> 
+								<select form="searchForm" name="groupId"
 									th:onchange="'groupChange(this)'";>
 									<option th:each="group : ${groups}" th:value="${group.id}"
 										th:text="${group.name}"
