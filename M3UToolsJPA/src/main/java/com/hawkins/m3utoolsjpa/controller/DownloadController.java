@@ -18,9 +18,11 @@ import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
-public class NewDownloadController {
+@Slf4j
+public class DownloadController {
 
 	@Autowired
 	M3UItemRepository itemRepository;
@@ -31,15 +33,14 @@ public class NewDownloadController {
         URL url = null;
 		try {
 			url = new URI(Utils.getURLFromName(name, itemRepository)).toURL();
+			log.info("Downloading {}", name);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
-		int bufferSize = 8192;
+		int bufferSize = 16384;
         BufferedInputStream inputStream = new BufferedInputStream(url.openStream(), bufferSize);
 
         response.setContentType("application/octet-stream");
