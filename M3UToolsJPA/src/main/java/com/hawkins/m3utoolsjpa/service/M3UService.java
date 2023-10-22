@@ -298,6 +298,12 @@ public class M3UService {
 			SearchFactory searchFactory = new SearchFactory();
 			Search search = searchFactory.createSearch(searchType);
 			searchResults = search.search(criteria, itemRepository);
+			
+			if (searchResults.size() > 0) {
+				for (M3UItem item : searchResults) {
+					item.setSearch(Utils.normaliseSearch(item.getSearch()));
+				}
+			}
 		}
 
 		return searchResults;
