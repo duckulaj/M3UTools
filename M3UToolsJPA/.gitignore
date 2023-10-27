@@ -12,3 +12,8 @@
 /M3UToolsJPA.m3u
 /channels.m3u
 /bin/
+/.classpath
+/.factorypath
+/deployM3UToolsJPA.sh
+/epg.xml
+/generatedChannels.xml
