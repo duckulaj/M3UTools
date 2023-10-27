@@ -1,6 +1,8 @@
 package com.hawkins.m3utoolsjpa.search;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -100,6 +102,8 @@ public class JsonToList {
 
 		}
 
-		return foundItems;
+		Collections.sort(foundItems, Comparator.comparing(M3UItem::getSearch));
+		
+		return foundItems; 
 	}
 }
