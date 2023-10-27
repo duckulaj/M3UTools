@@ -33,7 +33,7 @@ function openInformationModal(row) { // begin function
                     console.log(data.overview);
                     $("#modalTitleH4").html(data.title);
                     $("#modalBodyDiv").html(data.overview);
-                    $("#releaseDate").html(data.release_date);
+                    $("#releaseDate").html(convertDateFormat(data.release_date));
                     //document.getElementById("posterPath").style.backgroundImage = "url('https://image.tmdb.org/t/p/original" + data.poster_path + "')"
                     document.getElementById("posterPath").src = "https://image.tmdb.org/t/p/original" + data.poster_path + ""
                     $("#informationModal").modal("show");
@@ -44,4 +44,11 @@ function openInformationModal(row) { // begin function
 } // end function
 
 
+</script>
+
+<script>
+	function convertDateFormat(inputDate) {
+    var dateParts = inputDate.split("-");
+    return dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+}
 </script>
