@@ -1,6 +1,5 @@
 #!/bin/bash
 cd /home/jonathan/git/M3UTools/M3UToolsJPA
-git pull
 mvn clean package
 cd target
 echo "Stopping M3UToolsJPA"
