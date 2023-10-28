@@ -6,8 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +30,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.FilterRepository;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
@@ -32,10 +45,12 @@ import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.data.TvChannel;
 import com.hawkins.m3utoolsjpa.data.TvChannelRepository;
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
+import com.hawkins.m3utoolsjpa.m3u.M3UGenre;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.properties.OrderedProperties;
+import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
 import com.hawkins.m3utoolsjpa.utils.Constants;
@@ -294,6 +309,17 @@ public class M3UService {
 
 		List<M3UItem> searchResults = new ArrayList<M3UItem>();
 
+		int genreId = 0;
+		
+		// If the searchType evaluates to an integer it means that a genre was selected from the search.html form
+		try {
+			genreId = Integer.parseInt(searchType);
+			searchType = Constants.GENRE_SEARCH;
+			criteria = String.valueOf(genreId);
+		} catch (NumberFormatException nfe) {
+			genreId = 0;
+		}
+		
 		if (criteria != null && criteria.length() > 0) {
 			SearchFactory searchFactory = new SearchFactory();
 			Search search = searchFactory.createSearch(searchType);
@@ -353,5 +379,54 @@ public class M3UService {
 		
 		
 	}
+	
+	public List<M3UGenre> getGenres() {
+		
+			MovieDb movieDb = MovieDb.getInstance();
+			String genreURL = movieDb.getGenreURL();
+			String api = movieDb.getApi();
+			JsonObject obj = new JsonObject();
+
+			try {
+
+				Map<String, String> parameters = new HashMap<>();
+				parameters.put("api_key", api);
+				
+				URL url = new URI(genreURL + "?" + Utils.getParamsString(parameters)).toURL();
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+				con.setRequestMethod("GET");
+				con.setRequestProperty("Content-Type", "application/json");
+
+				JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
+						new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+
+				obj = jsonObject;
+
+			} catch (Exception e) {
+				log.info(e.getMessage());
+			}
+			
+			ObjectMapper objectMapper = new ObjectMapper();
+	        
+			List<M3UGenre> list = null;
+			try {
+				String jsonArray = obj.getAsJsonArray("genres").toString();
+		        TypeReference<List<M3UGenre>> typeReference = new TypeReference<List<M3UGenre>>() {};
+
+				list = objectMapper.readValue(jsonArray, typeReference);
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return list;
+		}
+
+		
+		
+
 
 }

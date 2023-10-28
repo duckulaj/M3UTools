@@ -15,8 +15,8 @@ public class MovieDb implements Runnable {
 	private String movieURL = "";
 	private String personURL = "";
 	private String discoverURL = "";
+	private String genreURL = "";
 	
-
 	private static MovieDb thisInstance = null;
 	
 	public MovieDb() {
@@ -28,7 +28,8 @@ public class MovieDb implements Runnable {
 		this.setMovieURL(props.getProperty("moviedb.searchMovieURL"));
 		this.setPersonURL(props.getProperty("moviedb.searchPersonURL"));
 		this.setDiscoverURL(props.getProperty("moviedb.discoverURL"));
-		
+		this.setGenreURL(props.getProperty("moviedb.genreURL"));
+			
 	}
 	
 	public static synchronized MovieDb getInstance()
@@ -87,12 +88,14 @@ public class MovieDb implements Runnable {
 	public void setDiscoverURL(String discoverURL) {
 		this.discoverURL = discoverURL;
 	}
-	
-	
+
+	public String getGenreURL() {
+		return genreURL;
+	}
+
+	public void setGenreURL(String genreURL) {
+		this.genreURL = genreURL;
+	}
 
 	
-	
-	
-	
-
 }

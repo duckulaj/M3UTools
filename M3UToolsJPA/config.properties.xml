@@ -12,6 +12,7 @@
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/Downloads</entry>
 <entry key="epg.time.difference">+0200</entry>
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
+<entry key="moviedb.genreURL">https://api.themoviedb.org/3/genre/movie/list</entry>
 <entry key="fileAge.m3u">240</entry>
 <entry key="emby.url">http://192.168.0.110:8096/emby/</entry>
 <entry key="moviedb.searchURL">https://api.themoviedb.org/3/search/movie</entry>

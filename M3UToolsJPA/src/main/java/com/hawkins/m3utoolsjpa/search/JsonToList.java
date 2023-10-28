@@ -73,6 +73,13 @@ public class JsonToList {
 					m3uitems.add(result.get("title").getAsString());
 
 					break;
+
+				case Constants.GENRE_SEARCH:
+
+					m3uitems.add(result.get("title").getAsString());
+
+					break;
+
 				default:
 					break;
 				}

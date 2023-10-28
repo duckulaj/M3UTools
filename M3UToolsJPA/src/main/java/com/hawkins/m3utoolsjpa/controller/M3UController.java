@@ -119,6 +119,7 @@ public class M3UController {
 			@RequestParam(required = false, defaultValue = "") String criteria) {
 
 		model.addAttribute("items", m3uService.searchMedia(searchType, criteria));
+		model.addAttribute("genres", m3uService.getGenres());
 		model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 		return Constants.SEARCH;
 	}

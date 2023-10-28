@@ -79,6 +79,7 @@ public class Constants {
 	public static final String ACTOR_SEARCH = "actor";
 	public static final String YEAR_SEARCH = "year";
 	public static final String TITLE_SEARCH = "title";
+	public static final String GENRE_SEARCH = "genre";
 
 	public static final String STREAM_PLAYLIST = "stream.playlist";
 	public static final String STREAM_CHANNELS = "stream.channels";
