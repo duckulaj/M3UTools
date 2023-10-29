@@ -19,7 +19,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.hawkins.dmanager.util.DManagerUtils;
-import com.hawkins.dmanager.util.LinuxUtils;
 import com.hawkins.dmanager.util.ParamUtils;
 import com.hawkins.dmanager.util.StringUtils;
 import com.hawkins.m3Utoolsjpa.network.http.HttpContext;
@@ -153,9 +152,11 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 		}
 		notifyListeners(null);
 		saveDownloadList();
-		if (Config.getInstance().isExecAntivir() && (!StringUtils.isNullOrEmptyOrBlank(Config.getInstance().getAntivirExe()))) {
-				execAntivir();
-		}
+		/*
+		 * if (Config.getInstance().isExecAntivir() &&
+		 * (!StringUtils.isNullOrEmptyOrBlank(Config.getInstance().getAntivirExe()))) {
+		 * execAntivir(); }
+		 */
 
 		processNextItem(id);
 		if (isAllFinished()) {
@@ -674,20 +675,20 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 
 	private void initShutdown() {
 		if (DManagerUtils.detectOS() == DManagerUtils.LINUX) {
-			LinuxUtils.initShutdown();
+			// LinuxUtils.initShutdown();
 		}
 		log.info("Initiating shutdown");
 	}
 		
 	private void execCmd() {
 		if (!StringUtils.isNullOrEmptyOrBlank(Config.getInstance().getCustomCmd())) {
-			DManagerUtils.exec(Config.getInstance().getCustomCmd());
+			// DManagerUtils.exec(Config.getInstance().getCustomCmd());
 		}
 	}
 
 	private void execAntivir() {
-		DManagerUtils.exec(Config.getInstance().getAntivirExe() + " "
-				+ (Config.getInstance().getAntivirCmd() == null ? "" : Config.getInstance().getAntivirCmd()));
+		// DManagerUtils.exec(Config.getInstance().getAntivirExe() + " "
+		//		+ (Config.getInstance().getAntivirCmd() == null ? "" : Config.getInstance().getAntivirCmd()));
 	}
 
 	private void updateFileName(DownloadEntry ent) {

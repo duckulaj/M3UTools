@@ -2,7 +2,6 @@ package com.hawkins.dmanager.util;
 
 import java.io.EOFException;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
@@ -197,16 +196,11 @@ public class DManagerUtils {
 		}
 	}
 
-	public static boolean exec(String args) {
-		try {
-			log.info("Launching: " + args);
-			Runtime.getRuntime().exec(args);
-		} catch (IOException e) {
-			log.info(e.getMessage());
-			return false;
-		}
-		return true;
-	}
+	/*
+	 * public static boolean exec(String args) { try { log.info("Launching: " +
+	 * args); Runtime.getRuntime().exec(args); } catch (IOException e) {
+	 * log.info(e.getMessage()); return false; } return true; }
+	 */
 
 	public static long getFreeSpace(String folder) {
 		if (folder == null)
@@ -219,11 +213,11 @@ public class DManagerUtils {
 		try {
 			int os = detectOS();
 			if (os == LINUX) {
-				LinuxUtils.keepAwakePing();
+				// LinuxUtils.keepAwakePing();
 			} else if (os == WINDOWS) {
 				WinUtils.keepAwakePing();
 			} else if (os == MAC) {
-				MacUtils.keepAwakePing();
+				// MacUtils.keepAwakePing();
 			}
 		} catch (Throwable e) {
 			log.info(e.getMessage());

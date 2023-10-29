@@ -66,13 +66,11 @@ public class MacUtils {
 		}
 	}
 
-	public static void keepAwakePing() {
-		try {
-			Runtime.getRuntime().exec("caffeinate -i -t 3");
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
-	}
+	/*
+	 * public static void keepAwakePing() { try {
+	 * Runtime.getRuntime().exec("caffeinate -i -t 3"); } catch (Exception e) {
+	 * log.info(e.getMessage()); } }
+	 */
 
 	public static void addToStartup() {
 		File dir = new File(System.getProperty("user.home"), "videoDownloader/Library/LaunchAgents");

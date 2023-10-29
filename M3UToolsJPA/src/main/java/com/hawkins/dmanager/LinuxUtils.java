@@ -49,14 +49,11 @@ public class LinuxUtils {
 		}
 	}
 
-	public static void keepAwakePing() {
-		try {
-			Runtime.getRuntime().exec(
-					"dbus-send --print-reply --type=method_call --dest=org.freedesktop.ScreenSaver /ScreenSaver org.freedesktop.ScreenSaver.SimulateUserActivity");
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
-	}
+	/*
+	 * public static void keepAwakePing() { try { Runtime.getRuntime().exec(
+	 * "dbus-send --print-reply --type=method_call --dest=org.freedesktop.ScreenSaver /ScreenSaver org.freedesktop.ScreenSaver.SimulateUserActivity"
+	 * ); } catch (Exception e) { log.info(e.getMessage()); } }
+	 */
 
 	public static void addToStartup() {
 		File dir = new File(System.getProperty("user.home"), "videoDownloader/.config/autostart");

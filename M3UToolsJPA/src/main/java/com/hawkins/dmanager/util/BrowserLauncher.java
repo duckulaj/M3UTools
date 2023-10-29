@@ -11,7 +11,8 @@ public class BrowserLauncher {
 			for (int i = 0; i < ffPaths.length; i++) {
 				System.out.println(ffPaths[i]);
 				if (ffPaths[i].exists()) {
-					return DManagerUtils.exec("\"" + ffPaths[i] + "\" " + args);
+					// return DManagerUtils.exec("\"" + ffPaths[i] + "\" " + args);
+					return false;
 				}
 			}
 		}
@@ -34,7 +35,8 @@ public class BrowserLauncher {
 					new File(System.getenv("LOCALAPPDATA"), "Google\\Chrome\\Application\\chrome.exe") };
 			for (int i = 0; i < ffPaths.length; i++) {
 				if (ffPaths[i].exists()) {
-					return DManagerUtils.exec("\"" + ffPaths[i] + "\" " + args);
+					// return DManagerUtils.exec("\"" + ffPaths[i] + "\" " + args);
+					return false;
 				}
 			}
 		}

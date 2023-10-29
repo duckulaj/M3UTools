@@ -20,19 +20,12 @@ public class LinuxUtils {
 			"dbus-send --system --print-reply --dest=\"org.freedesktop.ConsoleKit\" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop",
 			"systemctl poweroff" };
 
-	public static void initShutdown() {
-		for (int i = 0; i < shutdownCmds.length; i++) {
-			String cmd = shutdownCmds[0];
-			try {
-				Process proc = Runtime.getRuntime().exec(cmd);
-				int ret = proc.waitFor();
-				if (ret == 0)
-					break;
-			} catch (Exception e) {
-				log.info(e.getMessage());
-			}
-		}
-	}
+	/*
+	 * public static void initShutdown() { for (int i = 0; i < shutdownCmds.length;
+	 * i++) { String cmd = shutdownCmds[0]; try { Process proc =
+	 * Runtime.getRuntime().exec(cmd); int ret = proc.waitFor(); if (ret == 0)
+	 * break; } catch (Exception e) { log.info(e.getMessage()); } } }
+	 */
 
 	public static void open(final File f) throws FileNotFoundException {
 		if (!f.exists()) {
@@ -47,14 +40,11 @@ public class LinuxUtils {
 		}
 	}
 
-	public static void keepAwakePing() {
-		try {
-			Runtime.getRuntime().exec(
-					"dbus-send --print-reply --type=method_call --dest=org.freedesktop.ScreenSaver /ScreenSaver org.freedesktop.ScreenSaver.SimulateUserActivity");
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
-	}
+	/*
+	 * public static void keepAwakePing() { try { Runtime.getRuntime().exec(
+	 * "dbus-send --print-reply --type=method_call --dest=org.freedesktop.ScreenSaver /ScreenSaver org.freedesktop.ScreenSaver.SimulateUserActivity"
+	 * ); } catch (Exception e) { log.info(e.getMessage()); } }
+	 */
 
 	public static void addToStartup() {
 		File dir = new File(System.getProperty("user.home"), "videoDownloader/.config/autostart");
