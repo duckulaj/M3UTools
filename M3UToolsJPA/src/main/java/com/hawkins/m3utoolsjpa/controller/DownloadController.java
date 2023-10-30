@@ -1,6 +1,8 @@
 package com.hawkins.m3utoolsjpa.controller;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,10 +56,15 @@ public class DownloadController {
 
         
         int bytesRead;
+        OutputStream out = response.getOutputStream();
+        BufferedOutputStream bos = new BufferedOutputStream(out);
         while ((bytesRead = inputStream.read()) != -1) {
-            response.getOutputStream().write(bytesRead);
+            // response.getOutputStream().write(bytesRead);
+        	bos.write(bytesRead);
         }
 
         inputStream.close();
+        bos.close();
+        out.close();
     }
 }
