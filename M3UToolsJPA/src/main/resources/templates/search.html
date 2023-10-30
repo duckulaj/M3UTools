@@ -17,6 +17,71 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 
 	<div th:replace="~{fragments/informationModalScript :: script}"></div>
+	
+	<style>*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+
+
+label input {
+    position: absolute;
+    left: -9999px;
+}
+
+label input:checked+span {
+    background-color: #d6d6e5;
+}
+
+label input:checked+span:before {
+    box-shadow: inset 0 0 0 0.4375em #00005c;
+}
+
+label span {
+    display: flex;
+    align-items: center;
+    padding: 0.375em 0.75em 0.375em 0.375em;
+    border-radius: 99em;
+    transition: 0.25s ease;
+}
+
+label span:hover {
+    background-color: #d6d6e5;
+}
+
+label span:before {
+    display: flex;
+    flex-shrink: 0;
+    content: "";
+    background-color: #fff;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+    margin-right: 0.375em;
+    transition: 0.25s ease;
+    box-shadow: inset 0 0 0 0.125em #00005c;
+}
+
+.container {
+    position: inherit;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}</style>
 </head>
 
 <body>
@@ -27,29 +92,36 @@
 		<h3 class="text-center">Search</h3>
 
 		<form th:action="@{/search}" id="searchForm">
-			<div class="row d-flex gap-3">
-				<div class="col-md-6 mt-2">
+			
+			<div class="container">
 
-					<div class="input-group-prepend gap-3">
-						<label class="input-group-text gap-3">Search Type</label>
-						<select form="searchForm" name="searchType">
-							<option value="title">Title</option>
-							<option value="actor">Actor</option>
-							<option value="year">Year</option>
-							<option th:each="genre : ${genres}"
-                    				th:value="${genre.id}"
-                    				th:text="${genre.name}">
-                    		</option>
-						</select>
+        <label>
+            <input type="radio" name="searchType" value="title" checked />
+            <span>Title</span>
+        </label>
+        <label>
+            <input type="radio" name="searchType" value="actor" />
+            <span>Actor</span>
+        </label>
+        <label>
+            <input type="radio" name="searchType" value="year" />
+            <span>Year</span>
+        </label>
+        <label>
+            <input type="radio" name="searchType" value="genre" />
+            <span>Genre</span>
+        </label>
+
+</div>
+			
+								<div class="container" >
 						<input type="text" id="criteria" name="criteria" th:value="*{criteria}"
-							placeholder="Enter search criteria" />
-					</div>
-					<button type="submit" class="btn btn-info">Search</button>
+							placeholder="Enter search criteria" />&nbsp;
+					<button type="submit" class="btn btn-info">Search</button>&nbsp;
 					<button type="reset" class="btn btn-info">Reset</button>
+					</div>
 
-
-				</div>
-			</div>
+			
 		</form>
 	</div>
 
