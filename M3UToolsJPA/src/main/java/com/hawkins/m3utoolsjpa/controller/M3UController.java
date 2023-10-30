@@ -115,9 +115,13 @@ public class M3UController {
 	}
 
 	@GetMapping(value = "/search")
-	public String search(Model model, @RequestParam(required = false, defaultValue = "title") String searchType,
-			@RequestParam(required = false, defaultValue = "") String criteria) {
+	public String search(Model model, @RequestParam(required = false, defaultValue = "title") 
+		String searchType, @RequestParam(required = false, defaultValue = "")
+		String genre, @RequestParam(required = false, defaultValue = "")
+		String criteria) {
 
+		if (searchType.equals("genre")) criteria = genre;
+		
 		model.addAttribute("items", m3uService.searchMedia(searchType, criteria));
 		model.addAttribute("genres", m3uService.getGenres());
 		model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
