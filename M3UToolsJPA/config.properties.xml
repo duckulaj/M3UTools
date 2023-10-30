@@ -4,21 +4,22 @@
 <entry key="stream.channels">http://dome13667.cdngold.me/get.php?username=ba201db620&amp;password=21ffd018d2&amp;type=m3u_plus&amp;output=ts</entry>
 <entry key="fileName">./config.properties</entry>
 <entry key="fileAge.epg">240</entry>
-<entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
+<entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
+<entry key="moviedb.genreURL">https://api.themoviedb.org/3/genre/movie/list</entry>
 <entry key="emby.api">01f9cd6d610c499a82e5bc4a48401eec</entry>
 <entry key="moviedb.apikey">56744a89f97f5119fe2a2306794d29a3</entry>
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/Downloads</entry>
 <entry key="epg.time.difference">+0200</entry>
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
-<entry key="moviedb.genreURL">https://api.themoviedb.org/3/genre/movie/list</entry>
 <entry key="fileAge.m3u">240</entry>
 <entry key="emby.url">http://192.168.0.110:8096/emby/</entry>
 <entry key="moviedb.searchURL">https://api.themoviedb.org/3/search/movie</entry>
-<entry key="includedCountries">EN,UK,US</entry>
 <entry key="emby.installed">true</entry>
+<entry key="download.buffersize">16192</entry>
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
 <entry key="stream.playlist">http://dome13667.cdngold.me/xmltv.php?username=ba201db620&amp;password=21ffd018d2</entry>
+<entry key="includedCountries">EN,UK,US</entry>
 </properties>

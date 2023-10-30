@@ -45,6 +45,7 @@ public class DownloadProperties implements Runnable {
 	private int fileAgeM3U = 1;
 	private int fileAgeEPG = 1;
 	private String[] includedCountries = null;
+	private int bufferSize = 0;
 
 	public DownloadProperties() {
 
@@ -80,8 +81,10 @@ public class DownloadProperties implements Runnable {
 		this.setFileAgeEPG(Integer.valueOf(props.getProperty("fileAge.epg")));
 		this.setFileAgeM3U(Integer.valueOf(props.getProperty("fileAge.m3u")));
 		this.setIncludedCountries(props.getProperty("includedCountries").split(","));
+		this.setBufferSize(Integer.valueOf(props.getProperty("download.buffersize")));
 	}
 
+	
 	public static synchronized DownloadProperties getInstance()
 	{
 		log.debug("Requesting M3UPlayList instance");
@@ -323,6 +326,13 @@ public class DownloadProperties implements Runnable {
 		this.includedCountries = includedCountries;
 	}
 
+	public int getBufferSize() {
+		return bufferSize;
+	}
+
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
 
 
 

@@ -21,4 +21,5 @@
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
 <entry key="stream.playlist">http://dome13667.cdngold.me/xmltv.php?username=ba201db620&amp;password=21ffd018d2</entry>
+<entry key="download.buffersize">8096</entry>
 </properties>
