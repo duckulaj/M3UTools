@@ -28,6 +28,10 @@
 			document.getElementById('genreDiv').style.display = 'block';
 			document.getElementById('criteriaDiv').style.display = 'none';
 		}
+		
+		function submitForm() {
+      		document.getElementById("searchForm").submit();
+		}
 	</script>
 
 	<style>
@@ -135,11 +139,11 @@
 						placeholder="Enter search criteria" />&nbsp;
 				</div>
 				<div id="genreDiv" style="display: none;">
-					<select id="genre" name="genre" th:value="*{genre}" style="height: 30px; width: 256px;">
+					<select id="genre" name="genre" th:value="*{genre}" style="height: 30px; width: 256px;" onchange="submitForm()">
 						<option th:each="genre : ${genres}" th:value="${genre.id}" th:text="${genre.name}">
 						</option>
 					</select>&nbsp;
-
+					
 				</div>
 				<button type="submit" class="btn btn-info">Search</button>&nbsp;
 				<button type="reset" class="btn btn-info">Reset</button>
