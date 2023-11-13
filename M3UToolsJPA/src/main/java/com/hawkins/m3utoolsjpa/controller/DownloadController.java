@@ -46,6 +46,7 @@ public class DownloadController {
         
 		int bufferSize = DownloadProperties.getInstance().getBufferSize();
         BufferedInputStream inputStream = new BufferedInputStream(url.openStream(), bufferSize);
+        // BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
 
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=" + name + ".mp4");
@@ -54,10 +55,9 @@ public class DownloadController {
         // response.addHeader("Pragma", "no-cache");
         // response.addHeader("Cache-Control", "no-cache");
 
-        
         int bytesRead;
         OutputStream out = response.getOutputStream();
-        BufferedOutputStream bos = new BufferedOutputStream(out);
+        BufferedOutputStream bos = new BufferedOutputStream(out, bufferSize);
         while ((bytesRead = inputStream.read()) != -1) {
             // response.getOutputStream().write(bytesRead);
         	bos.write(bytesRead);
