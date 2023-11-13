@@ -8,8 +8,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.util.StopWatch;
 
@@ -184,62 +182,5 @@ public class Parser {
 
 	}
 
-	private static String extract(String line, Pattern pattern) {
-		Matcher matcher = pattern.matcher(line);
-		if (matcher.matches()) {
-			return matcher.group(1);
-		}
-		return null;
-	}
-
-
-	private static M3UItem extractExtInfoRaw(PatternMatcher patternMatcher, String line) {
-
-		String tvgName = extract(line, Patterns.TVG_NAME_REGEX);
-
-		
-		if (tvgName.startsWith("#####")) return null;
-		
-		String duration = patternMatcher.extract(line, Patterns.DURATION_REGEX);
-		String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
-		Long groupId = -1L;
-		String tvgId = patternMatcher.extract(line, Patterns.TVG_ID_REGEX);
-		String tvgChNo = patternMatcher.extract(line, Patterns.TVG_CHANNEL_NUMBER);
-		String tvgLogo = patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX);
-		String tvgShift = patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX);
-		String radio = patternMatcher.extract(line, Patterns.RADIO_REGEX);
-		String channelUri = "";
-		String channelName = patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX);
-		String type = "";
-		String search = channelName;
-		boolean selected = false;
-		
-		
-		
-		
-		
-		
-
-		return new M3UItem(
-				duration,
-				groupTitle,
-				groupId,
-				tvgId,
-				tvgName,
-				tvgChNo,
-				tvgLogo,
-				tvgShift,
-				radio,
-				channelUri,
-				channelName,
-				type,
-				search,
-				selected);
-
-	}
-
-
-
-
-
+	
 }

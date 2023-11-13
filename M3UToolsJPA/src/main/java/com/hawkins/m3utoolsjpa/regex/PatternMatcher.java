@@ -11,7 +11,7 @@ public class PatternMatcher implements Runnable {
 	public PatternMatcher( ) {
 
 		Pattern defaultPattern = Pattern.compile("");
-		this.matcher = defaultPattern.matcher("");
+		matcher = defaultPattern.matcher("");
 		
 	}
 	

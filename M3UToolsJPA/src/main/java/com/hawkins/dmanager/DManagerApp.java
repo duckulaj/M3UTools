@@ -686,11 +686,6 @@ public class DManagerApp implements DownloadListener, Comparator<String> {
 		}
 	}
 
-	private void execAntivir() {
-		// DManagerUtils.exec(Config.getInstance().getAntivirExe() + " "
-		//		+ (Config.getInstance().getAntivirCmd() == null ? "" : Config.getInstance().getAntivirCmd()));
-	}
-
 	private void updateFileName(DownloadEntry ent) {
 		
 		String id = ent.getId();
