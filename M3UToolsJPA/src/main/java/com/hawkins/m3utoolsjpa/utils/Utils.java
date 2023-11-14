@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
-import com.hawkins.m3utoolsjpa.jobs.DownloadJob;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
@@ -337,25 +336,7 @@ public class Utils {
 		return groupType;
 	}
 	
-	public static DownloadJob findJobByName(List<DownloadJob> jobs, String name) {
-
-		DownloadJob thisJob = null;
-
-		ListIterator<DownloadJob> iJobs = jobs.listIterator();
-
-		while (iJobs.hasNext()) {
-			DownloadJob j = iJobs.next();
-			if (j.getJobName().equalsIgnoreCase(name)) {
-				thisJob = j;
-				break;
-			}
-		}
-
-		return thisJob;
-
-	}
-
-	public static String getFileExtension(String url) {
+		public static String getFileExtension(String url) {
 
 		return url.substring(url.length() - 3);
 

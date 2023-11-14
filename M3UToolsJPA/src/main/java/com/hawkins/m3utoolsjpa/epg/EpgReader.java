@@ -15,10 +15,10 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.springframework.util.StopWatch;
 
-import com.hawkins.dmanager.util.Utils;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,7 +74,7 @@ public class EpgReader {
 			
 			StopWatch sw = new StopWatch();
 			sw.start();
-			File xmlFile = Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
+			Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
 			sw.stop();
 			
 			log.info("Downloading {} took {}ms", dp.getStreamXMLUrl(), sw.getTotalTimeMillis());
@@ -121,7 +121,7 @@ public class EpgReader {
 				writer.write(document);
 				writer.close();
 				
-				if (xmlFile.exists()) xmlFile.delete();
+				// if (xmlFile.exists()) xmlFile.delete();
 				
 				if (dp.isEmbyInstalled()) {
 					EmbyApi.refreshGuide();

@@ -8,14 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.io.input.ReversedLinesFileReader;
-
-import com.hawkins.dmanager.DownloadEntry;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -91,25 +86,7 @@ public class FileUtilsForM3UToolsJPA {
 		return lineCount;
 	}
 	
-	public static void copyToriginalFileName (DownloadEntry d) {
-
-		try {
-			Path copied = Paths.get(d.getFolder() + d.getFile());
-			Path originalPath = Paths.get(d.getFolder() + d.getOriginalFileName());
-			Files.copy(copied, originalPath, StandardCopyOption.REPLACE_EXISTING);
-
-			Files.isSameFile(copied, originalPath);
-
-			// Files.deleteIfExists(copied);
-
-		} catch (IOException ioe) {
-			if (log.isDebugEnabled()) {
-				log.debug(ioe.getMessage());
-			}
-		}
-
-
-	}
+	
 
 	public static String getCurrentWorkingDirectory() {
         

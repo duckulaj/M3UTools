@@ -1,7 +1,6 @@
 package com.hawkins.m3utoolsjpa.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
-import com.hawkins.m3utoolsjpa.jobs.DownloadJob;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
@@ -107,12 +105,7 @@ public class M3UController {
 		return Constants.PROPERTIES;
 	}
 
-	@GetMapping(value = "/showStatus")
-	public String showStatus(Model model) {
-
-		model.addAttribute(Constants.JOBLIST, new LinkedList<DownloadJob>());
-		return Constants.STATUS;
-	}
+	
 
 	@GetMapping(value = "/search")
 	public String search(Model model, @RequestParam(required = false, defaultValue = "title") 

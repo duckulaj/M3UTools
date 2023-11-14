@@ -4,12 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
-
-import com.hawkins.m3Utoolsjpa.network.http.ChunkedInputStream;
-import com.hawkins.m3Utoolsjpa.network.http.HeaderCollection;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,53 +36,8 @@ public class NetUtils {
 		return Integer.parseInt(arr[1]);
 	}
 
-	public static long getContentLength(HeaderCollection headers) {
-		try {
-			String clen = headers.getValue("content-length");
-			if (clen != null) {
-				return Long.parseLong(clen);
-			} else {
-				clen = headers.getValue("content-range");
-				if (clen != null) {
-					String str = clen.split(" ")[1];
-					str = str.split("/")[0];
-					String arr[] = str.split("-");
-					return Long.parseLong(arr[1]) - Long.parseLong(arr[0]) + 1;
-				} else {
-					return -1;
-				}
-			}
-		} catch (Exception e) {
-			return -1;
-		}
-	}
-
-	public static InputStream getInputStream(HeaderCollection respHeaders,
-			InputStream inStream) throws IOException {
-		String transferEncoding = respHeaders.getValue("transfer-encoding");
-		if (!StringUtils.isNullOrEmptyOrBlank(transferEncoding)) {
-			inStream = new ChunkedInputStream(inStream);
-		}
-		String contentEncoding = respHeaders.getValue("content-encoding");
-		if (!StringUtils.isNullOrEmptyOrBlank(contentEncoding)) {
-			if (contentEncoding.equalsIgnoreCase("gzip")) {
-				inStream = new GZIPInputStream(inStream);
-			} else if (!(contentEncoding.equalsIgnoreCase("none") || contentEncoding
-					.equalsIgnoreCase("identity"))) {
-				throw new IOException("Content Encoding not supported: "
-						+ contentEncoding);
-			}
-		}
-		return inStream;
-	}
-
-	public static void skipRemainingStream(HeaderCollection respHeaders,
-			InputStream inStream) throws IOException {
-		inStream = getInputStream(respHeaders, inStream);
-		long length = getContentLength(respHeaders);
-		skipRemainingStream(inStream, length);
-	}
-
+	
+	
 	public static void skipRemainingStream(InputStream inStream, long length)
 			throws IOException {
 		byte buf[] = new byte[8192];
