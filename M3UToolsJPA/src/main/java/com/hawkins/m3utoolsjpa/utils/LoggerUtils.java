@@ -21,11 +21,10 @@ public class LoggerUtils {
 		ch.qos.logback.classic.Logger logger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
 		
 		switch (level) {
-			case "debug" -> logger.setLevel(Level.DEBUG);
-			case "info" -> logger.setLevel(Level.INFO);
-			case "warn" -> logger.setLevel(Level.WARN);
-			case "error" -> logger.setLevel(Level.ERROR);
-			case "trace" -> logger.setLevel(Level.TRACE);
+			case "DEBUG" -> logger.setLevel(Level.DEBUG);
+			case "WARN" -> logger.setLevel(Level.WARN);
+			case "ERROR" -> logger.setLevel(Level.ERROR);
+			case "TRACE" -> logger.setLevel(Level.TRACE);
 			default -> logger.setLevel(Level.INFO);
 		}
 		
@@ -43,4 +42,12 @@ public class LoggerUtils {
 	    return logLevels;
 	}
 	
+	public static String getCurrentLogLevel() {
+		
+		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+		
+		ch.qos.logback.classic.Logger logger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
+		
+		return logger.getLevel().levelStr;
+	}
 }

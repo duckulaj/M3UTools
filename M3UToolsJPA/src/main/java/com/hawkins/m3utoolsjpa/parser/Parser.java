@@ -87,10 +87,13 @@ public class Parser {
 
 			PatternMatcher patternMatcher = PatternMatcher.getInstance();
 			M3UItem entry = null;
+			
+			String[] includedCountries = dp.getIncludedCountries();
+			
 			while ((line = buffer.readLine()) != null) {
 				lineNbr++;
 				if (isExtInfo(line)) {
-					entry = extractExtInfo(patternMatcher, line);
+					entry = extractExtInfo(patternMatcher, line, includedCountries);
 					// entry = extractExtInfoRaw(patternMatcher, line);
 				} else {
 					if (entry != null) {
@@ -137,13 +140,13 @@ public class Parser {
 		return line.contains(Patterns.M3U_INFO_MARKER);
 	}
 
-	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line) {
+	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
 
 		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
-
+				
 		if (tvgName.startsWith("#####")) return null;
 		
-		int endIndex = Utils.indexOfAny(tvgName.substring(0, 2), dp.getIncludedCountries());
+		int endIndex = Utils.indexOfAny(tvgName.substring(0, 2), includedCountries);
 		
 		if (endIndex == -1) return null;
 		
