@@ -16,14 +16,33 @@
 
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 
+<script>
+		function submitLogLevel() {
+			document.getElementById("logForm").submit();
+		}
+
+
+</script>
 </head>
 <body>
 	<div th:replace="~{fragments/header :: header}"></div>
+
+	<div>
+		<form id="logForm" th:action="@{/setLogLevel}">
+			<br/>
+			<p align="center" style="font-style: italic;">Change Log Level &nbsp;
+			
+				<select id="level" name="level" th:value="*{level}" style="height: 30px; width: 256px;" onchange="submitLogLevel()">
+					<option th:each="level : ${logLevels}" th:value="${level}" th:text="${level}" th:selected="${level} == ${currentLevel}"></option>
+				</select>
+			</p>
+		</form>
+		
+	</div>
 	<div width="90%" class="form-group shadow-textarea">
-		<label for="exampleFormControlTextarea6">Log File -
-			M3UToolsJPA.log</label>
+		<label for="textAreaLog">Log File - M3UToolsJPA.log</label>
 		<textarea class="form-control z-depth-1"
-			id="exampleFormControlTextarea6" rows="30" placeholder="..."
+			id="textAreaLog" rows="30" placeholder="..."
 			th:text="${logFile}"></textarea>
 	</div>
 

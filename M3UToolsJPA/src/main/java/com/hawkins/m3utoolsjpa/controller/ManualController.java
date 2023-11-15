@@ -2,6 +2,7 @@ package com.hawkins.m3utoolsjpa.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +12,7 @@ import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.service.CompletableFutureService;
 import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
+import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.LoggerUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -81,8 +83,9 @@ public class ManualController {
 	public ModelAndView setLogLevel(ModelMap model, @RequestParam(required = true, defaultValue = "info") String level) {
 		
 		LoggerUtils.updateLogLevel(level);
+		model.addAttribute("currentLevel", LoggerUtils.getCurrentLogLevel());
 		
-		return new ModelAndView("forward:/", model);
+		return new ModelAndView("forward:/viewLog", model);
 	}
 	
 	
