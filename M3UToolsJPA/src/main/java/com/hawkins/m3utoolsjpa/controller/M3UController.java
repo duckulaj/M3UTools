@@ -80,6 +80,7 @@ public class M3UController {
 	@GetMapping("/viewLog")
 	public String viewLog(Model model) {
 
+		model.addAttribute("logLevels", LoggerUtils.getLogLevelsAsList());
 		model.addAttribute("logFile", FileUtilsForM3UToolsJPA.fileTail("M3UToolsJPA.log", 200));
 		return Constants.VIEW_LOG;
 	}
