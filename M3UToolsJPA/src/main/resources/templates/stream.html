@@ -24,6 +24,7 @@
 <body>
 	<div th:replace="~{fragments/header :: header}"></div>
 	
+	<p align="center" style="font-style: italic;" th:text=${filmTitle}>
 	<div class="container mt-5">
 		<video id="videoPlayer" class="w-100" controls autoplay>
 			<source th:src="${streamUrl}" type="video/mp4">
