@@ -1,10 +1,13 @@
 package com.hawkins.m3utoolsjpa.service;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
+import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,8 @@ public class ApplicationService {
 				
 				log.info("Running m3uService.resetDatabase() at {}", Utils.printNow());
 				try {
+					File m3uFile = new File(Constants.M3U_FILE);
+					if (m3uFile.exists()) m3uFile.delete();
 					m3uService.resetDatabase();
 				} catch (M3UItemsNotFoundException e) {
 					// TODO Auto-generated catch block
@@ -44,6 +49,8 @@ public class ApplicationService {
 				swReadEPG.start();
 				
 				log.info("Running epgService.readEPG() at {}", Utils.printNow());
+				File epgFile = new File(Constants.EPG_XML);
+				if (epgFile.exists()) epgFile.delete();
 				epgService.readEPG();
 				
 				swReadEPG.stop();
