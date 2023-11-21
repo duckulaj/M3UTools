@@ -1,8 +1,10 @@
-package com.hawkins.m3utoolsjpa.utils;
+package com.hawkins.m3utoolsjpa.test.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+
+import com.hawkins.m3utoolsjpa.utils.StringUtils;
 
 class StringUtilsTest {
 
