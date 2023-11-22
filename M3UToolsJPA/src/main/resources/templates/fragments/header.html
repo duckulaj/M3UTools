@@ -9,7 +9,8 @@
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<div class="navbar-nav me-auto mb-2 mb-lg-0">
+					<div sec:authorize="hasRole('ADMIN')">
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
 							aria-expanded="false">
@@ -22,12 +23,17 @@
 							<li><a class="dropdown-item" th:href="@{/properties}">Properties</a></li>
 						</ul>
 					</li>
+					</div>
+					<div sec:authorize="hasRole('ADMIN')">
 					<li class="nav-item">
 						<a class="nav-link" th:href="@{/viewLog}">View Log</a>
 					</li>
+					</div>
+					<div sec:authorize="hasRole('ADMIN')">
 					<li class="nav-item">
 						<a class="nav-link" th:href="@{/tvChannels}">TV Channels</a>
 					</li>
+					</div>
 					<!--<li class="nav-item">
 						<a class="nav-link" th:href="@{/showStatus}">Status</a>
 					</li> -->

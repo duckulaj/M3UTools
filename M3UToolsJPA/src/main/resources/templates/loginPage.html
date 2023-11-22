@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Login</title>
+<script th:src="@{webjars/jquery/jquery.min.js}"></script>
+<!-- <script th:src="@{webjars/bootstrap/js/bootstrap.min.js}"></script> -->
+<script th:src="@{webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{webjars/font-awesome/6.4.2/js/all.js}"></script>
+<link rel="stylesheet" th:href="@{webjars/font-awesome/6.4.2/css/all.css}"/>
+<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
+
+</head>
+<body>
+   <div class="container">
+      <div class="row">
+         <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 col-lg-offset-4 collg-4">
+            <div class="panel panel-primary">
+               <div class="panel-body">
+                  <form th:action="@{/login}" method="post">
+                     <div class="form-group">
+                        <label for="userName">User Name</label>
+                        <input type="text" class="form-control" id="userName" name="username" autocomplete="off">
+                     </div>
+                     <div class="form-group">
+                        <label for="userPass">Password</label>
+                        <input type="password"  class="form-control" id="userPass" name="userpass">
+                     </div>
+                     <div class="form-group">
+                        <button class="btn btn-primary form-control" type="submit">Login</button>
+                        <button class="btn btn-default form-control" type="reset">Clear</button>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+   <script type="text/javascript" th:src="@{/assets/jquery/js/jquery.min.js}"></script>
+   <script type="text/javascript" th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+</body>
+</html>
