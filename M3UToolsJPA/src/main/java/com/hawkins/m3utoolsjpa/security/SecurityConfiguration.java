@@ -21,10 +21,6 @@ public class WebAppSecurityConfig {
                     .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
                     .anyRequest().authenticated()
             )
-            .logout((logout) -> logout
-                    .logoutSuccessUrl("/")
-                    .permitAll()
-                )
             .httpBasic(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .headers(headers -> {
