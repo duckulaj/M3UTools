@@ -101,6 +101,8 @@ public class M3UService {
 				if (groups.size() > 0) {
 					group = groups.stream()
 							  .filter(thisGroup -> item.getGroupTitle().equals(thisGroup.getName()))
+							  .parallel()
+							  .unordered()
 							  .findFirst()
 							  .orElse(null);
 					// M3UGroup group = groupRepository.findByName(item.getGroupTitle());

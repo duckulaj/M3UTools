@@ -50,6 +50,8 @@ public class XmltvDoc {
 	    	XmltvChannel selectedChannel = channels.stream()
 	    			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
 	    			.filter(channel -> tvgName.equals(StringUtils.cleanTextContent(normalisedDisplayName(channel))))
+	    			.parallel()
+	    			.unordered()
 	    			.findFirst()
 	    			.get();
 	    	
