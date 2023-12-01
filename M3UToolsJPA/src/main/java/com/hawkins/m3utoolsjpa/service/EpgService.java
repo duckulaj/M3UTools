@@ -24,6 +24,7 @@ import com.hawkins.m3utoolsjpa.epg.XmltvUtils;
 import com.hawkins.m3utoolsjpa.epg.XmltvVideo;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -172,6 +173,7 @@ public class EpgService {
 
 		try {
 			if (getRemoteEPG) {
+				FileUtilsForM3UToolsJPA.backupFile(epgFile);
 				String url = dp.getStreamXMLUrl();
 				log.info("Retrieving EPG from remote server");
 				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
@@ -181,8 +183,10 @@ public class EpgService {
 			log.info("Reading epg.xml");
 			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
 		} catch (JsonParseException jpe) {
+			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
 			log.info("Error parsing {} , invalid xml format", epgFile);
 		} catch (IOException ioe) {
+			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
 			log.info("Error reading {} - {}", epgFile, ioe.getMessage());
 		}
 

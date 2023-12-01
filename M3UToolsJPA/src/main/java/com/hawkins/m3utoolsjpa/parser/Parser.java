@@ -16,6 +16,7 @@ import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -67,6 +68,7 @@ public class Parser {
 		}
 
 		if (getRemoteM3U) {
+			FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
 			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
 			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
 		}
@@ -117,6 +119,7 @@ public class Parser {
 				}
 			}
 		} catch (IOException e) {
+			FileUtilsForM3UToolsJPA.restoreFile(m3uFileOnDisk.toString());
 			throw new ParsingException(lineNbr, "Cannot read file", e);
 		} 
 

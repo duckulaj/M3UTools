@@ -3,18 +3,27 @@ package com.hawkins.m3utoolsjpa.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
+import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
+import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive;
 
 @Configuration
+@EnableWebSecurity
 public class WebAppSecurityConfig {
 
 	@Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+		
+		HeaderWriterLogoutHandler clearSiteData = new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(Directive.ALL));
+				    
         http
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
@@ -22,9 +31,14 @@ public class WebAppSecurityConfig {
                     .anyRequest().authenticated()
             )
             .logout((logout) -> logout
-                    .logoutSuccessUrl("/")
+                    .logoutSuccessUrl("/login")
+                    .addLogoutHandler(clearSiteData)
                     .permitAll()
-                )
+             )
+            .formLogin(form -> form
+            		.loginProcessingUrl("/loginPage.html")
+            		.permitAll()
+            )
             .httpBasic(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .headers(headers -> {

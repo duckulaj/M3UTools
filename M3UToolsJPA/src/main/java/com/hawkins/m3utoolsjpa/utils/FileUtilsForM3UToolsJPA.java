@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import lombok.extern.slf4j.Slf4j;
@@ -100,5 +101,29 @@ public class FileUtilsForM3UToolsJPA {
 
         return userDirectory;
     }
+
+	public static void backupFile(String fileName) {
+		
+		File file = new File(fileName);
+		File backupFile = new File(fileName + ".bu");
+		try {
+			FileUtils.copyFile(file, backupFile);
+		} catch (IOException e) {
+			log.debug("Error creating {}", backupFile.toString());
+		}
+		
+	}
 	
+	public static void restoreFile(String fileName) {
+		
+		
+		File backupFile = new File(fileName + ".bu");
+		File file = new File(fileName);
+		
+		try {
+			FileUtils.copyFile(backupFile, file);
+		} catch (IOException e) {
+			log.debug("Error creating {}", file.toString());
+		}
+	}
 }
