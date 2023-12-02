@@ -105,13 +105,15 @@ public class FileUtilsForM3UToolsJPA {
 	public static void backupFile(String fileName) {
 		
 		File file = new File(fileName);
-		File backupFile = new File(fileName + ".bu");
-		try {
-			FileUtils.copyFile(file, backupFile);
-		} catch (IOException e) {
-			log.debug("Error creating {}", backupFile.toString());
-		}
 		
+		if (file.exists()) {
+			File backupFile = new File(fileName + ".bu");
+			try {
+				FileUtils.copyFile(file, backupFile);
+			} catch (IOException e) {
+				log.debug("Error creating {}", backupFile.toString());
+			}
+		}
 	}
 	
 	public static void restoreFile(String fileName) {
@@ -120,10 +122,12 @@ public class FileUtilsForM3UToolsJPA {
 		File backupFile = new File(fileName + ".bu");
 		File file = new File(fileName);
 		
-		try {
-			FileUtils.copyFile(backupFile, file);
-		} catch (IOException e) {
-			log.debug("Error creating {}", file.toString());
+		if (backupFile.exists()) {
+			try {
+				FileUtils.copyFile(backupFile, file);
+			} catch (IOException e) {
+				log.debug("Error creating {}", file.toString());
+			}
 		}
 	}
 }
