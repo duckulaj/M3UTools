@@ -84,15 +84,15 @@
 						</thead>
 						<tbody>
 							<tr th:each="channel, itemStat : ${form.channels}">
-								<td><input th:name="|channels[${itemStat.index}].id|" th:value="${channel.getId()}" />
+								<td><input th:name="|channels[${itemStat.index}].id|" th:value="${channel.getId()}" tabindex="-1" readonly/>
 								</td>
 								<td><input th:name="|channels[${itemStat.index}].tvgId|"
-										th:value="${channel.getTvgId()}" /></td>
+										th:value="${channel.getTvgId()}" tabindex="-1" readonly/></td>
 								<td><input th:name="|channels[${itemStat.index}].groupId|"
-										th:value="${channel.getGroupId()}" /></td>
+										th:value="${channel.getGroupId()}" tabindex="-1" readonly/></td>
 								<td><input th:size="30" th:placeholder="Name + ' ' + ${itemStat.count}"
 										th:name="|channels[${itemStat.index}].tvgName|"
-										th:value="${channel.getTvgName()}" required /></td>
+										th:value="${channel.getTvgName()}" tabindex="-1" readonly/></td>
 								<td><input type="checkbox" th:placeholder="Selected + ' ' + ${itemStat.count}"
 										th:name="|channels[${itemStat.index}].selected|"
 										th:checked="${channel.isSelected()}" /></td>

@@ -14,6 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +30,7 @@ public class WebAppSecurityConfig {
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
+                    .requestMatchers(externalContentMatcher()).permitAll()
                     .anyRequest().authenticated()
             )
             .logout((logout) -> logout
@@ -61,5 +64,11 @@ public class WebAppSecurityConfig {
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
+    }
+    
+    private RequestMatcher externalContentMatcher() {
+    	
+    	return new AntPathRequestMatcher("dome13667**");
+    	
     }
 }
