@@ -359,7 +359,7 @@ public class M3UService {
 	public void writeTvChannelsM3U() {
 		
 		String outputFile = "./M3UToolsJPA.m3u";
-		FileUtilsForM3UToolsJPA.backupFile(outputFile);
+		// FileUtilsForM3UToolsJPA.backupFile(outputFile);
 		
 		List<M3UItem> channels = getSelectedTvChannels();
 		
@@ -370,7 +370,7 @@ public class M3UService {
 			bos.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			FileUtilsForM3UToolsJPA.restoreFile(outputFile);
+			// FileUtilsForM3UToolsJPA.restoreFile(outputFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 			FileUtilsForM3UToolsJPA.restoreFile(outputFile);

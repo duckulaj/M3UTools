@@ -173,7 +173,7 @@ public class EpgService {
 
 		try {
 			if (getRemoteEPG) {
-				FileUtilsForM3UToolsJPA.backupFile(epgFile);
+				// FileUtilsForM3UToolsJPA.backupFile(epgFile);
 				String url = dp.getStreamXMLUrl();
 				log.info("Retrieving EPG from remote server");
 				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
@@ -183,7 +183,7 @@ public class EpgService {
 			log.info("Reading epg.xml");
 			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
 		} catch (JsonParseException jpe) {
-			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
+			// FileUtilsForM3UToolsJPA.restoreFile(epgFile);
 			log.info("Error parsing {} , invalid xml format", epgFile);
 		} catch (IOException ioe) {
 			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
