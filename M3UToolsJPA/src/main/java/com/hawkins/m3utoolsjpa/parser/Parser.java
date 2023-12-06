@@ -22,9 +22,6 @@ import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Created by tgermain on 30/12/2017.
- */
 @Slf4j
 public class Parser {
 
@@ -34,9 +31,9 @@ public class Parser {
 	 * @param stream pointing to your m3u file
 	 * @return Linked List of m3uItems found within the supplied m3uFile
 	 */
-	
-	private static DownloadProperties dp = DownloadProperties.getInstance();
-	
+
+
+
 	public static LinkedList<M3UItem> parse() {
 
 		int lineNbr = 0;
@@ -48,23 +45,18 @@ public class Parser {
 		sw.start();
 
 		boolean getRemoteM3U = false;
-		URL m3uUrl = null;
+
 		File m3uFileOnDisk = new File(Constants.M3U_FILE);
 
 		try {
-			m3uUrl = new  URI(dp.getStreamChannels()).toURL();
 
-			try {
-				getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
-			} catch (IOException ex) {
-				log.info("File {} does not exist", m3uFileOnDisk);
-				getRemoteM3U = true;
-			}
+			getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
+
 		} catch (MalformedURLException e) {
 			throw new ParsingException(lineNbr, "Cannot open URL", e);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException e) {
+			log.info("File {} not found", m3uFileOnDisk.toString());
+			getRemoteM3U = true;
 		}
 
 		if (getRemoteM3U) {
@@ -89,9 +81,9 @@ public class Parser {
 
 			PatternMatcher patternMatcher = PatternMatcher.getInstance();
 			M3UItem entry = null;
-			
+
 			String[] includedCountries = dp.getIncludedCountries();
-			
+
 			while ((line = buffer.readLine()) != null) {
 				lineNbr++;
 				if (isExtInfo(line)) {
@@ -107,10 +99,10 @@ public class Parser {
 						if (entry.getType().equals(Constants.MOVIE)) {
 							entry.setSearch(Utils.normaliseSearch(entry.getChannelName()));
 						}
-						*/
+						 */
 
 						// if (!RegexUtils.containsRegex(entry.getTvgName(), Patterns.HASH_REGEX) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
-						
+
 						entries.add(entry);
 						// }
 
@@ -146,20 +138,20 @@ public class Parser {
 	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
 
 		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
-				
+
 		if (tvgName.startsWith("#####")) return null;
-		
+
 		int endIndex = Utils.indexOfAny(tvgName.substring(0, 2), includedCountries);
-		
+
 		if (endIndex == -1) return null;
-		
+
 		tvgName = StringUtils.removeCountryAndDelimiter(tvgName, "|");
 		tvgName = StringUtils.cleanTextContent(tvgName);
-		
+
 		String channelName = patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX);
 		channelName = StringUtils.removeCountryAndDelimiter(channelName, "|");
 		channelName = StringUtils.cleanTextContent(channelName);
-		
+
 		String duration = patternMatcher.extract(line, Patterns.DURATION_REGEX);
 		String tvgId = patternMatcher.extract(line, Patterns.TVG_ID_REGEX);
 		String tvgShift = patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX);
@@ -167,8 +159,8 @@ public class Parser {
 		String tvgLogo = patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX);
 		String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
 		Long groupId = -1L;
-		
-		
+
+
 
 		return new M3UItem(
 				duration,
@@ -188,5 +180,5 @@ public class Parser {
 
 	}
 
-	
+
 }

@@ -54,6 +54,7 @@ import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 import com.hawkins.m3utoolsjpa.utils.Writer;
 
@@ -357,10 +358,8 @@ public class M3UService {
 	
 	public void writeTvChannelsM3U() {
 		
-		// DownloadProperties dp = DownloadProperties.getInstance();
-				
-		// String outputFile = dp.getFileWatcherLocation() + "/M3UToolsJPA.m3u";
 		String outputFile = "./M3UToolsJPA.m3u";
+		FileUtilsForM3UToolsJPA.backupFile(outputFile);
 		
 		List<M3UItem> channels = getSelectedTvChannels();
 		
@@ -370,11 +369,11 @@ public class M3UService {
 			Writer.write(channels, bos);
 			bos.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			FileUtilsForM3UToolsJPA.restoreFile(outputFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			FileUtilsForM3UToolsJPA.restoreFile(outputFile);
 		}
 		
 		log.info("Updated m3u file written to {}", outputFile);
