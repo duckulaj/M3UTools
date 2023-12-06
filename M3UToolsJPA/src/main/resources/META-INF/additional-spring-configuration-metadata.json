@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "server.tomcat.protocol-header",
+    "type": "java.lang.String",
+    "description": "A description for 'server.tomcat.protocol-header'"
+  },
+  {
+    "name": "server.tomcat.remote-ip-header",
+    "type": "java.lang.String",
+    "description": "A description for 'server.tomcat.remote-ip-header'"
+  },
+  {
+    "name": "security.require-ssl",
+    "type": "java.lang.String",
+    "description": "A description for 'security.require-ssl'"
+  }
+]}
