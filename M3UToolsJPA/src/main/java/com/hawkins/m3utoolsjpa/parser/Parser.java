@@ -60,7 +60,9 @@ public class Parser {
 		}
 
 		if (getRemoteM3U) {
-			// FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
+			
+			if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
+			
 			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
 			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
 		}
@@ -88,30 +90,17 @@ public class Parser {
 				lineNbr++;
 				if (isExtInfo(line)) {
 					entry = extractExtInfo(patternMatcher, line, includedCountries);
-					// entry = extractExtInfoRaw(patternMatcher, line);
 				} else {
 					if (entry != null) {
 						String type = Utils.deriveGroupTypeByUrl(line);
 						entry.setType(type);
 						entry.setChannelUri(line);
-
-						/*
-						if (entry.getType().equals(Constants.MOVIE)) {
-							entry.setSearch(Utils.normaliseSearch(entry.getChannelName()));
-						}
-						 */
-
-						// if (!RegexUtils.containsRegex(entry.getTvgName(), Patterns.HASH_REGEX) || (!RegexUtils.containsRegex(entry.getChannelName(), Patterns.ADULT_REGEX)) ) {
-
 						entries.add(entry);
-						// }
-
 					}
-
 				}
 			}
 		} catch (IOException e) {
-			// FileUtilsForM3UToolsJPA.restoreFile(m3uFileOnDisk.toString());
+			FileUtilsForM3UToolsJPA.restoreFile(m3uFileOnDisk.toString());
 			throw new ParsingException(lineNbr, "Cannot read file", e);
 		} 
 

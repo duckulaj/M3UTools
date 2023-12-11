@@ -106,7 +106,6 @@ public class M3UService {
 							  .unordered()
 							  .findFirst()
 							  .orElse(null);
-					// M3UGroup group = groupRepository.findByName(item.getGroupTitle());
 				}
 				if (group == null) {
 					M3UGroup newGroup = groupRepository.save(new M3UGroup(item.getGroupTitle(), item.getType()));
@@ -119,11 +118,11 @@ public class M3UService {
 	
 			}
 			StopWatch swSave = new org.springframework.util.StopWatch();
+			
 			swSave.start();
 			itemRepository.saveAllAndFlush(items);
-			// saveAllUsingBatch(items);
-			
 			swSave.stop();
+
 			log.info("Saved {} M3UItem(s) in {} milliseconds", items.size(), swSave.getTotalTimeMillis());
 		}
 		
@@ -217,9 +216,8 @@ public class M3UService {
 			properties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
 			properties = OrderedProperties.copyOf(properties);
 			sortedProperties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException ioe) {
+			log.info("IOException occurred - {}", ioe.getMessage());
 		}
 
 		return properties;
@@ -231,10 +229,9 @@ public class M3UService {
 		OrderedProperties properties = new OrderedProperties();
 		try {
 			properties.loadFromXML(new FileInputStream(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
-					properties = OrderedProperties.copyOf(properties);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			properties = OrderedProperties.copyOf(properties);
+		} catch (IOException ioe) {
+			log.info("IOException occurred - {}", ioe.getMessage());
 		}
 
 		return properties.entrySet();
@@ -288,16 +285,7 @@ public class M3UService {
 					foundGroup.get().getType());
 			return selectedGroup; 
 		}
-		 
-
-		/*
-		 * if (foundGroup != null) { M3UGroupSelected selectedGroup = new
-		 * M3UGroupSelected(foundGroup.getId(), foundGroup.getName(),
-		 * foundGroup.getType());
-		 * 
-		 * return selectedGroup; }
-		 */
-
+		
 		return new M3UGroupSelected();
 
 	}
@@ -359,7 +347,6 @@ public class M3UService {
 	public void writeTvChannelsM3U() {
 		
 		String outputFile = "./M3UToolsJPA.m3u";
-		// FileUtilsForM3UToolsJPA.backupFile(outputFile);
 		
 		List<M3UItem> channels = getSelectedTvChannels();
 		
@@ -369,11 +356,10 @@ public class M3UService {
 			Writer.write(channels, bos);
 			bos.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			// FileUtilsForM3UToolsJPA.restoreFile(outputFile);
+			log.info("FileNotFoundException - {}", e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
-			FileUtilsForM3UToolsJPA.restoreFile(outputFile);
+			log.info("IOException - {}", e.getMessage());
+
 		}
 		
 		log.info("Updated m3u file written to {}", outputFile);
@@ -416,12 +402,9 @@ public class M3UService {
 
 				list = objectMapper.readValue(jsonArray, typeReference);
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.info("JsonMappingException - {}", e.getMessage());
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				log.info("JsonProcessingException - {}", e.getMessage());			}
 
 			return list;
 		}

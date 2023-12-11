@@ -31,19 +31,17 @@ public class DatabaseService {
 		
 		itemRepository.flush();
 		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaBuilder cbItems = em.getCriteriaBuilder();
 		
-		CriteriaDelete<M3UItem> deleteItems = cb.createCriteriaDelete(M3UItem.class);
-		
-		// Root ei = deleteItems.from(M3UItem.class);
+		CriteriaDelete<M3UItem> deleteItems = cbItems.createCriteriaDelete(M3UItem.class);
 		
 		this.em.createQuery(deleteItems).executeUpdate();
 		
 		groupRepository.flush();
 		
-		CriteriaDelete<M3UGroup> deleteGroups = cb.createCriteriaDelete(M3UGroup.class);
+		CriteriaBuilder cbGroups = em.getCriteriaBuilder();
 		
-		// Root eg = deleteGroups.from(M3UGroup.class);
+		CriteriaDelete<M3UGroup> deleteGroups = cbGroups.createCriteriaDelete(M3UGroup.class);
 		
 		this.em.createQuery(deleteGroups).executeUpdate();
 	}

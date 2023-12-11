@@ -72,12 +72,9 @@ public class CompletableFutureService {
 		
 		
 		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
+		
 		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
-			// itemRepository.deleteAllInBatch();
 			databaseService.DeleteItemsAndGroups();
-			// itemRepository.flush();
-			// groupRepository.deleteAllInBatch();
-			// groupRepository.flush();
 		});
 		
 		
@@ -86,8 +83,7 @@ public class CompletableFutureService {
 			log.info("Starting cleanItemsAndGroups.get() at {}", Utils.printNow());
 			cleanItemsAndGroups.get();
 		} catch (InterruptedException | ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("Interrupted Execution - {}", e.getMessage());
 		}
 
 		if (cleanItemsAndGroups.isDone()) log.info("cleanItemsAndGroups.isDone() at {}", Utils.printNow());
@@ -100,8 +96,7 @@ public class CompletableFutureService {
 					);
 			return m3UItemsFromParser.get();
 		} catch (InterruptedException | ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("Execution Excption - {}", e.getMessage());
 			return null;
 		}		
 
