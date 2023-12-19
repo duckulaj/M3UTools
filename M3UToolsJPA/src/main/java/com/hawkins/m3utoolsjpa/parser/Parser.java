@@ -130,7 +130,13 @@ public class Parser {
 
 		if (tvgName.startsWith("#####")) return null;
 
-		int endIndex = Utils.indexOfAny(tvgName.substring(0, 2), includedCountries);
+		int endIndex = -1;
+		
+		if (tvgName.length() ==  0) {
+			return null;
+		}
+		
+		endIndex = Utils.indexOfAny(tvgName.substring(0, 2), includedCountries);
 
 		if (endIndex == -1) return null;
 
