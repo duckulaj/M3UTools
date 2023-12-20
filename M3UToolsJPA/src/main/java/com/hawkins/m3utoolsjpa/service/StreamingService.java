@@ -1,7 +1,11 @@
 package com.hawkins.m3utoolsjpa.service;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
@@ -53,5 +57,29 @@ public class StreamingService {
 			long rangeLength = Math.min(ChunkSize, contentLength);
 			return new ResourceRegion(video, 0, rangeLength);
 		}
+	}
+	
+	public InputStream getInputStream(String streamUrl, HttpHeaders headers) {
+		
+		HttpURLConnection con;
+		InputStream targetStream = null;
+		try {
+			con = (HttpURLConnection) new URI(streamUrl).toURL().openConnection();
+			targetStream = con.getInputStream();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	    
+	    
+	    return targetStream;
+		
+		
 	}
 }
