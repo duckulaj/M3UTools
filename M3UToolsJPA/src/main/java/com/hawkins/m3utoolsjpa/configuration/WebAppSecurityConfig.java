@@ -1,4 +1,4 @@
-package com.hawkins.m3utoolsjpa.security;
+package com.hawkins.m3utoolsjpa.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -2,6 +2,9 @@ package com.hawkins.m3utoolsjpa.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -89,6 +92,23 @@ public class NetUtils {
 		return contentType;
 	}
 	
+	public static String getContentTypeFromUrl(String streamUrl) {
+		
+		URL url = null;
+		try {
+			url = new URI(streamUrl).toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return getContentTypeFromUrl(url);
+		
+	}
+	
 	public static String getContentTypeFromUrl(URL url) {
 	    if (url == null) {
 	        return null;
@@ -114,6 +134,22 @@ public class NetUtils {
 	        IOUtils.closeQuietly(input);
 	    }
 	    return contentType;
+	}
+	
+	public static Long getContentSizeFromUrl(String streamUrl) {
+		
+		URL url = null;
+		try {
+			url = new URI(streamUrl).toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return getContentSizeFromUrl(url);
 	}
 	
 	public static Long getContentSizeFromUrl(URL url) {
