@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpHeaders;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -171,4 +172,11 @@ public class NetUtils {
 	    return contentSize;
 	}
 
+	public static void printHeaders(HttpHeaders headers) {
+		
+		headers.forEach((key, value) -> {
+	        log.info(String.format("Header '%s' = %s", key, value));
+	    });
+		
+	}
 }

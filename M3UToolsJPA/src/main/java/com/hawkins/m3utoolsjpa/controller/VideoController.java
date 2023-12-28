@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -64,10 +65,12 @@ public class VideoController {
 
 	@GetMapping(value = "media")
 	@ResponseBody
-	public final ResponseEntity<InputStreamResource> retrieveResource(@RequestParam String streamUrl) throws Exception {
+	public final ResponseEntity<InputStreamResource> retrieveResource(@RequestParam String streamUrl, @RequestHeader HttpHeaders headers) throws Exception {
 
-		HttpHeaders headers = new HttpHeaders();
+		// HttpHeaders headers = new HttpHeaders();
 		// InputStream targetStream = service.getInputStream(streamUrl, headers);
+		
+		NetUtils.printHeaders(headers);
 		
 		HttpURLConnection con = (HttpURLConnection) new URI(streamUrl).toURL().openConnection(); 
 	    InputStream targetStream = con.getInputStream();
@@ -78,10 +81,13 @@ public class VideoController {
 	    headers.set("Cache-Control", "no-cache, no-store");
 	    headers.set("Connection", "keep-alive");
 	    headers.set("Content-Transfer-Encoding", "binary");
+	    // headers.setContentLength(NetUtils.getContentSizeFromUrl(streamUrl));
+	    // headers.set("range", "bytes=0-100000");
 
 	    return new ResponseEntity<>(new InputStreamResource(targetStream), headers, HttpStatus.OK);
 
 	}
+	
 
 
 }
