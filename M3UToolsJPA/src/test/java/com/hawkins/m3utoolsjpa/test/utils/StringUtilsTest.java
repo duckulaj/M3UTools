@@ -26,4 +26,6 @@ class StringUtilsTest {
 		
 		assertEquals(expected, actual);
 	}
+	
+	
 }
