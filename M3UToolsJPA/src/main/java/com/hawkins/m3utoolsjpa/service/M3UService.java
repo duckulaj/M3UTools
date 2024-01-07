@@ -92,6 +92,8 @@ public class M3UService {
 		
 		if (items.size() > 0) {
 			
+			completableFutureService.cleanItemsAndGroups();
+			
 			List<M3UGroup> groups = new ArrayList<M3UGroup>();
 				
 			M3UGroup group = null;

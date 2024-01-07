@@ -69,26 +69,6 @@ public class CompletableFutureService {
 
 	public List<M3UItem> reloadDatabase() {
 		
-		
-		
-		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
-		
-		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
-			databaseService.DeleteItemsAndGroups();
-		});
-		
-		
-		
-		try {
-			log.info("Starting cleanItemsAndGroups.get() at {}", Utils.printNow());
-			cleanItemsAndGroups.get();
-		} catch (InterruptedException | ExecutionException e) {
-			log.info("Interrupted Execution - {}", e.getMessage());
-		}
-
-		if (cleanItemsAndGroups.isDone()) log.info("cleanItemsAndGroups.isDone() at {}", Utils.printNow());
-		log.info("CompletableFutures completed");
-		
 		try {
 			log.info("Starting m3UItemsFromParser at {}", Utils.printNow());
 			CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
@@ -100,6 +80,25 @@ public class CompletableFutureService {
 			return null;
 		}		
 
+	}
+	
+	public void cleanItemsAndGroups() {
+		
+		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
+		
+		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
+			databaseService.DeleteItemsAndGroups();
+		});
+		
+		try {
+			log.info("Starting cleanItemsAndGroups.get() at {}", Utils.printNow());
+			cleanItemsAndGroups.get();
+		} catch (InterruptedException | ExecutionException e) {
+			log.info("Interrupted Execution - {}", e.getMessage());
+		}
+
+		if (cleanItemsAndGroups.isDone()) log.info("cleanItemsAndGroups.isDone() at {}", Utils.printNow());
+		log.info("CompletableFutures completed");
 	}
 	
 }
