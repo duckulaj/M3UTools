@@ -205,7 +205,7 @@ public class M3UService {
 
 	}
 	
-	public List<M3UItem> getSelectedTvChannels() {
+	private List<M3UItem> getSelectedTvChannels() {
 		
 		return IteratorUtils.toList(itemRepository.findTvChannelsBySelected(true).iterator());
 	}

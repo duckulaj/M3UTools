@@ -136,15 +136,23 @@ public class Utils {
 
 	public static void copyUrlToFileUsingCommonsIO(String url, String fileName) {
 
+		String epgFile = Constants.EPG_XML;
+		
 		try {
+			FileUtilsForM3UToolsJPA.backupFile(epgFile);
 			FileUtils.copyURLToFile(new URI(url).toURL(), new File(fileName), 180000, 600000);
 		} catch (MalformedURLException e) {
+			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
 			log.info("MalformedURLException - {}", e.getMessage());
 		} catch (IOException e) {
+			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
 			log.info("IOException - {}", e.getMessage());
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
+			log.info("URISyntaxException - {}", e.getMessage());
+		} catch (Exception e) {
+			FileUtilsForM3UToolsJPA.restoreFile(epgFile);
+			log.info("Exception - {}", e.getMessage());
 		} 
 	}
 	
