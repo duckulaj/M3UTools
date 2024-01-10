@@ -54,7 +54,6 @@ import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 import com.hawkins.m3utoolsjpa.utils.Writer;
 

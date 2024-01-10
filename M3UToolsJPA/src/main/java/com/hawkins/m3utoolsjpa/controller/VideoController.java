@@ -27,9 +27,6 @@ import com.hawkins.m3utoolsjpa.service.StreamingService;
 import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Controller
 public class VideoController {
 

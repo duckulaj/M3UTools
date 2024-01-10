@@ -276,10 +276,6 @@ public class M3UtoStrmService {
 
 			if (endIndex != -1) {
 
-
-
-				String groupTitle = movie.getGroupTitle();
-
 				String folder = movie.getChannelName();
 				folder = Utils.replaceForwardSlashWithSpace(folder);
 				folder = Utils.removeFromString(folder, Patterns.SQUARE_BRACKET_REGEX);

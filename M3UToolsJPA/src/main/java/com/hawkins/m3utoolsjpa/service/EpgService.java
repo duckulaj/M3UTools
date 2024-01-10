@@ -24,7 +24,6 @@ import com.hawkins.m3utoolsjpa.epg.XmltvUtils;
 import com.hawkins.m3utoolsjpa.epg.XmltvVideo;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;

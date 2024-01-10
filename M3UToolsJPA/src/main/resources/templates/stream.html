@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8">
@@ -27,8 +27,8 @@
 	<p align="center" style="font-style: italic;" th:text=${filmTitle}>
 	<div class="container mt-5">
 		<video id="videoPlayer" class="w-100" controls autoplay>
-<!-- 			<source th:src="@{/stream(streamUrl=${streamUrl})}" type="video/mp4"> -->
-				<source th:src=${streamUrl} type="video/mp4">
+			<source th:src="@{/stream(streamUrl=${streamUrl})}" type="video/mp4">
+<!-- 			<source th:src=${streamUrl} type="video/mp4"> -->
 			Your browser does not support the video tag.
 		</video>
 	</div>
