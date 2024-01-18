@@ -24,6 +24,7 @@ import com.hawkins.m3utoolsjpa.epg.XmltvUtils;
 import com.hawkins.m3utoolsjpa.epg.XmltvVideo;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -153,6 +154,8 @@ public class EpgService {
 	
 	public XmltvDoc getXmlTvDoc() {
 
+		int maxRetries = 3;
+		
 		// Make the call to this a CompletableFuture
 
 		String epgFile = Constants.EPG_XML;
@@ -170,25 +173,33 @@ public class EpgService {
 			getRemoteEPG = true;
 		}
 
-		try {
-			if (getRemoteEPG) {
+		int i = 0;
+		
+		while (i < maxRetries) {
+			try {
+				if (getRemoteEPG) {
+					
+					String url = dp.getStreamXMLUrl();
+					log.info("Retrieving EPG from remote server");
+					Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
+					// Utils.copyUrlToFileUsingNIO(url, epgFile);
+				}
 				
-				String url = dp.getStreamXMLUrl();
-				log.info("Retrieving EPG from remote server");
-				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
-				// Utils.copyUrlToFileUsingNIO(url, epgFile);
+				log.info("Reading epg.xml");
+				doc = xm.readValue(new File(epgFile), XmltvDoc.class);
+				break;
+			} catch (JsonParseException jpe) {
+				log.info("Error parsing {} , invalid xml format", epgFile);
+				FileUtilsForM3UToolsJPA.restoreFile(epgFile);
+				i++;
+			} catch (IOException ioe) {
+				log.info("Error reading {} - {}", epgFile, ioe.getMessage());
+				i++;
+			} catch (Exception e) {
+				log.info("Error reading {} - {}", epgFile, e.getMessage());
+				i++;
 			}
-			
-			log.info("Reading epg.xml");
-			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
-		} catch (JsonParseException jpe) {
-			log.info("Error parsing {} , invalid xml format", epgFile);
-		} catch (IOException ioe) {
-			log.info("Error reading {} - {}", epgFile, ioe.getMessage());
-		} catch (Exception e) {
-			log.info("Error reading {} - {}", epgFile, e.getMessage());
 		}
-
 		return doc;
 	}
 
