@@ -13,8 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -29,7 +27,6 @@ public class WebAppSecurityConfig {
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
-                    .requestMatchers(externalContentMatcher()).permitAll()
                     .anyRequest().authenticated()
             )
             .logout((logout) -> logout
@@ -59,15 +56,10 @@ public class WebAppSecurityConfig {
             .roles("USER")
             .build();
         UserDetails admin = User.withUsername("admin")
-            	.password("{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
+            	.password("{bcrypt}$2a$10$3/KYlinLpd7SLc9fFdKpjebmh3GQiwACk7IAW/nLDvyui5Oo2qKUu")
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
     }
     
-    private RequestMatcher externalContentMatcher() {
-    	
-    	return new AntPathRequestMatcher("dome13667**");
-    	
-    }
 }
