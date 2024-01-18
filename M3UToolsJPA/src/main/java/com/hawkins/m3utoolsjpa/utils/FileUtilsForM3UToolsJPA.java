@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
@@ -42,7 +42,13 @@ public class FileUtilsForM3UToolsJPA {
 		}
 
 		try {
-			ReversedLinesFileReader object = new ReversedLinesFileReader(file, Charset.forName("UTF-8"));
+			
+			ReversedLinesFileReader object = ReversedLinesFileReader.builder()
+					   .setPath(file.toPath())
+					   .setCharset(StandardCharsets.UTF_8)
+					   .get();
+			
+			// ReversedLinesFileReader object = new ReversedLinesFileReader(file, Charset.forName("UTF-8"));
 
 			while(counter < linecount) {
 				sb.append(object.readLine());
