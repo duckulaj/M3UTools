@@ -6,10 +6,15 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +24,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
@@ -85,6 +92,53 @@ public class VideoController {
 
 	}
 	
+	@GetMapping(value = "restTemplateMedia")
+	@ResponseBody
+	public final ResponseEntity<Resource> restTemplateMedia(@RequestParam String streamUrl, @RequestHeader HttpHeaders headers) {
+		
+		// request url
+		// String url = "https://jsonplaceholder.typicode.com/posts/{id}";
+
+		// create an instance of RestTemplate
+		RestTemplate restTemplate = new RestTemplate();
+
+		// create headers
+		// HttpHeaders headers = new HttpHeaders();
+
+		// set `Content-Type` and `Accept` headers
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_OCTET_STREAM));
+
+		// example of custom header
+		headers.set("X-Request-Source", "Desktop");
+
+		// build the request
+		HttpEntity request = new HttpEntity(headers);
+
+		// make an HTTP GET request with headers
+		/* ResponseEntity<Byte> response = restTemplate.exchange(
+		        streamUrl,
+		        HttpMethod.GET,
+		        request,
+		        Byte.class,
+		        1
+		);
+		
+		// check response
+		if (response.getStatusCode() == HttpStatus.OK) {
+		    System.out.println("Request Successful.");
+
+		} else {
+		    System.out.println("Request Failed");
+		    System.out.println(response.getStatusCode());
+		}
+		*/
+		ResponseExtractor<ResponseEntity<byte[]>> responseExtractor = restTemplate.responseEntityExtractor(byte[].class);
+		ResponseEntity<byte[]> results = restTemplate.execute(streamUrl, HttpMethod.GET, null, responseExtractor);
+
+		ByteArrayResource byteArrayResource = new ByteArrayResource(results.getBody());
+		return new ResponseEntity<Resource>(byteArrayResource, null, HttpStatus.OK);
+	}
 
 
 }
