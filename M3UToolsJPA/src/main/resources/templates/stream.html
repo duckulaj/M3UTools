@@ -7,17 +7,7 @@
 	<title>Video Player</title>
 	<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
 	<script th:src="@{webjars/jquery/jquery.min.js}"></script>
-	<script>
-		$(document).ready(function () {
-			var video = document.getElementById('videoPlayer');
-
-			// Add event listener for seek
-			video.addEventListener('seeking', function () {
-				console.log('Seeking to: ' + video.currentTime);
-			});
-		});
-
-	</script>
+	
 
 </head>
 
@@ -26,13 +16,28 @@
 	
 	<p align="center" style="font-style: italic;" th:text=${filmTitle}>
 	<div class="container mt-5">
-		<video id="videoPlayer" class="w-100" controls autoplay>
+		<video id="videoPlayer" class="w-100" autoplay>
 			<source th:src="@{/stream(streamUrl=${streamUrl})}" type="video/mp4">
 <!-- 			<source th:src=${streamUrl} type="video/mp4"> -->
 			Your browser does not support the video tag.
 		</video>
 	</div>
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+	
+	document.addEventListener('DOMContentLoaded', function() {
+	    
+		var video = document.getElementById('videoPlayer');
+
+		// alert("Attaching eventListener to " + video.id);
+		// Add event listener for seek
+		video.addEventListener('click', function () {
+			alert('Seeking to: ' + video.currentTime);
+		});
+	});
+
+	</script>
 </body>
 
 </html>

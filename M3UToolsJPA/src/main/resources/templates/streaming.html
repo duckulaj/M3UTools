@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Video Player</title>
+	<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
+	<link rel="stylesheet" th:href="@{/css/controls.css}" />
+	<script th:src="@{webjars/jquery/jquery.min.js}"></script>
+</head>
+
+<body>
+	<div th:replace="~{fragments/header :: header}"></div>
+	
+	<p align="center" style="font-style: italic;" th:text=${filmTitle}>
+	<div align="center" style="width:90%; height:90%;">
+	<div class="video-player">
+		<video id="video" class="video w-100" autoplay>
+			<source th:src="@{/media(streamUrl=${streamUrl})}" type="video/mp4">
+		</video>
+	</div>
+	<div class="controls">
+        <div class="progress">
+          <div class="progress__filled"></div>
+        </div>
+        <button class="controls__button toggleButton" title="Toggle Play">
+          ►
+        </button>
+        <input
+          type="range"
+          name="volume"
+          class="controls__slider"
+          min="0"
+          max="1"
+          step="0.05"
+          value="1"
+        />
+        <input
+          type="range"
+          name="playbackRate"
+          class="controls__slider"
+          min="0.5"
+          max="2"
+          step="0.1"
+          value="1"
+        />
+        <button class="controls__button" data-skip="-10">« 10s</button>
+        <button class="controls__button" data-skip="25">10s »</button>
+      </div>
+    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+	<script src="/js/controls.js" th:href="@{/js/controls.js}" type="text/javascript"></script>
+</body>
+
+	
+</html>

@@ -1,7 +1,9 @@
 package com.hawkins.m3utoolsjpa;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -10,7 +12,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = { 
+	    SecurityAutoConfiguration.class, 
+	    ManagementWebSecurityAutoConfiguration.class})
 @ComponentScan(basePackages = {"com.hawkins.m3utoolsjpa"})
 @EnableAsync
 @EnableJpaRepositories(bootstrapMode = BootstrapMode.DEFAULT)

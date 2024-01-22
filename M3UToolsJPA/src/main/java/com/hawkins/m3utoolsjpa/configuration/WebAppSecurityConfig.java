@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -26,8 +27,9 @@ public class WebAppSecurityConfig {
         http
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
+                    .requestMatchers("/webjars/**", "/css/**", "/js/**", "/actuator/**").permitAll()
                     .anyRequest().authenticated()
+                    
             )
             .logout((logout) -> logout
                     .logoutSuccessUrl("/login")
@@ -57,7 +59,7 @@ public class WebAppSecurityConfig {
             .build();
         UserDetails admin = User.withUsername("admin")
             	.password("{bcrypt}$2a$10$3/KYlinLpd7SLc9fFdKpjebmh3GQiwACk7IAW/nLDvyui5Oo2qKUu")
-                .roles("ADMIN")
+                .roles("ADMIN, USER")
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
     }

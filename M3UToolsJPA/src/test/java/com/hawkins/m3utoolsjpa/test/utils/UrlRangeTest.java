@@ -47,7 +47,7 @@ public class UrlRangeTest {
 			// Range: bytes=0-
 
 			HttpHeaders requestHeaders = new HttpHeaders();
-			requestHeaders.set("Range", "bytes=0-");
+			requestHeaders.set("Range", "bytes=0-10000");
 
 			MultiValueMap<String, String> postParameters = new LinkedMultiValueMap<String, String>();
 
