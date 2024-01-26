@@ -59,7 +59,7 @@ public class WebAppSecurityConfig {
             .build();
         UserDetails admin = User.withUsername("admin")
             	.password("{bcrypt}$2a$10$3/KYlinLpd7SLc9fFdKpjebmh3GQiwACk7IAW/nLDvyui5Oo2qKUu")
-                .roles("ADMIN, USER")
+                .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
     }
