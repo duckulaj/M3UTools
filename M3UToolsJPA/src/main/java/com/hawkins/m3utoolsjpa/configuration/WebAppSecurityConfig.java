@@ -29,7 +29,6 @@ public class WebAppSecurityConfig {
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
-                    .requestMatchers(externalContentMatcher()).permitAll()
                     .anyRequest().authenticated()
             )
             .logout((logout) -> logout
@@ -65,9 +64,4 @@ public class WebAppSecurityConfig {
         return new InMemoryUserDetailsManager(user, admin);
     }
     
-    private RequestMatcher externalContentMatcher() {
-    	
-    	return new AntPathRequestMatcher("dome13667**");
-    	
-    }
 }
