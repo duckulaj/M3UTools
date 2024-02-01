@@ -124,6 +124,7 @@ public class Parser {
 	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
 
 		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
+		// String tvgName = patternMatcher.extract(line, Patterns.SQUARE_BRACKET_COUNTRY);
 
 		if (tvgName.startsWith("#####")) return null;
 
@@ -133,15 +134,15 @@ public class Parser {
 			return null;
 		}
 		
-		endIndex = Utils.indexOfAny(tvgName.substring(0, 2), includedCountries);
+		endIndex = Utils.indexOfAny(tvgName.substring(0, 3), includedCountries);
 
 		if (endIndex == -1) return null;
 
-		tvgName = StringUtils.removeCountryAndDelimiter(tvgName, "|");
+		// tvgName = StringUtils.removeCountryAndDelimiter(tvgName, "]");
 		tvgName = StringUtils.cleanTextContent(tvgName);
 
 		String channelName = patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX);
-		channelName = StringUtils.removeCountryAndDelimiter(channelName, "|");
+		// channelName = StringUtils.removeCountryAndDelimiter(channelName, "]");
 		channelName = StringUtils.cleanTextContent(channelName);
 
 		String duration = patternMatcher.extract(line, Patterns.DURATION_REGEX);
