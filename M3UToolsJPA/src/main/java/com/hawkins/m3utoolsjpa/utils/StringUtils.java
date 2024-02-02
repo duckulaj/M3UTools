@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.utils;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 
@@ -33,6 +34,18 @@ public class StringUtils {
 	public static String removeCountryIdentifier(String toParse) {
 
 		Matcher matcher = Patterns.STRIP_COUNTRY_IDENTIFIER.matcher(toParse);
+
+		if(matcher.find()) {
+			toParse = matcher.replaceFirst("");
+		}
+
+		return toParse;
+
+	}
+	
+	public static String removeCountryIdentifierUsingRegExpr(String toParse, String regExpr) {
+
+		Matcher matcher = Pattern.compile(regExpr).matcher(toParse);
 
 		if(matcher.find()) {
 			toParse = matcher.replaceFirst("");

@@ -13,8 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +29,7 @@ public class WebAppSecurityConfig {
                 authorizeRequests
                     .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
                     .anyRequest().authenticated()
+                    
             )
             .logout((logout) -> logout
                     .logoutSuccessUrl("/login")
@@ -58,10 +58,14 @@ public class WebAppSecurityConfig {
             .roles("USER")
             .build();
         UserDetails admin = User.withUsername("admin")
-            	.password("{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
+            	.password("{bcrypt}$2a$10$3/KYlinLpd7SLc9fFdKpjebmh3GQiwACk7IAW/nLDvyui5Oo2qKUu")
                 .roles("ADMIN")
                 .build();
-        return new InMemoryUserDetailsManager(user, admin);
+        UserDetails jonathan = User.withUsername("jonathan")
+            	.password("{bcrypt}$2a$10$N9AMwnocjm57hi54yeRzvOXCHt/UauJwD9LNSQZQUZg4XuYVyAXfO")
+                .roles("ADMIN")
+                .build();
+        return new InMemoryUserDetailsManager(user, admin, jonathan);
     }
     
 }

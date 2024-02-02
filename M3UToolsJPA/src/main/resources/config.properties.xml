@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<entry key="stream.channels">http://dome13667.cdngold.me/get.php?username=ba201db620&amp;password=21ffd018d2&amp;type=m3u_plus&amp;output=ts</entry>
+<entry key="stream.channels">http://line.fire-4k.cc/get.php?username=97C3A5&amp;password=83567C&amp;type=m3u_plus&amp;output=mpegts</entry>
 <entry key="fileName">./config.properties</entry>
 <entry key="fileAge.epg">240</entry>
 <entry key="fullM3U">./allChannels.m3u</entry>
@@ -20,6 +20,7 @@
 <entry key="emby.installed">true</entry>
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
-<entry key="stream.playlist">http://dome13667.cdngold.me/xmltv.php?username=ba201db620&amp;password=21ffd018d2</entry>
+<entry key="stream.playlist">http://line.fire-4k.cc/xmltv.php?username=97C3A5&amp;password=83567C</entry>
 <entry key="download.buffersize">8096</entry>
+<entry key="country.regExpr">\[.{2,}\] </entry>
 </properties>

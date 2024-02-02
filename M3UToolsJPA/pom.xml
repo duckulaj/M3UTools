@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.1</version>
+		<version>3.2.2</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.hawkins</groupId>
@@ -15,7 +15,7 @@
 	<name>M3uJpa</name>
 	<description>M3U Handler with JPA</description>
 	<properties>
-		<jakarta-servlet.version>5.0.0</jakarta-servlet.version>
+		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
 		<java.version>20</java.version>
 		<tests.skip>true</tests.skip>
 	</properties>

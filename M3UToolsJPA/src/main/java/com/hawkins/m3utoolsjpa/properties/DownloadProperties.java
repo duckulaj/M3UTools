@@ -46,6 +46,7 @@ public class DownloadProperties implements Runnable {
 	private int fileAgeEPG = 1;
 	private String[] includedCountries = null;
 	private int bufferSize = 0;
+	private String CountryRegExpr = null;
 
 	public DownloadProperties() {
 
@@ -82,6 +83,7 @@ public class DownloadProperties implements Runnable {
 		this.setFileAgeM3U(Integer.valueOf(props.getProperty("fileAge.m3u")));
 		this.setIncludedCountries(props.getProperty("includedCountries").split(","));
 		this.setBufferSize(Integer.valueOf(props.getProperty("download.buffersize")));
+		this.setCountryRegExpr(props.getProperty("country.regExpr"));
 	}
 
 	
@@ -334,6 +336,13 @@ public class DownloadProperties implements Runnable {
 		this.bufferSize = bufferSize;
 	}
 
+	public String getCountryRegExpr() {
+		return CountryRegExpr;
+	}
+
+	public void setCountryRegExpr(String countryRegExpr) {
+		CountryRegExpr = countryRegExpr;
+	}
 
 
 }
