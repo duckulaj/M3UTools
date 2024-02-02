@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
 
 @JacksonXmlRootElement(localName = "tv")
@@ -30,6 +31,8 @@ public class XmltvDoc {
     @JacksonXmlProperty(localName = "programme")
     private List<XmltvProgramme> programmes;
 
+    DownloadProperties dp = DownloadProperties.getInstance();
+    
     public XmltvDoc() {
     }
 
@@ -68,7 +71,7 @@ public class XmltvDoc {
     private String normalisedDisplayName(XmltvChannel channel) {
     	
     	String normalisedName = channel.getDisplayNames().get(0).getText();
-    	normalisedName = StringUtils.removeCountryAndDelimiter(normalisedName, "|");
+    	normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, dp.getCountryRegExpr());
     	
     	return normalisedName;
     }

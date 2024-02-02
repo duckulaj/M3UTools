@@ -7,7 +7,7 @@
 <entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
-<entry key="emby.api">01f9cd6d610c499a82e5bc4a48401eec</entry>
+<entry key="emby.api">a507e8dbaddd434782251645c5f824a6</entry>
 <entry key="moviedb.apikey">56744a89f97f5119fe2a2306794d29a3</entry>
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/Downloads</entry>
 <entry key="epg.time.difference">+0200</entry>
