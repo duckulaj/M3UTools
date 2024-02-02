@@ -44,6 +44,10 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
 	List<M3UItem> findByChannelName(String type, String channelName);
 	
 	@Transactional(readOnly = true)
+	@Query("SELECT m0 FROM M3UItem m0 WHERE type = ?1")
+	List<M3UItem> findAllByType(String type);
+	
+	@Transactional(readOnly = true)
 	@Query("SELECT m0 FROM M3UItem m0 WHERE channelName LIKE ?1")
 	List<M3UItem> findListByChannelName(String channelName);
 	

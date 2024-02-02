@@ -169,7 +169,7 @@ public class M3UtoStrmService {
 
 		tvshows.forEach(tvShow -> {
 
-			int endIndex = StringUtils.indexOfAny(tvShow.getChannelName(), dp.getIncludedCountries());
+			int endIndex = StringUtils.indexOfAny(tvShow.getGroupTitle(), dp.getIncludedCountries());
 			if (endIndex != -1) {
 
 				String tvShowName = tvShow.getChannelName();
@@ -272,7 +272,7 @@ public class M3UtoStrmService {
 
 		movies.forEach(movie -> {
 
-			int endIndex = StringUtils.indexOfAny(movie.getChannelName(), dp.getIncludedCountries());
+			int endIndex = StringUtils.indexOfAny(movie.getGroupTitle(), dp.getIncludedCountries());
 
 			if (endIndex != -1) {
 
