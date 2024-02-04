@@ -17,3 +17,6 @@
 /deployM3UToolsJPA.sh
 /epg.xml
 /generatedChannels.xml
+/channels.m3u.bu
+/config.properties.xml.bu
+/epg.xml.bu
