@@ -63,7 +63,7 @@ public class M3UController {
 			model.addAttribute(Constants.MOVIEDB, MovieDb.getInstance());
 			model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
 			model.addAttribute("groupId", groupId);
-			model.addAttribute("groups", m3uService.getM3UGroups());
+			model.addAttribute("groups", m3uService.getM3UGroupsByType(Constants.MOVIE));
 			model.addAttribute("items", pageItems.getContent());
 			model.addAttribute("currentPage", pageItems.getNumber() + 1);
 			model.addAttribute("totalItems", pageItems.getTotalElements());
