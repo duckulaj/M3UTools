@@ -83,7 +83,7 @@ public class VideoController {
 	    headers.set("Connection", "keep-alive");
 	    headers.set("Content-Transfer-Encoding", "binary");
 	    headers.setContentLength(NetUtils.getContentSizeFromUrl(streamUrl));
-	    headers.set("range", "bytes=0-100000");
+	    headers.set("range", "bytes=0-10000");
 
 	    return new ResponseEntity<>(new InputStreamResource(targetStream), headers, HttpStatus.OK);
 
