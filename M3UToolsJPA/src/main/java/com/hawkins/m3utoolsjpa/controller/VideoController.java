@@ -1,6 +1,6 @@
 package com.hawkins.m3utoolsjpa.controller;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -8,12 +8,12 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,21 +71,32 @@ public class VideoController {
 		// HttpHeaders headers = new HttpHeaders();
 		// InputStream targetStream = service.getInputStream(streamUrl, headers);
 		
+		
+		Long contentLength = NetUtils.getContentSizeFromUrl(streamUrl);
+		
 		NetUtils.printHeaders(headers);
 		
 		HttpURLConnection con = (HttpURLConnection) new URI(streamUrl).toURL().openConnection(); 
-	    InputStream targetStream = con.getInputStream();
+	    
+		BufferedInputStream bufferedInputStream = new BufferedInputStream(con.getInputStream());
+		
+		// InputStream targetStream = con.getInputStream();
 
+	    List<HttpRange> rangeList = headers.getRange();
+	    HttpRange range = rangeList.get(0);
+	    long start = range.getRangeStart(contentLength);
+	    long end = range.getRangeEnd(contentLength);
+	    
 	    headers.setContentType(MediaType.valueOf("video/mp4"));
 	    headers.set("Accept-Ranges", "bytes");
 	    headers.set("Expires", "0");
 	    headers.set("Cache-Control", "no-cache, no-store");
 	    headers.set("Connection", "keep-alive");
 	    headers.set("Content-Transfer-Encoding", "binary");
-	    headers.setContentLength(NetUtils.getContentSizeFromUrl(streamUrl));
-	    headers.set("range", "bytes=0-1024");
+	    headers.setContentLength(contentLength);
+	    headers.set("range", "bytes=" + start + "-" + (end) + "/" + contentLength);
 
-	    return new ResponseEntity<>(new InputStreamResource(targetStream), headers, HttpStatus.OK);
+	    return new ResponseEntity<>(new InputStreamResource(bufferedInputStream), headers, HttpStatus.OK);
 
 	}
 	
