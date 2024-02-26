@@ -3,18 +3,10 @@ package com.hawkins.m3utoolsjpa.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.springframework.core.io.UrlResource;
-import org.springframework.core.io.support.ResourceRegion;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRange;
 import org.springframework.stereotype.Service;
-
-import com.hawkins.m3utoolsjpa.utils.NetUtils;
 
 @Service
 public class StreamingService {
