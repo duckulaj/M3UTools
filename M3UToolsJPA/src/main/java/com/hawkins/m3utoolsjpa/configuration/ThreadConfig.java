@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableAsync
 public class ThreadConfig {
 	@Bean(name = "downloadTaskExecutor")
-	public TaskExecutor downloadTaskExecutor() {
+	TaskExecutor downloadTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(5);
@@ -21,7 +21,7 @@ public class ThreadConfig {
 	}
 	
 	@Bean
-    public ThreadPoolTaskExecutor taskExecutor() {
+    ThreadPoolTaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         return executor;

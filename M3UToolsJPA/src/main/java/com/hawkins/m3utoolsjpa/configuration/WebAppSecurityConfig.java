@@ -19,7 +19,7 @@ import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter
 public class WebAppSecurityConfig {
 
 	@Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		
 		HeaderWriterLogoutHandler clearSiteData = new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(Directive.ALL));
 				    
@@ -51,7 +51,7 @@ public class WebAppSecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user")
         	.password("{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
             .roles("USER")

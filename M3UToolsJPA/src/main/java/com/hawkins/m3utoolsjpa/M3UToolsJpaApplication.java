@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 public class M3UToolsJpaApplication {
 
 	@Bean
-   public RestTemplate restTemplateBean() { 
+   RestTemplate restTemplateBean() { 
         return new RestTemplate(); 
     } 
 	
