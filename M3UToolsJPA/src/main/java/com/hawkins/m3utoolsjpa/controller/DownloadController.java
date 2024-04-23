@@ -7,15 +7,20 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.service.DownloadService;
+import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -28,6 +33,9 @@ public class DownloadController {
 
 	@Autowired
 	M3UItemRepository itemRepository;
+	
+	@Autowired
+	DownloadService downloadService;
 	
 	@GetMapping(value ="newDownload", params = { "name" })
     public void newDownload(@RequestParam String name, HttpServletResponse response) throws IOException {
@@ -67,4 +75,14 @@ public class DownloadController {
         bos.close();
         out.close();
     }
+	
+	@GetMapping(value ="downloadToServer", params = { "name" })
+    public ModelAndView downloadToServer(@RequestParam String name, ModelMap model) throws IOException {
+    
+		CompletableFuture<Void> downloaded = CompletableFuture.runAsync(() -> 
+			downloadService.downloadToserver(name)
+		);
+		
+		return new ModelAndView("forward:/", model);
+	}
 }
