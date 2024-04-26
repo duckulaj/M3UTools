@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.DownloadService;
-import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -37,14 +36,14 @@ public class DownloadController {
 	@Autowired
 	DownloadService downloadService;
 	
-	@GetMapping(value ="newDownload", params = { "name" })
-    public void newDownload(@RequestParam String name, HttpServletResponse response) throws IOException {
+	@GetMapping(value ="newDownload", params = { "downloadName" })
+    public void newDownload(@RequestParam String downloadName, HttpServletResponse response) throws IOException {
         
 		Long contentSize = 0L;
         URL url = null;
 		try {
-			url = new URI(Utils.getURLFromName(name, itemRepository)).toURL();
-			log.info("Downloading {}", name);
+			url = new URI(Utils.getURLFromName(downloadName, itemRepository)).toURL();
+			log.info("Downloading {}", downloadName);
 			contentSize = NetUtils.getContentSizeFromUrl(url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -57,7 +56,7 @@ public class DownloadController {
         // BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
 
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=" + name + ".mp4");
+        response.setHeader("Content-Disposition", "attachment; filename=" + downloadName + ".mp4");
         response.setHeader("Content-Length", contentSize.toString());
         response.addHeader(HttpHeaders.CONNECTION, "keep-alive");
         // response.addHeader("Pragma", "no-cache");

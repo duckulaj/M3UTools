@@ -39,13 +39,13 @@ public class VideoController {
 	@Autowired
 	StreamingService service;
 
-	@GetMapping(value ="stream", params = { "name" })
-	public ModelAndView stream(ModelMap model, @RequestParam String name) {
+	@GetMapping(value ="stream", params = { "streamName" })
+	public ModelAndView stream(ModelMap model, @RequestParam String streamName) {
 
 		URL url = null;
 
 		try {
-			url = new URI(Utils.getURLFromName(name, m3uItemRepository)).toURL();
+			url = new URI(Utils.getURLFromName(streamName, m3uItemRepository)).toURL();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,7 +55,7 @@ public class VideoController {
 		}
 
 		model.addAttribute("streamUrl", url);
-		model.addAttribute("filmTitle", Utils.removeFromString(name, Patterns.STRIP_COUNTRY_IDENTIFIER));
+		model.addAttribute("filmTitle", Utils.removeFromString(streamName, Patterns.STRIP_COUNTRY_IDENTIFIER));
 
 		return new ModelAndView("stream", model);
 
