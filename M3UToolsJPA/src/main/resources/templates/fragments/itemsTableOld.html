@@ -1,26 +1,4 @@
 <div th:fragment="itemsTable" th:if="${items.size() > 0}">
-
-
-	<div class="row">
-                <div class="col-xl-4" th:each="item : ${items}">
-                    <div class="product-container">
-                    	<table>
-							
-							<tr>
-								<td align="center"><img style="max-width: 30%; max-height: 30%;" th:src="${item.tvgLogo}" th:onclick="openInformationModal(this);" th:value="${item.search}"></td>
-							</tr>
-							<tr>
-								<td align="center">[[${item.tvgName}]]</td>
-							</tr>	             
-							<br>       	
-                    	</table>
-                    	
-                    	    
-                    </div>
-                </div>
-            </div>
-
-
 	<table class="table table-striped">
 		<thead class="table-dark">
 			<tr>

@@ -1,4 +1,5 @@
-<div th:fragment="informationModal" id="informationModal" class="modal fade" role="dialog">
+<div th:fragment="informationModal" id="informationModal"
+	class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<!-- Modal content-->
 		<div class="modal-content text-white" style="background-color: black;">
@@ -9,11 +10,11 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="max-width: 50%; max-height: 50%;">
-						<img id="posterPath" style="max-width: 100%; height: auto;" />
-					</td>
+					<td style="max-width: 50%; max-height: 50%;"><img
+						id="posterPath" style="max-width: 100%; height: auto;" /></td>
 					<td>
-						<div class="modal-body" style="mix-blend-mode:hard-light;" id="modalBodyDiv"></div>
+						<div class="modal-body" style="mix-blend-mode: hard-light;"
+							id="modalBodyDiv"></div>
 					</td>
 				</tr>
 				<tr>
@@ -21,7 +22,28 @@
 						<div class="modal-body" id="releaseDate"></div>
 					</td>
 					<td align="center">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<table>
+							<tr>
+								<form action="#" th:action="@{/newDownload}" method="get">
+									<td><input type="hidden" name="downloadName"
+										id="downloadName" />
+										<button type="submit" class="btn btn-secondary" name="action"
+											id="btndownload" value="download">Download</button></td>
+								</form>
+								<form action="#" th:action="@{/stream}" method="get">
+									<td><input type="hidden" name="streamName"
+										id="streamName" />
+										<button type="submit" class="btn btn-secondary" name="action"
+											id="btnstream" value="stream">Play</button></td>
+								</form>
+								<td>
+									<button type="button" class="btn btn-secondary"
+										data-bs-dismiss="modal">Close</button>
+								</td>
+							</tr>
+						</table>
+
+
 
 					</td>
 				</tr>

@@ -27,7 +27,7 @@ public class StreamingService {
 		if (fileSize < rangeEnd) {
 			rangeEnd = fileSize - 1;
 		}
-		String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
+		// String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
 		try {
 			data = readByteRange(streamUrl, rangeStart, rangeEnd);
 		} catch (IOException e) {

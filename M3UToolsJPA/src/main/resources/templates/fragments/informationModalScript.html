@@ -34,6 +34,8 @@ function openInformationModal(row) { // begin function
                     $("#modalTitleH4").html(data.title);
                     $("#modalBodyDiv").html(data.overview);
                     $("#releaseDate").html(convertDateFormat(data.release_date));
+                    $("#downloadName").val(data.title);
+                    $("#streamName").val(data.title);
                     //document.getElementById("posterPath").style.backgroundImage = "url('https://image.tmdb.org/t/p/original" + data.poster_path + "')"
                     document.getElementById("posterPath").src = "https://image.tmdb.org/t/p/original" + data.poster_path + ""
                     $("#informationModal").modal("show");

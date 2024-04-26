@@ -57,16 +57,15 @@ public class M3UtoStrmService {
 			createMovieFolders(movies);
 			log.info("Created HD Movies folders");
 		});
+		
+		createMovies.thenRunAsync(() -> {
+				List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
+				log.info("{} TV Shows", tvshows.size());
 
-		CompletableFuture<Void> createTVShows = CompletableFuture.runAsync(() -> {
-			List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
-			log.info("{} TV Shows", tvshows.size());
-
-			createTVshowFolders(tvshows);
-			log.info("Created TV Shows folders");
+				createTVshowFolders(tvshows);
+				log.info("Created TV Shows folders");
 		});
-
-
+		
 	}
 
 
