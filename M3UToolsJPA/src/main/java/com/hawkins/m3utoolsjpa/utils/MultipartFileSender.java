@@ -268,6 +268,7 @@ public class MultipartFileSender {
                 // End with multipart boundary.
                 sos.println();
                 sos.println("--" + MULTIPART_BOUNDARY + "--");
+                sos.close();
             }
         }
 

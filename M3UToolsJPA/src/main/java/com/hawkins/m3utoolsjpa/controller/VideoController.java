@@ -7,10 +7,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,6 +34,7 @@ import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.service.StreamingService;
 import com.hawkins.m3utoolsjpa.utils.MultipartFileSender;
 import com.hawkins.m3utoolsjpa.utils.NetUtils;
+import com.hawkins.m3utoolsjpa.utils.Range;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -103,7 +109,7 @@ public class VideoController {
 
 	}
 	
-	@GetMapping(value = "video")
+	@GetMapping(value = "videoOld")
 	@ResponseBody
 	public ResponseEntity<byte[]> video(@RequestParam String streamUrl, @RequestHeader(value = "Range",required = false) String range) throws IOException {
         
@@ -158,4 +164,49 @@ public class VideoController {
 		}
 	}
 	
+	@GetMapping("video")
+    public ResponseEntity<Resource> streamVideo(@RequestParam String streamName,
+                                                @RequestHeader(value = "Range", required = false) String rangeHeader) {
+        try {
+            
+        	
+            Resource resource = null;
+			try {
+				resource = new UrlResource(new URI(Utils.getURLFromName(streamName, m3uItemRepository)).toURL());
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Get total file size
+            long fileSize = 0;
+			try {
+				fileSize = resource.contentLength();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+            // Parse range header
+            Range range = Range.parse(rangeHeader, fileSize, resource);
+            
+
+            // Determine content range
+            String contentRange = range.getContentRangeHeader();
+
+            // Send appropriate partial content with 206 status code
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                    .contentType(MediaType.valueOf("video/mp4"))
+                    .header(HttpHeaders.CONTENT_RANGE, contentRange)
+                    .body(range.getResource());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
+	

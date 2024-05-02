@@ -37,7 +37,7 @@ public class M3UtoStrmService {
 	// private static String[] viewingDefinitions = {"[SD]", "[FHD]", "[UHD]", "[HD]", "[4K]", "[8K]"};
 	private static String tvShowRegex = "[S]{1}[0-9]{2} [E]{1}[0-9]{2}";
 	private static String seasonRegex = "[S]{1}[0-9]{2}";
-	
+
 	public void convertM3UtoStream() {
 
 		/*
@@ -57,15 +57,15 @@ public class M3UtoStrmService {
 			createMovieFolders(movies);
 			log.info("Created HD Movies folders");
 		});
-		
-		createMovies.thenRunAsync(() -> {
-				List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
-				log.info("{} TV Shows", tvshows.size());
 
-				createTVshowFolders(tvshows);
-				log.info("Created TV Shows folders");
+		createMovies.thenRunAsync(() -> {
+			List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
+			log.info("{} TV Shows", tvshows.size());
+
+			createTVshowFolders(tvshows);
+			log.info("Created TV Shows folders");
 		});
-		
+
 	}
 
 
@@ -136,7 +136,7 @@ public class M3UtoStrmService {
 			log.debug("Starting createMovieFolders");
 		}
 
-		deleteFolder(Constants.FOLDER_MOVIES);
+		// deleteFolder(Constants.FOLDER_MOVIES);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Processing {} movies", movies.size());
@@ -202,10 +202,13 @@ public class M3UtoStrmService {
 					if (!seasonFolder.exists()) seasonFolder.mkdir();
 
 					File thisFile = new File(seasonFolder.getAbsolutePath() + File.separator + tvShowName + ".strm"); 
-					try {
-						writeToFile(thisFile, tvShow.getChannelUri());
-					} catch (IOException e) {
-						e.printStackTrace();
+					if (!thisFile.exists()) {
+						try {
+							writeToFile(thisFile, tvShow.getChannelUri());
+							log.info("Written - {}", thisFile.getAbsolutePath());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -237,7 +240,7 @@ public class M3UtoStrmService {
 		// 	deleteFolder(newDirectory.getAbsolutePath());
 		// }
 
-		newDirectory.mkdir();
+		if (!newDirectory.exists()) newDirectory.mkdir();
 
 		if (log.isDebugEnabled()) {
 			log.debug("Created folder {}", newDirectory.getAbsolutePath());
@@ -293,26 +296,28 @@ public class M3UtoStrmService {
 				try {
 					// if (!RegexUtils.containsRegex(groupTitle, Patterns.ADULT_REGEX)) {
 
-						// String newFolder = Utils.normaliseName(folder);
-						String newFolder = folder;
-						String newFolderPath = createFolder(Constants.FOLDER_MOVIES + File.separator + newFolder);
+					// String newFolder = Utils.normaliseName(folder);
+					String newFolder = folder;
+					String newFolderPath = createFolder(Constants.FOLDER_MOVIES + File.separator + newFolder);
 
-						if (log.isDebugEnabled()) {
-							log.debug("Created {}", newFolderPath);
-						}
+					if (log.isDebugEnabled()) {
+						log.debug("Created {}", newFolderPath);
+					}
 
-						File thisFile = new File(newFolderPath + File.separator + folder + ".strm"); 
+					File thisFile = new File(newFolderPath + File.separator + folder + ".strm"); 
+
+					if (!thisFile.exists()) {
 						writeToFile(thisFile, url);
 
-						if (log.isDebugEnabled()) {
-							log.debug("Written - {}", thisFile.getAbsolutePath());
-						}
+						log.info("Written - {}", thisFile.getAbsolutePath());
+					}
 
 					// }
 				} catch (IOException ioe) {
 					ioe.getMessage();
 				}
 			}
+
 		});
 	}
 }
