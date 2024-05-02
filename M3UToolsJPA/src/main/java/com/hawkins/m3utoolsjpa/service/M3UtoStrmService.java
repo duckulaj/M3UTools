@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.Counter;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
@@ -151,11 +153,14 @@ public class M3UtoStrmService {
 
 	public static void createTVshowFolders (List<M3UItem> tvshows) {
 
+		Counter numberOfNewTVShows = new Counter();
+		Counter numberOfExistingTVShows = new Counter();
+		
 		if (log.isDebugEnabled()) {
 			log.debug("Starting createTVshowFolders");
 		}
 
-		deleteFolder(Constants.FOLDER_TVSHOWS);
+		// deleteFolder(Constants.FOLDER_TVSHOWS);
 		String tvShowFolder = createFolder(Constants.FOLDER_TVSHOWS) + File.separator;
 
 		if (log.isDebugEnabled()) {
@@ -205,14 +210,20 @@ public class M3UtoStrmService {
 					if (!thisFile.exists()) {
 						try {
 							writeToFile(thisFile, tvShow.getChannelUri());
-							log.info("Written - {}", thisFile.getAbsolutePath());
+							// log.info("Written - {}", thisFile.getAbsolutePath());
+							numberOfNewTVShows.inc();
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
+					} else {
+						numberOfExistingTVShows.inc();
 					}
 				}
 			}
 		});
+		
+		log.info("Number of existing TV Show episodes = {}", numberOfExistingTVShows.getCount());
+		log.info("Number of new TV Show episodes = {}", numberOfNewTVShows.getCount());
 	}
 
 	public static void deleteFolder (String folder) {
@@ -268,6 +279,9 @@ public class M3UtoStrmService {
 
 		String movieFolder = createFolder(Constants.FOLDER_MOVIES) + File.separator;
 
+		Counter numberOfNewMovies = new Counter();
+		Counter numberOfExistingMovies = new Counter();
+		
 		if (log.isDebugEnabled()) {
 			log.debug("Created {}", movieFolder);
 		}
@@ -308,8 +322,10 @@ public class M3UtoStrmService {
 
 					if (!thisFile.exists()) {
 						writeToFile(thisFile, url);
-
-						log.info("Written - {}", thisFile.getAbsolutePath());
+						numberOfNewMovies.inc();
+						// log.info("Written - {}", thisFile.getAbsolutePath());
+					} else {
+						numberOfExistingMovies.inc();
 					}
 
 					// }
@@ -319,5 +335,8 @@ public class M3UtoStrmService {
 			}
 
 		});
+		
+		log.info("Number of existing Movies = {}", numberOfExistingMovies.getCount());
+		log.info("Number of new Movies = {}", numberOfNewMovies.getCount());
 	}
 }
