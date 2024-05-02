@@ -31,8 +31,6 @@ public class XmltvDoc {
     @JacksonXmlProperty(localName = "programme")
     private List<XmltvProgramme> programmes;
 
-    DownloadProperties dp = DownloadProperties.getInstance();
-    
     public XmltvDoc() {
     }
 
@@ -71,7 +69,7 @@ public class XmltvDoc {
     private String normalisedDisplayName(XmltvChannel channel) {
     	
     	String normalisedName = channel.getDisplayNames().get(0).getText();
-    	normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, dp.getCountryRegExpr());
+    	normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, DownloadProperties.getInstance().getCountryRegExpr());
     	
     	return normalisedName;
     }

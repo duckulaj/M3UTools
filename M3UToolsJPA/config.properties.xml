@@ -15,14 +15,11 @@
 <entry key="download.buffersize">16192</entry>
 <entry key="country.regExpr">\[.{2,}\] </entry>
 <entry key="filewatcher.pollingDuration">10000</entry>
-<entry key="xteve.user">duckulaj</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
 <entry key="includedCountries">CA,CN,EN,UK,US,NF</entry>
 <entry key="stream.channels">http://line.fire-4k.cc/get.php?username=97C3A5&amp;password=83567C&amp;type=m3u_plus&amp;output=mpegts</entry>
 <entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
-<entry key="xteve.url">http://localhost:34400/api/</entry>
-<entry key="xteve.installed">false</entry>
 <entry key="emby.api">a507e8dbaddd434782251645c5f824a6</entry>
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
 <entry key="stream.playlist">http://line.fire-4k.cc/xmltv.php?username=97C3A5&amp;password=83567C</entry>
