@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
 import com.codahale.metrics.Counter;
-import com.codahale.metrics.Counter;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
@@ -36,7 +35,6 @@ public class M3UtoStrmService {
 
 	private static DownloadProperties dp = DownloadProperties.getInstance();
 	private static String[] videoTypes = {Constants.AVI, Constants.MKV, Constants.MP4};
-	// private static String[] viewingDefinitions = {"[SD]", "[FHD]", "[UHD]", "[HD]", "[4K]", "[8K]"};
 	private static String tvShowRegex = "[S]{1}[0-9]{2} [E]{1}[0-9]{2}";
 	private static String seasonRegex = "[S]{1}[0-9]{2}";
 
@@ -210,7 +208,6 @@ public class M3UtoStrmService {
 					if (!thisFile.exists()) {
 						try {
 							writeToFile(thisFile, tvShow.getChannelUri());
-							// log.info("Written - {}", thisFile.getAbsolutePath());
 							numberOfNewTVShows.inc();
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -301,16 +298,10 @@ public class M3UtoStrmService {
 
 				folder = folder.replace("/", " ").trim();
 
-				if (folder.contains("EN ")) {
-					folder = folder.substring(3);
-				}
-
 				String url = movie.getChannelUri();
 
 				try {
-					// if (!RegexUtils.containsRegex(groupTitle, Patterns.ADULT_REGEX)) {
 
-					// String newFolder = Utils.normaliseName(folder);
 					String newFolder = folder;
 					String newFolderPath = createFolder(Constants.FOLDER_MOVIES + File.separator + newFolder);
 
@@ -323,7 +314,6 @@ public class M3UtoStrmService {
 					if (!thisFile.exists()) {
 						writeToFile(thisFile, url);
 						numberOfNewMovies.inc();
-						// log.info("Written - {}", thisFile.getAbsolutePath());
 					} else {
 						numberOfExistingMovies.inc();
 					}
