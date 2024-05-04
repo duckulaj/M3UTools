@@ -20,7 +20,7 @@ public class ScheduledTasks {
 	@Autowired
 	ApplicationService  applicationService;
 
-	@Scheduled(cron = "0 1 */2 * * ?") // 1.00am every other day
+	@Scheduled(cron = "0 5 0  */2 * ?") // 12.05am every other day
 	public void createStreams() {
 
 		m3UtoStrm.convertM3UtoStream();
