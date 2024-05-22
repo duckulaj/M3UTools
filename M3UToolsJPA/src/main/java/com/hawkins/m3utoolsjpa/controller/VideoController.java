@@ -33,6 +33,10 @@ import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3utoolsjpa.utils.Range;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class VideoController {
 
@@ -80,16 +84,14 @@ public class VideoController {
 		
 		HttpURLConnection con = (HttpURLConnection) new URI(streamUrl).toURL().openConnection(); 
 	    
-		BufferedInputStream bufferedInputStream = new BufferedInputStream(con.getInputStream());
 		
-		// InputStream targetStream = con.getInputStream();
 
 	    List<HttpRange> rangeList = headers.getRange();
 	    HttpRange range = rangeList.get(0);
 	    long start = range.getRangeStart(contentLength);
 	    long end = range.getRangeEnd(contentLength);
 	    	    
-	    headers.setContentType(MediaType.valueOf("video/mp4"));
+	    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 	    headers.set("Accept-Ranges", "bytes");
 	    headers.set("Expires", "0");
 	    headers.set("Cache-Control", "no-cache, no-store");
@@ -98,7 +100,11 @@ public class VideoController {
 	    headers.setContentLength(contentLength);
 	    headers.set("range", "bytes=" + start + "-" + (end) + "/" + contentLength);
 
-	    return new ResponseEntity<>(new InputStreamResource(bufferedInputStream), headers, HttpStatus.OK);
+	    log.info("URL is {}", streamUrl);
+	    log.info("Content Length is {}", contentLength);
+	    log.info("Content Type is {}", NetUtils.getContentTypeFromUrl(streamUrl));
+	    
+	    return new ResponseEntity<>(new InputStreamResource(new BufferedInputStream(con.getInputStream())), headers, HttpStatus.OK);
 
 	}
 	

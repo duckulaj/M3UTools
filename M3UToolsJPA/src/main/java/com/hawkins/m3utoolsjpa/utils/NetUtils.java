@@ -1,5 +1,6 @@
 package com.hawkins.m3utoolsjpa.utils;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -10,6 +11,7 @@ import java.net.URLConnection;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -115,24 +117,19 @@ public class NetUtils {
 	        return null;
 	    }// w ww  .j  a va 2 s . c om
 	    String contentType;
-	    InputStream input = null;
+	    
 	    try {
 	        URLConnection connection = url.openConnection();
-	        contentType = connection.getContentType();
-	        log.debug("Content type from headers: {}", contentType);
-	        if (contentType == null) {
-	            input = connection.getInputStream();
-	            contentType = URLConnection.guessContentTypeFromStream(input);
-	            log.debug("Content type from data: {}", contentType);
+	        contentType = URLConnection.guessContentTypeFromStream(new BufferedInputStream(connection.getInputStream()));
 	            if (contentType == null) {
-	                contentType = "application/octet-stream";
+	                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
 	            }
-	        }
+	       
 	    } catch (IOException e) {
 	        log.debug("Failed to identify content type from URL: {}", e.getMessage());
-	        contentType = "application/octet-stream";
+	        contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
 	    } finally {
-	        IOUtils.closeQuietly(input);
+	    
 	    }
 	    return contentType;
 	}
