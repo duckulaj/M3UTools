@@ -17,6 +17,7 @@ import org.springframework.util.StopWatch;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -119,7 +120,7 @@ public class EpgReader {
 				
 				writer.write(document);
 				writer.close();
-				
+								
 				// if (xmlFile.exists()) xmlFile.delete();
 				
 				if (dp.isEmbyInstalled()) {

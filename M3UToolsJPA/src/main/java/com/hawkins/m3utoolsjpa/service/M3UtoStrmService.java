@@ -1,7 +1,6 @@
 package com.hawkins.m3utoolsjpa.service;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -207,7 +206,7 @@ public class M3UtoStrmService {
 					File thisFile = new File(seasonFolder.getAbsolutePath() + File.separator + tvShowName + ".strm"); 
 					if (!thisFile.exists()) {
 						try {
-							writeToFile(thisFile, tvShow.getChannelUri());
+							Utils.writeToFile(thisFile, tvShowFolder);
 							numberOfNewTVShows.inc();
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -258,20 +257,6 @@ public class M3UtoStrmService {
 
 	}
 
-	public static void writeToFile(File thisFile, String content) throws IOException{
-
-		if (log.isDebugEnabled()) {
-			log.debug("Writing file {}", thisFile.getAbsolutePath());
-		}
-
-		FileWriter writer = new FileWriter(thisFile);
-		writer.write(content);
-
-		writer.close();
-
-
-	}
-
 	public static void makeMovieFolders(List<M3UItem> movies) {
 
 		String movieFolder = createFolder(Constants.FOLDER_MOVIES) + File.separator;
@@ -312,7 +297,7 @@ public class M3UtoStrmService {
 					File thisFile = new File(newFolderPath + File.separator + folder + ".strm"); 
 
 					if (!thisFile.exists()) {
-						writeToFile(thisFile, url);
+						Utils.writeToFile(thisFile, url);
 						numberOfNewMovies.inc();
 					} else {
 						numberOfExistingMovies.inc();

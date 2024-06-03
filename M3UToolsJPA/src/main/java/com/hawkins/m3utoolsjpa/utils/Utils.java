@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -394,5 +395,19 @@ public class Utils {
 	public static int indexOfAny(String search, String[] items) {
 		
 		return StringUtils.indexOfAny(search, items);
+	}
+	
+	public static void writeToFile(File thisFile, String content) throws IOException{
+
+		if (log.isDebugEnabled()) {
+			log.debug("Writing file {}", thisFile.getAbsolutePath());
+		}
+
+		FileWriter writer = new FileWriter(thisFile);
+		writer.write(content);
+
+		writer.close();
+
+
 	}
 }

@@ -44,14 +44,6 @@ public class ManualController {
 		return new ModelAndView("forward:/", model);
 	}
 	
-	@GetMapping("/reloadEPG")
-	public ModelAndView reloadEPG(ModelMap model) {
-
-		epgService.readEPG();
-		
-		return new ModelAndView("forward:/", model);
-	}
-	
 	@GetMapping("writeM3U")
 	public ModelAndView writeM3U(ModelMap model) {
 		
@@ -60,15 +52,6 @@ public class ManualController {
 		return new ModelAndView("forward:/", model);
 	}
 	
-	@GetMapping("readEPG")
-	public ModelAndView readEPG(ModelMap model) {
-		
-		epgService.readEPG();
-		// epgService.readEPGUsingSax();
-		
-		return new ModelAndView("forward:/", model);
-	}
-
 	@GetMapping("completableFuture")
 	public ModelAndView completableFuture(ModelMap model) {
 		

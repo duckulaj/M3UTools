@@ -13,6 +13,10 @@ import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -136,4 +140,24 @@ public class FileUtilsForM3UToolsJPA {
 			}
 		}
 	}
+	
+	public static void XmlToJsonConverter() {
+		
+		File xmlFile = new File("./generatedChannels.xml");
+
+        XmlMapper xmlMapper = new XmlMapper();
+        JsonNode jsonNode;
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = null;
+        
+		try {
+			jsonNode = xmlMapper.readTree(xmlFile);
+			jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
+			Utils.writeToFile(new File("./epg.json"), jsonString);
+		} catch (IOException e) {
+			log.info(e.getMessage());
+		}
+    }
+	
+	
 }

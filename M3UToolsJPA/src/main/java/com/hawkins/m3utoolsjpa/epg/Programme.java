@@ -7,9 +7,9 @@ public class Programme {
 	private String title;
 	private String lang;
 	private String desc;
-	private Date date;
-	private Date start;
-	private Date stop;
+	private String date;
+	private String start;
+	private String stop;
 	private String channel;
 	
 	public Programme() {
@@ -34,22 +34,22 @@ public class Programme {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
-	public Date getStart() {
+	public String getStart() {
 		return start;
 	}
-	public void setStart(Date start) {
+	public void setStart(String start) {
 		this.start = start;
 	}
-	public Date getStop() {
+	public String getStop() {
 		return stop;
 	}
-	public void setStop(Date stop) {
+	public void setStop(String stop) {
 		this.stop = stop;
 	}
 

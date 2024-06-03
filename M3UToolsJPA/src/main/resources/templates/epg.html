@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport"
+	content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+<title>M3UToolsJPA</title>
+<head>
+	<link rel="stylesheet" th:href="@{webjars/font-awesome/6.5.1/css/all.css}"/>
+	<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/epgStyle.css}" />
+	
+	<script type="text/javascript">
+	
+		// Convert time to minutes from start of the day
+	    function timeToMinutes(time) {
+	        const [hours, minutes] = time.split(':').map(Number);
+	        return hours * 60 + minutes;
+	    }
+	
+	    // Calculate duration in minutes
+	    function calculateDuration(startTime, endTime) {
+	        return timeToMinutes(endTime) - timeToMinutes(startTime);
+	    }
+
+	</script>
+</head>
+<body>
+	
+	<div th:replace="~{fragments/header :: header}"></div>
+	
+	<div class="row">
+		<div th:each="channel, channelStat : ${channels}">
+			<div class="channel-title" th:text="${channel.display_name}"></div>
+			
+			<div class="epg-list" th:each="programme : ${channel.programmes}">
+				<p class="epg-item">[[${programme.start}]] [[${programme.title}]] [[${programme.stop}]]</p>
+			</div>
+		</div>	
+	</div>
+	<div th:replace="~{fragments/footer :: footer}"></div>
+	
+	
+
+</body>
+</html>
