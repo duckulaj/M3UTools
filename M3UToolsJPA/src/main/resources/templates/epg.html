@@ -30,12 +30,15 @@
 	<div th:replace="~{fragments/header :: header}"></div>
 	
 	<div class="row">
-		<div th:each="channel, channelStat : ${channels}">
-			<div class="channel-title" th:text="${channel.display_name}"></div>
+		<div  style="overflow: auto;" th:each="channel, channelStat : ${channels}">
+			<table>
+				<thead th:text="${channel.display_name}"></thead>
+					<tr style="display:inline-block;" class="epg-list" th:each="programme : ${channel.programmes}">
+						<td class="epg-inala tem">[[${programme.start}]] [[${programme.title}]] [[${programme.stop}]]</td>
+					</tr>
+				</table>
 			
-			<div class="epg-list" th:each="programme : ${channel.programmes}">
-				<p class="epg-item">[[${programme.start}]] [[${programme.title}]] [[${programme.stop}]]</p>
-			</div>
+			
 		</div>	
 	</div>
 	<div th:replace="~{fragments/footer :: footer}"></div>

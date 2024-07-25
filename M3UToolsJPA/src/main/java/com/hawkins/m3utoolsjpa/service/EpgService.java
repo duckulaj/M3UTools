@@ -114,20 +114,20 @@ public class EpgService {
 
 		// We need to ensure that the tvg-id in the epg matches the tvg-id for the m3u Item
 		for (M3UItem m3uItem : m3uItems) {
-			
+
 			XmltvChannel foundByStream = doc.getChannelsByIdAndName(m3uItem.getTvgId(), m3uItem.getTvgName());
-			
+
 			if (foundByStream != null) selectedXmltvChannels.add(foundByStream);
-			 
+
 		}
 
 		log.info("Processing {} selected channels", selectedXmltvChannels.size());
 
 		if (xmltvProgrammes != null) { 
 			for (XmltvChannel channel : selectedXmltvChannels) {
-				
+
 				List<XmltvProgramme> foundByStream = doc.getProgrammesById(channel.getId());
-				
+
 				if (foundByStream != null) {
 					for (XmltvProgramme xmltvProgramme : foundByStream) { 
 						xmltvProgramme.setChannel(channel.getId()); 
@@ -157,7 +157,7 @@ public class EpgService {
 			if (selectedXmltvChannels != null && !selectedXmltvChannels.isEmpty()) {
 				writeJson(selectedXmltvChannels, doc);
 			}
-			
+
 			if (dp.isEmbyInstalled()) {
 				EmbyApi.refreshGuide();
 			}
@@ -169,7 +169,7 @@ public class EpgService {
 		}
 	}
 
-	
+
 	public XmltvDoc getXmlTvDoc() {
 
 		// Make the call to this a CompletableFuture
@@ -178,12 +178,12 @@ public class EpgService {
 
 		XmlMapper xm = XmltvUtils.createMapper();
 		XmltvDoc doc = new XmltvDoc();
-		
+
 		File epgFileOnDisk = new File(epgFile);
-		
+
 		boolean getRemoteEPG = false;
 		try {
-		    getRemoteEPG = Utils.fileOlderThan(epgFileOnDisk, dp.getFileAgeEPG());
+			getRemoteEPG = Utils.fileOlderThan(epgFileOnDisk, dp.getFileAgeEPG());
 		} catch (IOException ex) {
 			log.info("File {} does not exist", epgFile);
 			getRemoteEPG = true;
@@ -191,13 +191,13 @@ public class EpgService {
 
 		try {
 			if (getRemoteEPG) {
-				
+
 				String url = dp.getStreamXMLUrl();
 				log.info("Retrieving EPG from remote server");
 				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
 				// Utils.copyUrlToFileUsingNIO(url, epgFile);
 			}
-			
+
 			log.info("Reading epg.xml");
 			doc = xm.readValue(new File(epgFile), XmltvDoc.class);
 		} catch (JsonParseException jpe) {
@@ -216,71 +216,74 @@ public class EpgService {
 		JsonObject jsonEPG = new JsonObject();
 		StringBuffer jsonString = new StringBuffer();
 		JsonArray jsonChannels = new JsonArray();
-		
+
 		for (XmltvChannel channel : channels) {
-			
+
 			JsonObject thisChannel = new JsonObject();
 			thisChannel.addProperty("display_name", channel.getDisplayNames().get(0).getText());
-			
+
 			JsonArray programmes = new JsonArray();
-			
+
 			List<XmltvProgramme> foundByStream = doc.getProgrammesById(channel.getId());
-			
-			for (XmltvProgramme programme : foundByStream) {
-				JsonObject thisProgramme = new JsonObject();
-				thisProgramme.addProperty("start", formatTime(programme.getStart()));
-				thisProgramme.addProperty("stop", formatTime(programme.getStop()));
-				thisProgramme.addProperty("title", programme.getTitle().getText());
-				
-				programmes.add(thisProgramme);
+
+			if (foundByStream != null && foundByStream.isEmpty()) {
+				for (XmltvProgramme programme : foundByStream) {
+					JsonObject thisProgramme = new JsonObject();
+					thisProgramme.addProperty("start", formatTime(programme.getStart()));
+					thisProgramme.addProperty("stop", formatTime(programme.getStop()));
+					thisProgramme.addProperty("title", programme.getTitle().getText());
+
+					programmes.add(thisProgramme);
+				}
+
+				thisChannel.add("programmes", programmes);
+				jsonChannels.add(thisChannel);
 			}
-			thisChannel.add("programmes", programmes);
-			jsonChannels.add(thisChannel);
-			
+
+			// jsonEPG.add("EPG", jsonChannels);
+
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			JsonElement jsonElement = JsonParser.parseString(jsonChannels.toString());
+			String prettyJson = gson.toJson(jsonElement);
+
+			log.info(prettyJson);
+			try (FileWriter fileWriter = new FileWriter(new File("./epg.json"))){
+
+				fileWriter.write(prettyJson);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
-		
-		// jsonEPG.add("EPG", jsonChannels);
-		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		JsonElement jsonElement = JsonParser.parseString(jsonChannels.toString());
-        String prettyJson = gson.toJson(jsonElement);
-        
-		log.info(prettyJson);
-		try (FileWriter fileWriter = new FileWriter(new File("./epg.json"))){
-			
-			fileWriter.write(prettyJson);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
 	}
-	
+
 	private static String formatTime(String datetimeString) {
-		
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss X");
 		ZonedDateTime zonedDateTime = ZonedDateTime.parse(datetimeString, formatter);
 
 		LocalTime time = zonedDateTime.toLocalTime();
 		return time.format(DateTimeFormatter.ofPattern("HH:mm")).toString();
 
-		
+
 	}
-	
+
 	public List<Channel> getEPGJson() {
-		
+
 		String epgJson = null;
 		List<Channel> channels = null;
-		
+
 		try (BufferedInputStream bis = new BufferedInputStream(new File("./epg.json").toURI().toURL().openStream())){
-			
+
 			epgJson = IOUtils.toString(bis, "UTF-8"); 
-			
+
 			Gson gson = new Gson();
-			
+
 			Type listType = new TypeToken<List<Channel>>() {}.getType();
 			channels = gson.fromJson(epgJson, listType);
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
