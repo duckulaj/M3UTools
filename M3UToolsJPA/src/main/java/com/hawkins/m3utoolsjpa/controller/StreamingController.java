@@ -60,7 +60,7 @@ public class StreamingController {
 		}
 	}
 
-	private String getRangeHeader(HttpServletRequest request) {
+	public String getRangeHeader(HttpServletRequest request) {
 		String rangeHeader = request.getHeader(HttpHeaders.RANGE);
 		return rangeHeader != null ? rangeHeader.replace("bytes=", "") : "";
 	}

@@ -1,10 +1,9 @@
 package com.hawkins.m3utoolsjpa.data;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,18 +12,9 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 public class Filter {
 
-	@GenericGenerator(
-	        name = "filterSequenceGenerator",
-	        type = org.hibernate.id.enhanced.SequenceStyleGenerator.class,
-	        parameters = {
-	                @Parameter(name = "sequence_name", value = "filterSequence"),
-	                @Parameter(name = "initial_value", value = "1"),
-	                @Parameter(name = "increment_size", value = "1")
-	        }
-	)
-
 	@Id
-	@GeneratedValue(generator = "itemSequenceGenerator")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", nullable = false)
 	private Long Id;
 	
 	@NotBlank(message = "Name is mandatory")

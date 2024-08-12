@@ -1,7 +1,5 @@
 package com.hawkins.m3utoolsjpa.epg;
 
-import java.util.Date;
-
 public class Programme {
 
 	private String title;

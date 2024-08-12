@@ -8,10 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.service.EpgService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Controller
-@Slf4j
 public class epgController {
 	
 	@Autowired

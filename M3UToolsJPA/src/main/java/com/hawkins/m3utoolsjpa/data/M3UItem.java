@@ -1,11 +1,10 @@
 package com.hawkins.m3utoolsjpa.data;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -21,23 +20,14 @@ public class M3UItem {
 
 	
 	
-	@GenericGenerator(
-	        name = "itemSequenceGenerator",
-	        type = org.hibernate.id.enhanced.SequenceStyleGenerator.class,
-	        parameters = {
-	                @Parameter(name = "sequence_name", value = "itemSequence"),
-	                @Parameter(name = "initial_value", value = "1"),
-	                @Parameter(name = "increment_size", value = "3"),
-	                @Parameter(name = "optimizer", value = "hilo")
-	        }
-	)
 	
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="groupId", nullable=false, insertable=false, updatable=false)
     private M3UGroup group;
 
 	@Id
-	@GeneratedValue(generator = "itemSequenceGenerator")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", nullable = false)
 	private Long id;
 	private String duration;
 	private String groupTitle;

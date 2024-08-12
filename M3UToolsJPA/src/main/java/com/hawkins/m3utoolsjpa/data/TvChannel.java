@@ -1,10 +1,9 @@
 package com.hawkins.m3utoolsjpa.data;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
@@ -17,18 +16,9 @@ import jakarta.persistence.Table;
 )
 public class TvChannel {
 	
-	@GenericGenerator(
-	        name = "tvChannelSequenceGenerator",
-	        type = org.hibernate.id.enhanced.SequenceStyleGenerator.class,
-	        parameters = {
-	                @Parameter(name = "sequence_name", value = "tvChannelSequence"),
-	                @Parameter(name = "initial_value", value = "1"),
-	                @Parameter(name = "increment_size", value = "3"),
-	                @Parameter(name = "optimizer", value = "hilo")
-	        }
-	)
 	@Id
-	@GeneratedValue(generator = "tvChannelSequenceGenerator")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", nullable = false)
 	private Long id;
 	public Long channelID;
 	public Long groupId;

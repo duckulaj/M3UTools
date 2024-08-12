@@ -33,7 +33,6 @@ import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3utoolsjpa.utils.Range;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -213,8 +213,6 @@ public class EpgService {
 
 	private static void writeJson(List<XmltvChannel> channels, XmltvDoc doc) {
 
-		JsonObject jsonEPG = new JsonObject();
-		StringBuffer jsonString = new StringBuffer();
 		JsonArray jsonChannels = new JsonArray();
 
 		for (XmltvChannel channel : channels) {
