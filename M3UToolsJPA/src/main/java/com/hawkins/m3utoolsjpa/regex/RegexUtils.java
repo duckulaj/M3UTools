@@ -14,4 +14,16 @@ public static boolean containsRegex(String stringToTest, Pattern pattern) {
 		return false;
 		
 	}
+
+	public static String removeCountryIdentifier (String stringToParse, String[] charactersToMatch) {
+	
+		String regexPattern = String.join("|", charactersToMatch);
+		
+		if (Pattern.compile("^(" + regexPattern + ")").matcher(stringToParse).find()) {
+			stringToParse = stringToParse.substring(2).trim();
+		}
+		
+		return stringToParse;
+		
+	}
 }

@@ -20,6 +20,7 @@ import com.codahale.metrics.Counter;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
+import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -280,6 +281,7 @@ public class M3UtoStrmService {
 				folder = Utils.removeFromString(folder, Patterns.PIPES_REGEX);
 				folder = Utils.removeFromString(folder, Patterns.PIPE_REGEX);
 				folder = Utils.removeFromString(folder, Patterns.HYPHEN_REGEX);
+				folder = RegexUtils.removeCountryIdentifier(folder, dp.getIncludedCountries());
 
 				folder = folder.replace("/", " ").trim();
 

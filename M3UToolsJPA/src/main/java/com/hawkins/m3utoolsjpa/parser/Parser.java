@@ -127,7 +127,7 @@ public class Parser {
 		
 		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
 		// String tvgName = patternMatcher.extract(line, Patterns.SQUARE_BRACKET_COUNTRY);
-
+		if (tvgName == null) return null;
 		if (tvgName.startsWith("#####")) return null;
 
 		int endIndex = -1;
@@ -173,7 +173,7 @@ public class Parser {
 				channelName,
 				false);
 
+	
+
 	}
-
-
 }

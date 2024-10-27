@@ -154,9 +154,10 @@ public class EpgService {
 			xm.writeValue(new File("./generatedChannels.xml"), selectedXmltvDoc);
 			log.info("Written ./generatedChannels.xml");
 
-			if (selectedXmltvChannels != null && !selectedXmltvChannels.isEmpty()) {
-				writeJson(selectedXmltvChannels, doc);
-			}
+			/*
+			 * if (selectedXmltvChannels != null && !selectedXmltvChannels.isEmpty()) {
+			 * writeJson(selectedXmltvChannels, doc); }
+			 */
 
 			if (dp.isEmbyInstalled()) {
 				EmbyApi.refreshGuide();

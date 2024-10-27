@@ -42,13 +42,18 @@ public class DownloadController {
 		Long contentSize = 0L;
         URL url = null;
 		try {
-			url = new URI(Utils.getURLFromName(downloadName, itemRepository)).toURL();
+			String storedUrl = Utils.getURLFromName(downloadName, itemRepository); 
+			log.info("StoredUrl is {}", storedUrl);
+			url = new URI(storedUrl).toURL();
+			
 			log.info("Downloading {}", downloadName);
 			contentSize = NetUtils.getContentSizeFromUrl(url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
+		} catch (NullPointerException npe) {
+			npe.printStackTrace();
 		}
         
 		int bufferSize = DownloadProperties.getInstance().getBufferSize();

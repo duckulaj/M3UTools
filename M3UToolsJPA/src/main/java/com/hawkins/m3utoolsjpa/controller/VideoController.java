@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
+import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.service.StreamingService;
 import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3utoolsjpa.utils.Range;
@@ -44,6 +46,8 @@ public class VideoController {
 	
 	@Autowired
 	StreamingService service;
+	
+	private static DownloadProperties dp = DownloadProperties.getInstance();
 
 	@GetMapping(value ="stream", params = { "streamName" })
 	public ModelAndView stream(ModelMap model, @RequestParam String streamName) {
@@ -61,7 +65,7 @@ public class VideoController {
 		}
 
 		model.addAttribute("streamUrl", url);
-		model.addAttribute("filmTitle", Utils.removeFromString(streamName, Patterns.STRIP_COUNTRY_IDENTIFIER));
+		model.addAttribute("filmTitle", RegexUtils.removeCountryIdentifier(Utils.removeFromString(streamName, Patterns.STRIP_COUNTRY_IDENTIFIER),dp.getIncludedCountries())) ;
 
 		return new ModelAndView("stream", model);
 

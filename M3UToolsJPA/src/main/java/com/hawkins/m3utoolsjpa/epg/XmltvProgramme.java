@@ -1,7 +1,9 @@
 package com.hawkins.m3utoolsjpa.epg;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class XmltvProgramme {
     
 	@JacksonXmlProperty(isAttribute = true)
