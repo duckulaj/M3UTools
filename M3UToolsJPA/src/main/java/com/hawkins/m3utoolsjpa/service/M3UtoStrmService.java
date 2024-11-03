@@ -180,11 +180,8 @@ public class M3UtoStrmService {
 				tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPES_REGEX);
 				tvShowName = Utils.removeFromString(tvShowName, Patterns.PIPE_REGEX);
 				tvShowName = Utils.removeFromString(tvShowName, Patterns.HYPHEN_REGEX);
-
-				if (tvShowName.contains("EN ")) {
-					tvShowName = tvShowName.substring(3);
-				}
-
+				tvShowName = RegexUtils.removeCountryIdentifier(tvShowName, dp.getIncludedCountries());
+				
 				Pattern seasonPattern = Pattern.compile(seasonRegex, Pattern.CASE_INSENSITIVE);
 				Matcher seasonMatcher = seasonPattern.matcher(tvShowName);
 				boolean seasonMatchFound = seasonMatcher.find();
@@ -207,7 +204,7 @@ public class M3UtoStrmService {
 					File thisFile = new File(seasonFolder.getAbsolutePath() + File.separator + tvShowName + ".strm"); 
 					if (!thisFile.exists()) {
 						try {
-							Utils.writeToFile(thisFile, tvShowFolder);
+							Utils.writeToFile(thisFile, tvShow.getChannelUri());
 							numberOfNewTVShows.inc();
 						} catch (IOException e) {
 							e.printStackTrace();
