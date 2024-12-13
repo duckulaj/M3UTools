@@ -12,6 +12,7 @@ import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
+import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
@@ -92,6 +93,8 @@ public class Parser {
 						String type = Utils.deriveGroupTypeByUrl(line);
 						entry.setType(type);
 						entry.setChannelUri(line);
+						entry.setChannelName(RegexUtils.removeCountryIdentifier(entry.getChannelName(), dp.getIncludedCountries()));
+						entry.setTvgName(RegexUtils.removeCountryIdentifier(entry.getTvgName(), dp.getIncludedCountries()));
 						entries.add(entry);
 					}
 				}

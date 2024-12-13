@@ -2,11 +2,16 @@ package com.hawkins.m3utoolsjpa.epg;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.regex.Patterns;
+import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 
 @JacksonXmlRootElement(localName = "tv")
 public class XmltvDoc {
@@ -30,6 +35,8 @@ public class XmltvDoc {
 
     @JacksonXmlProperty(localName = "programme")
     private List<XmltvProgramme> programmes;
+    
+    private DownloadProperties dp = DownloadProperties.getInstance();
 
     public XmltvDoc() {
     }
@@ -69,8 +76,8 @@ public class XmltvDoc {
     private String normalisedDisplayName(XmltvChannel channel) {
     	
     	String normalisedName = channel.getDisplayNames().get(0).getText();
-    	normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, DownloadProperties.getInstance().getCountryRegExpr());
-    	
+    	// normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, DownloadProperties.getInstance().getCountryRegExpr());
+    	normalisedName = RegexUtils.removeCountryIdentifier(Utils.removeFromString(normalisedName, Patterns.STRIP_COUNTRY_IDENTIFIER),dp.getIncludedCountries());
     	return normalisedName;
     }
 
@@ -87,10 +94,9 @@ public class XmltvDoc {
     	
     	if (this.programmes == null) return null;
     	
-    	List<XmltvProgramme> selectedProgrammes = programmes.stream()
-    			.filter(programme -> tvgId.equals(programme.getChannel()))
-    			.toList();
-    			
+    	List<XmltvProgramme> selectedProgrammes = programmes.parallelStream()
+    		    .filter(programme -> Objects.equals(tvgId, programme.getChannel()))
+    		    .collect(Collectors.toList());		
     			
         return selectedProgrammes;
     }

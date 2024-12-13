@@ -43,19 +43,19 @@ public class ApplicationService {
 				swUpdateDatabase.stop();
 				log.info("m3uService.resetDatabase() took {}ms", swUpdateDatabase.getTotalTimeMillis());
 				
-				// Create the epg file with latest programmes for the updated m3u items
-				
-				StopWatch swReadEPG = new org.springframework.util.StopWatch();
-				swReadEPG.start();
-				
-				log.info("Running epgService.readEPG() at {}", Utils.printNow());
-				File epgFile = new File(Constants.EPG_XML);
-				if (epgFile.exists()) epgFile.delete();
-				epgService.readEPG();
-				
-				swReadEPG.stop();
-				log.info("epgService.readEPG() took {}ms", swReadEPG.getTotalTimeMillis());
-
+				  // Create the epg file with latest programmes for the updated m3u items
+				  
+				  StopWatch swReadEPG = new org.springframework.util.StopWatch();
+				  swReadEPG.start();
+				  
+				  log.info("Running epgService.readEPG() at {}", Utils.printNow()); 
+				  File epgFile = new File(Constants.EPG_XML); 
+				  if (epgFile.exists()) epgFile.delete(); 
+				  epgService.readEPG();
+				  
+				  swReadEPG.stop(); log.info("epgService.readEPG() took {}ms",
+				  swReadEPG.getTotalTimeMillis());
+				 
 		
 		
 	}

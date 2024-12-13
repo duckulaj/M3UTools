@@ -4,11 +4,11 @@
 <entry key="fileName">./config.properties</entry>
 <entry key="stream.channels">http://line.4kppv.com/get.php?username=97C3A5&amp;password=83567C&amp;type=m3u_plus&amp;output=mpegts</entry>
 <entry key="fileAge.epg">30</entry>
-<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="fullM3U">./allChannels.m3u</entry>
+<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
 <entry key="moviedb.genreURL">https://api.themoviedb.org/3/genre/movie/list</entry>
-<entry key="moviedb.apikey">56744a89f97f5119fe2a2306794d29a3</entry>
+<entry key="moviedb.apikey">a950a3d8d9a21129ea3d512b28af8f4d</entry>
 <entry key="emby.api">ec8aa1e47043450284e675363101abb4</entry>
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/</entry>
 <entry key="fileAge.m3u">240</entry>
@@ -22,5 +22,5 @@
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
 <entry key="stream.playlist">http://line.4kppv.com/xmltv.php?username=97C3A5&amp;password=83567C</entry>
-<entry key="includedCountries">EN,UK,US,MULTI,BEIN,F1</entry>
+<entry key="includedCountries">EN,UK,US,MULTI,BEIN,FORMULA 1,F1</entry>
 </properties>

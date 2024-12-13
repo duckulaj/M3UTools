@@ -42,6 +42,7 @@ public class DownloadController {
 		Long contentSize = 0L;
         URL url = null;
 		try {
+			log.info("downloadName is {}", downloadName);
 			String storedUrl = Utils.getURLFromName(downloadName, itemRepository); 
 			log.info("StoredUrl is {}", storedUrl);
 			url = new URI(storedUrl).toURL();
