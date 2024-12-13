@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
-import com.hawkins.m3utoolsjpa.regex.Patterns;
-import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
-import com.hawkins.m3utoolsjpa.utils.Utils;
 
 @JacksonXmlRootElement(localName = "tv")
 public class XmltvDoc {
@@ -35,8 +32,6 @@ public class XmltvDoc {
 
     @JacksonXmlProperty(localName = "programme")
     private List<XmltvProgramme> programmes;
-    
-    private DownloadProperties dp = DownloadProperties.getInstance();
 
     public XmltvDoc() {
     }
@@ -76,8 +71,8 @@ public class XmltvDoc {
     private String normalisedDisplayName(XmltvChannel channel) {
     	
     	String normalisedName = channel.getDisplayNames().get(0).getText();
-    	// normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, DownloadProperties.getInstance().getCountryRegExpr());
-    	normalisedName = RegexUtils.removeCountryIdentifier(Utils.removeFromString(normalisedName, Patterns.STRIP_COUNTRY_IDENTIFIER),dp.getIncludedCountries());
+    	normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, DownloadProperties.getInstance().getCountryRegExpr());
+    	
     	return normalisedName;
     }
 
@@ -96,7 +91,8 @@ public class XmltvDoc {
     	
     	List<XmltvProgramme> selectedProgrammes = programmes.parallelStream()
     		    .filter(programme -> Objects.equals(tvgId, programme.getChannel()))
-    		    .collect(Collectors.toList());		
+    		    .collect(Collectors.toList());	
+    			
     			
         return selectedProgrammes;
     }
