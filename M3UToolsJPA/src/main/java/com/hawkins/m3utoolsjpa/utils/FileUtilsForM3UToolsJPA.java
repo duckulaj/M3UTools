@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
@@ -141,23 +142,50 @@ public class FileUtilsForM3UToolsJPA {
 		}
 	}
 	
-	public static void XmlToJsonConverter() {
-		
-		File xmlFile = new File("./generatedChannels.xml");
+	public static void xmlToJsonConverter() {
+        File xmlFile = new File("./generatedChannels.xml");
+        File jsonFile = new File("./epg.json");
+
+        // Ensure XML file exists
+        if (!xmlFile.exists()) {
+            log.info("XML file not found: " + xmlFile.getAbsolutePath());
+            return;
+        }
 
         XmlMapper xmlMapper = new XmlMapper();
-        JsonNode jsonNode;
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = null;
-        
-		try {
-			jsonNode = xmlMapper.readTree(xmlFile);
-			jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
-			Utils.writeToFile(new File("./epg.json"), jsonString);
-		} catch (IOException e) {
-			log.info(e.getMessage());
-		}
+        String jsonString;
+
+        try {
+            // Read XML file and convert to JsonNode
+            JsonNode jsonNode = xmlMapper.readTree(xmlFile);
+            
+            // Convert JsonNode to pretty-printed JSON string
+            jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
+
+            // Write JSON string to output file
+            writeToFile(jsonFile, jsonString);
+            
+            log.info("Successfully converted XML to JSON and saved to: " + jsonFile.getAbsolutePath());
+        } catch (IOException e) {
+            log.info("Error converting XML to JSON", e);
+        }
     }
-	
+
+    private static void writeToFile(File file, String content) {
+        try {
+            // Create directories if they don't exist
+            Files.createDirectories(Paths.get(file.getParent()));
+
+            // Write content to the file
+            Files.write(file.toPath(), content.getBytes());
+        } catch (IOException e) {
+            log.info("Error writing to file: " + file.getAbsolutePath(), e);
+        }
+    }
+
+    public static void main(String[] args) {
+        xmlToJsonConverter();
+    }	
 	
 }

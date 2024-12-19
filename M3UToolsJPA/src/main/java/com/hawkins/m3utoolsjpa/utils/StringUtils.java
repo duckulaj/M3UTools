@@ -7,73 +7,61 @@ import com.hawkins.m3utoolsjpa.regex.Patterns;
 
 public class StringUtils {
 
-	private StringUtils() {
-		throw new IllegalStateException("Utility class");
-	}
+    private StringUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
-	public static boolean isNullOrEmpty(String str) {
-		return str == null || str.length() < 1;
-	}
+    // Check if the string is null or empty
+    public static boolean isNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
 
-	public static boolean isNullOrEmptyOrBlank(String str) {
-		return str == null || str.trim().length() < 1;
-	}
+    // Check if the string is null, empty, or blank (ignoring whitespace)
+    public static boolean isNullOrEmptyOrBlank(String str) {
+        return str == null || str.trim().isEmpty();
+    }
 
-	public static byte[] getBytes(StringBuffer sb) {
-		return sb.toString().getBytes();
-	}
+    // Convert StringBuffer to byte array
+    public static byte[] getBytes(StringBuffer sb) {
+        return sb == null ? new byte[0] : sb.toString().getBytes();
+    }
 
-	public static byte[] getBytes(StringBuilder sb) {
-		return sb.toString().getBytes();
-	}
+    // Convert StringBuilder to byte array
+    public static byte[] getBytes(StringBuilder sb) {
+        return sb == null ? new byte[0] : sb.toString().getBytes();
+    }
 
-	public static byte[] getBytes(String s) {
-		return s.getBytes();
-	}
+    // Convert String to byte array
+    public static byte[] getBytes(String s) {
+        return s == null ? new byte[0] : s.getBytes();
+    }
 
-	public static String removeCountryIdentifier(String toParse) {
+    // Remove country identifier from the string using predefined pattern
+    public static String removeCountryIdentifier(String toParse) {
+        if (toParse == null) return null;
+        Matcher matcher = Patterns.STRIP_COUNTRY_IDENTIFIER.matcher(toParse);
+        return matcher.find() ? matcher.replaceFirst("") : toParse;
+    }
 
-		Matcher matcher = Patterns.STRIP_COUNTRY_IDENTIFIER.matcher(toParse);
+    // Remove country identifier using custom regular expression
+    public static String removeCountryIdentifierUsingRegExpr(String toParse, String regExpr) {
+        if (toParse == null || regExpr == null) return toParse;
+        Matcher matcher = Pattern.compile(regExpr).matcher(toParse);
+        return matcher.find() ? matcher.replaceFirst("") : toParse;
+    }
 
-		if(matcher.find()) {
-			toParse = matcher.replaceFirst("");
-		}
+    // Clean text content by stripping non-ASCII, control characters, and non-printable Unicode characters
+    public static String cleanTextContent(String text) {
+        if (text == null) return null;
+        // Combining regular expressions to perform all cleaning operations in a single replaceAll
+        return text.replaceAll("[^\\x00-\\x7F\\r\\n\\t]|\\p{Cntrl}|\\p{C}", "").trim();
+    }
 
-		return toParse;
-
-	}
-	
-	public static String removeCountryIdentifierUsingRegExpr(String toParse, String regExpr) {
-
-		Matcher matcher = Pattern.compile(regExpr).matcher(toParse);
-
-		if(matcher.find()) {
-			toParse = matcher.replaceFirst("");
-		}
-
-		return toParse;
-
-	}
-
-	public static String cleanTextContent(String text) {
-		// strips off all non-ASCII characters
-		text = text.replaceAll("[^\\x00-\\x7F]", "");
-
-		// erases all the ASCII control characters
-		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
-
-		// removes non-printable characters from Unicode
-		text = text.replaceAll("\\p{C}", "");
-
-		return text.trim();
-	}
-	
-	public static String removeCountryAndDelimiter(String name, String delimiter) {
-		
-		if (name.lastIndexOf(delimiter) > 0) {
-			name = name.substring(name.lastIndexOf(delimiter) + 1).trim();
-		}
-		return name;
-	}
-	
+    // Remove the country and delimiter (based on the last occurrence of the delimiter)
+    public static String removeCountryAndDelimiter(String name, String delimiter) {
+        if (name == null || delimiter == null || !name.contains(delimiter)) {
+            return name; // Return the original name if delimiter is not found
+        }
+        return name.substring(name.lastIndexOf(delimiter) + 1).trim();
+    }
 }

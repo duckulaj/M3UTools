@@ -4,11 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.util.MimeTypeUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class FileDownloadUtil {
 
     private FileDownloadUtil() {
@@ -24,27 +25,40 @@ public final class FileDownloadUtil {
 
 
     private static void handle(HttpServletResponse response, URL file, String originalFileName, String mimeType, Long contentSize) throws IOException {
+        if (file == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found or invalid URL");
+            return;
+        }
+
+        // Default mime type to application/octet-stream if not provided
+        if (mimeType == null || mimeType.isEmpty()) {
+            mimeType = MimeTypeUtils.APPLICATION_OCTET_STREAM.getType();
+        }
+
+        // Validate content size
+        if (contentSize == null || contentSize <= 0) {
+            contentSize = file.openConnection().getContentLengthLong();
+        }
+
+        // Set MIME type and content length headers
+        response.setContentType(mimeType);
+        response.setContentLengthLong(contentSize); // Use setContentLengthLong for large files
+
+        // Set the Content-Disposition header to indicate an attachment
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + originalFileName + "\"");
+
+        // Stream the file content to the response output stream
         try (var in = new BufferedInputStream(file.openStream())) {
-
-            // get MIME type of the file
-
-            if (mimeType == null) {
-                // set to binary type if MIME mapping not found
-                mimeType = MimeTypeUtils.APPLICATION_OCTET_STREAM.getType();
-            }
-
-            // set content attributes for the response
-            response.setContentType(mimeType);
-            response.setContentLength(contentSize.intValue());
-
-            // This will download the file to the user's computer
-            response.setHeader("Content-Disposition", "attachment; filename=" + originalFileName);
-
+            // Copy the file content directly to the output stream
             in.transferTo(response.getOutputStream());
-            IOUtils.copyLarge(in, response.getOutputStream());
 
+            // Ensure the output stream is flushed after transfer
             response.getOutputStream().flush();
+        } catch (IOException e) {
+            log.info("Error streaming file to response", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing file");
         }
     }
+
 
 }

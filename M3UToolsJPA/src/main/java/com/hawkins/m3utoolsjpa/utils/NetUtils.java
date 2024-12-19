@@ -152,22 +152,32 @@ public class NetUtils {
 	
 	public static Long getContentSizeFromUrl(URL url) {
 	    if (url == null) {
+	        log.warn("URL is null. Cannot determine content size.");
 	        return null;
-	    }// w ww  .j  a va 2 s . c om
-	    Long contentSize = 0L;
-	    InputStream input = null;
+	    }
+
+	    Long contentSize = null;
+	    
 	    try {
 	        URLConnection connection = url.openConnection();
+	        
+	        // Get content length (some servers may not provide this)
 	        contentSize = connection.getContentLengthLong();
+	        
+	        if (contentSize == -1) {
+	            log.warn("Content length is unavailable for URL: {}", url);
+	            return null;  // If the content length is unavailable
+	        }
+
 	        log.debug("Content size from headers: {}", contentSize);
 	    } catch (IOException e) {
-	        log.debug("Failed to identify content type from URL: {}", e.getMessage());
-	        contentSize = 0L;
-	    } finally {
-	        IOUtils.closeQuietly(input);
+	        log.error("Failed to retrieve content size for URL: {}. Error: {}", url, e.getMessage(), e);
+	        return null;  // Return null when there is an error
 	    }
+
 	    return contentSize;
 	}
+
 
 	public static void printHeaders(HttpHeaders headers) {
 		

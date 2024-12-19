@@ -1,7 +1,8 @@
 package com.hawkins.m3utoolsjpa.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,127 +21,102 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SelectedChannelService {
 
-	/*
-	 * When a channel is selected we need to perform the following actions
-	 * 
-	 * 1. Set selected to true for the selected items in table M3UItem 2. Check to
-	 * see if it exists within the TvChannel table 3. If M3UItem does not exist in
-	 * the TvChannel Table add it using the Max ChannelId as the new channel Id 4.
-	 * If an M3UItem is now unselected pdate the M3UItem table and remove from
-	 * TvChannel table
-	 */
+    @Autowired
+    private M3UItemRepository itemRepository;
 
-	
-	@Autowired
-	M3UItemRepository itemRepository;
+    @Autowired
+    private TvChannelRepository tvChannelRepository;
 
-	@Autowired
-	TvChannelRepository tvChannelRepository;
+    // Fetch selected channels based on groupId
+    public List<SelectedChannel> find(Long groupId) {
+        return groupId > 0
+                ? itemRepository.findTvChannelsByGroup(groupId).stream()
+                        .filter(item -> StringUtils.isNotBlank(item.getTvgId()))
+                        .map(this::convertToSelectedChannel)
+                        .collect(Collectors.toList())
+                : List.of();
+    }
 
-	public List<SelectedChannel> find(Long groupId) {
+    // Fetch all channels based on the selection status
+    public List<SelectedChannel> find(boolean selected) {
+        return tvChannelRepository.findAll().stream()
+                .filter(channel -> StringUtils.isNotBlank(channel.getTvgId()))
+                .map(channel -> convertToSelectedChannel(channel, selected))
+                .collect(Collectors.toList());
+    }
 
-		List<M3UItem> items = new ArrayList<M3UItem>();
+    // Save all selected channels to the database
+    public void saveAll(List<SelectedChannel> channels) {
+        channels.forEach(channel -> {
+            if (channel.isSelected()) {
+                log.debug("Channel {} IS selected", channel.getTvgName());
+            }
 
-		if (groupId > 0) {
-			items = itemRepository.findTvChannelsByGroup(groupId);
-		}
+            if (StringUtils.isNotBlank(channel.getTvgId())) {
+                itemRepository.updateSelected(channel.getTvgId(), channel.getGroupId(),
+                        channel.getTvgName(), channel.isSelected());
+                addOrUpdateTvChannel(channel);
+            }
+        });
+    }
 
-		List<SelectedChannel> channels = new ArrayList<SelectedChannel>();
+ // Add or update TvChannel based on selected M3UItem
+    private void addOrUpdateTvChannel(SelectedChannel channel) {
+        log.debug("Finding channel(M3UItem) {}", channel.getTvgId());
 
-		items.forEach(item -> {
-			
-			if (item.getTvgId() != null && !item.getTvgId().isEmpty()) {
-				SelectedChannel channel = new SelectedChannel();
-				channel.setId(item.getId());
-				channel.setGroupId(String.valueOf(item.getGroupId()));
-				channel.setTvgName(item.getTvgName());
-				channel.setTvgId(item.getTvgId());
-				channel.setSelected(item.isSelected());
-				channels.add(channel);
-			}
-		});
+        try {
+            List<M3UItem> items = itemRepository.findByTvgIdAndTvgName(channel.getTvgId(), channel.getTvgName());
 
-		return channels;
-	}
-	
-	public List<SelectedChannel> find(boolean selected) {
-		
-		List<TvChannel> channels = new ArrayList<TvChannel>();
-		channels = tvChannelRepository.findAll();
-		
-		List<SelectedChannel> selectedChannels = new ArrayList<SelectedChannel>();
+            if (items.isEmpty()) {
+                return;
+            }
 
-		channels.forEach(channel -> {
-			
-			if (channel.getTvgId() != null && !channel.getTvgId().isEmpty()) {
+            M3UItem thisItem = items.get(0);
+            Optional<TvChannel> tvChannelOpt = Optional.ofNullable(tvChannelRepository.findByTvgName(thisItem.getTvgName()));
 
-				SelectedChannel selectedChannel = new SelectedChannel();
-				selectedChannel.setId(channel.getId());
-				selectedChannel.setGroupId(String.valueOf(channel.getGroupId()));
-				selectedChannel.setTvgName(channel.getTvgName());
-				selectedChannel.setTvgId(channel.getTvgId());
-				selectedChannel.setSelected(true);
-				selectedChannels.add(selectedChannel);
-			}
-		});
+            if (tvChannelOpt.isEmpty() && channel.isSelected()) {
+                // Use Optional to handle null values safely
+                Long newChannelNumber = Optional.ofNullable(tvChannelRepository.getMaxChannelNumber())
+                        .map(num -> num + 1) // Increment the max channel number
+                        .orElse(1000L); // Default to 1000 if max channel number is null
 
-		return selectedChannels;
-	}
+                TvChannel newChannel = new TvChannel(newChannelNumber, thisItem.getGroupId(), newChannelNumber.toString(),
+                        thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(),
+                        thisItem.getChannelUri());
+                tvChannelRepository.save(newChannel);
 
-	public void saveAll(List<SelectedChannel> channels) {
+            } else if (!channel.isSelected()) {
+                tvChannelOpt.ifPresent(tvChannel -> {
+                    itemRepository.updateTvgChNo(thisItem.getId(), "");
+                    itemRepository.updateSelected(tvChannel.getTvgId(), String.valueOf(tvChannel.getGroupId()), tvChannel.getTvgName(), false);
+                    tvChannelRepository.delete(tvChannel);
+                });
+            }
 
-		channels.forEach(channel -> {
-			
-			if (channel.isSelected()) log.debug("Channel {} IS selected", channel.getTvgName());
-			
-			if (!StringUtils.isBlank(channel.getTvgId())) {
-				itemRepository.updateSelected(channel.getTvgId(), channel.getGroupId(), channel.getTvgName(), channel.isSelected());
-				AddOrUpdateTvChannel(channel);
-			}
-		});
-	}
+        } catch (NonUniqueResultException e) {
+            log.warn("Found duplicate M3UItem named {}", channel.getTvgName(), e);
+        }
+    }
 
-	private void AddOrUpdateTvChannel(SelectedChannel channel) {
+    // Helper method to convert M3UItem to SelectedChannel
+    private SelectedChannel convertToSelectedChannel(M3UItem item) {
+        SelectedChannel channel = new SelectedChannel();
+        channel.setId(item.getId());
+        channel.setGroupId(String.valueOf(item.getGroupId()));
+        channel.setTvgName(item.getTvgName());
+        channel.setTvgId(item.getTvgId());
+        channel.setSelected(item.isSelected());
+        return channel;
+    }
 
-		Long newChannelNumber;
-
-		log.debug("Finding channel(M3UItem) {}", channel.getTvgId());
-
-		try {
-			List<M3UItem> items = itemRepository.findByTvgIdAndTvgName(channel.getTvgId(), channel.getTvgName());
-			
-			if (items.size() > 0) {
-				M3UItem thisItem = items.get(0);
-
-				TvChannel tvChannel = tvChannelRepository.findByTvgName(thisItem.getTvgName());
-
-				if (tvChannel == null && channel.isSelected()) {
-					if (tvChannelRepository.getMaxChannelNumber() == null) {
-						newChannelNumber = 1000L;
-					} else {
-						newChannelNumber = tvChannelRepository.getMaxChannelNumber() + 1L;
-					}
-
-					TvChannel newChannel = new TvChannel(newChannelNumber, thisItem.getGroupId(), newChannelNumber.toString(),
-							thisItem.getTvgName(), thisItem.getTvgId(), thisItem.getTvgLogo(), thisItem.getGroupTitle(),
-							thisItem.getChannelUri());
-					tvChannelRepository.save(newChannel);
-					
-				} else {
-					
-					if (!channel.isSelected()) {
-						if (tvChannel != null) {
-							itemRepository.updateTvgChNo(thisItem.getId(), "");
-							itemRepository.updateSelected(tvChannel.getTvgId(), String.valueOf(tvChannel.getGroupId()), tvChannel.getTvgName(), false);
-							tvChannelRepository.delete(tvChannel);
-						}
-					}
-				}
-			}
-
-		} catch (NonUniqueResultException nure) {
-			log.info("Found duplicate M3UItem named {}", channel.getTvgName());
-		}
-
-	}
+    // Helper method to convert TvChannel to SelectedChannel with selected flag
+    private SelectedChannel convertToSelectedChannel(TvChannel channel, boolean selected) {
+        SelectedChannel selectedChannel = new SelectedChannel();
+        selectedChannel.setId(channel.getId());
+        selectedChannel.setGroupId(String.valueOf(channel.getGroupId()));
+        selectedChannel.setTvgName(channel.getTvgName());
+        selectedChannel.setTvgId(channel.getTvgId());
+        selectedChannel.setSelected(selected);
+        return selectedChannel;
+    }
 }
