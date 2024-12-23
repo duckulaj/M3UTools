@@ -13,28 +13,30 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class ScheduledTasks {
-	
+
 	@Autowired
 	M3UtoStrmService m3UtoStrm;
-	
+
 	@Autowired
 	ApplicationService  applicationService;
 
-	@Scheduled(cron = "0 5 0  */2 * ?") // 12.05am every other day
+
+	@Scheduled(cron = "0 0 2 * * ?") // 02:00 AM every day
 	public void createStreams() {
 
 		m3UtoStrm.convertM3UtoStream();
 		log.info("Scheduled Task createStreams) completed at {}", Utils.printNow());
 	}
 
-		
-	@Scheduled(cron = "0 0 0/6 ? * *") // Every four hours 
+
+
+	@Scheduled(cron = "0 0 1 * * ?") // 01:00 AM every day
 	public void updateApplication() {
 
 		applicationService.runAtStartup();
 		log.info("Scheduled Task updateApplication completed at {}", Utils.printNow());
 	}
 
-	
-	
+
+
 }
