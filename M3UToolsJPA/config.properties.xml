@@ -9,12 +9,12 @@
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
 <entry key="moviedb.genreURL">https://api.themoviedb.org/3/genre/movie/list</entry>
 <entry key="moviedb.apikey">a950a3d8d9a21129ea3d512b28af8f4d</entry>
-<entry key="emby.api">ec8aa1e47043450284e675363101abb4</entry>
+<entry key="emby.api">c82387f51f5d4d8f98406bc4cd8de657</entry>
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/</entry>
 <entry key="fileAge.m3u">240</entry>
 <entry key="epg.time.difference">+0100</entry>
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
-<entry key="emby.url">http://192.168.0.110:8096/emby/</entry>
+<entry key="emby.url">http://192.168.0.110:8097/emby/</entry>
 <entry key="moviedb.searchURL">https://api.themoviedb.org/3/search/movie</entry>
 <entry key="emby.installed">true</entry>
 <entry key="download.buffersize">64768</entry>

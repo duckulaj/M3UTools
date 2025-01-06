@@ -32,8 +32,8 @@ public class ApplicationService {
 				
 				log.info("Running m3uService.resetDatabase() at {}", Utils.printNow());
 				try {
-					File m3uFile = new File(Constants.M3U_FILE);
-					if (m3uFile.exists()) m3uFile.delete();
+					// File m3uFile = new File(Constants.M3U_FILE);
+					// if (m3uFile.exists()) m3uFile.delete();
 					m3uService.resetDatabase();
 				} catch (M3UItemsNotFoundException e) {
 					// TODO Auto-generated catch block
@@ -49,8 +49,8 @@ public class ApplicationService {
 				  swReadEPG.start();
 				  
 				  log.info("Running epgService.readEPG() at {}", Utils.printNow()); 
-				  File epgFile = new File(Constants.EPG_XML); 
-				  if (epgFile.exists()) epgFile.delete(); 
+				  // File epgFile = new File(Constants.EPG_XML); 
+				  // if (epgFile.exists()) epgFile.delete(); 
 				  epgService.readEPG();
 				  
 				  swReadEPG.stop(); log.info("epgService.readEPG() took {}ms",

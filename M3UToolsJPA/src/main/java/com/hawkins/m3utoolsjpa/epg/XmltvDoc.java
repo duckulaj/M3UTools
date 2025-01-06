@@ -1,7 +1,8 @@
+
 package com.hawkins.m3utoolsjpa.epg;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -35,75 +36,58 @@ public class XmltvDoc {
 
     @JacksonXmlProperty(localName = "programme")
     private List<XmltvProgramme> programmes;
-    
+
     private DownloadProperties dp = DownloadProperties.getInstance();
 
     public XmltvDoc() {
     }
 
     public XmltvDoc(List<XmltvChannel> channels, List<XmltvProgramme> programmes) {
-        this.channels = channels;
-        this.programmes = programmes;
+        this.channels = Objects.requireNonNull(channels, "channels must not be null");
+        this.programmes = Objects.requireNonNull(programmes, "programmes must not be null");
     }
 
     public List<XmltvChannel> getChannels() {
-        return channels;
+        return Collections.unmodifiableList(channels);
     }
-    
+
     public XmltvChannel getChannelsByIdAndName(String tvgId, String tvgName) {
-    	
-    	if (this.channels == null || channels.isEmpty()) return null;
-    	
-    	try {
-	    	XmltvChannel selectedChannel = channels.stream()
-	    			.filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
-	    			.filter(channel -> tvgName.equals(StringUtils.cleanTextContent(normalisedDisplayName(channel))))
-	    			.parallel()
-	    			.unordered()
-	    			.findFirst()
-	    			.get();
-	    	
-	    	return selectedChannel;
-	    	
-    	} catch (NoSuchElementException nsee) {
-    		
-    		return null;
-    	}
-    			
-        
+        if (this.channels == null || channels.isEmpty()) return null;
+
+        return channels.stream()
+            .filter(channel -> tvgId.equalsIgnoreCase(channel.getId()))
+            .filter(channel -> tvgName.equals(StringUtils.cleanTextContent(normalisedDisplayName(channel))))
+            .parallel()
+            .unordered()
+            .findFirst()
+            .orElse(null);
     }
-    
+
     private String normalisedDisplayName(XmltvChannel channel) {
-    	
-    	String normalisedName = channel.getDisplayNames().get(0).getText();
-    	// normalisedName = StringUtils.removeCountryIdentifierUsingRegExpr(normalisedName, DownloadProperties.getInstance().getCountryRegExpr());
-    	normalisedName = RegexUtils.removeCountryIdentifier(Utils.removeFromString(normalisedName, Patterns.STRIP_COUNTRY_IDENTIFIER),dp.getIncludedCountries());
-    	return normalisedName;
+        String normalisedName = channel.getDisplayNames().get(0).getText();
+        normalisedName = RegexUtils.removeCountryIdentifier(Utils.removeFromString(normalisedName, Patterns.STRIP_COUNTRY_IDENTIFIER), dp.getIncludedCountries());
+        return normalisedName;
     }
 
     public XmltvDoc setChannels(List<XmltvChannel> channels) {
-        this.channels = channels;
+        this.channels = Collections.unmodifiableList(Objects.requireNonNull(channels, "channels must not be null"));
         return this;
     }
 
     public List<XmltvProgramme> getProgrammes() {
-        return programmes;
-    }
-    
-    public List<XmltvProgramme> getProgrammesById(String tvgId) {
-    	
-    	if (this.programmes == null) return null;
-    	
-    	List<XmltvProgramme> selectedProgrammes = programmes.parallelStream()
-    		    .filter(programme -> Objects.equals(tvgId, programme.getChannel()))
-    		    .collect(Collectors.toList());		
-    			
-        return selectedProgrammes;
+        return Collections.unmodifiableList(programmes);
     }
 
+    public List<XmltvProgramme> getProgrammesById(String tvgId) {
+        if (this.programmes == null) return null;
+
+        return programmes.parallelStream()
+            .filter(programme -> Objects.equals(tvgId, programme.getChannel()))
+            .collect(Collectors.toList());
+    }
 
     public XmltvDoc setProgrammes(List<XmltvProgramme> programmes) {
-        this.programmes = programmes;
+        this.programmes = Collections.unmodifiableList(Objects.requireNonNull(programmes, "programmes must not be null"));
         return this;
     }
 

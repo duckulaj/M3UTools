@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,6 +34,7 @@ import com.hawkins.m3utoolsjpa.epg.XmltvChannel;
 import com.hawkins.m3utoolsjpa.epg.XmltvDoc;
 import com.hawkins.m3utoolsjpa.epg.XmltvIcon;
 import com.hawkins.m3utoolsjpa.epg.XmltvProgramme;
+import com.hawkins.m3utoolsjpa.epg.XmltvText;
 import com.hawkins.m3utoolsjpa.epg.XmltvUtils;
 import com.hawkins.m3utoolsjpa.epg.XmltvVideo;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -180,7 +180,8 @@ private List<XmltvProgramme> getSelectedProgrammes(XmltvDoc doc, List<XmltvChann
 					JsonObject thisProgramme = new JsonObject();
 					thisProgramme.addProperty("start", formatTime(programme.getStart()));
 					thisProgramme.addProperty("stop", formatTime(programme.getStop()));
-					thisProgramme.addProperty("title", programme.getTitle().getText());
+					// thisProgramme.addProperty("title", programme.getTitle().getText());
+					thisProgramme.addProperty("title", programme.getTitle().map(XmltvText::getText).orElse(""));
 
 					programmes.add(thisProgramme);
 				}

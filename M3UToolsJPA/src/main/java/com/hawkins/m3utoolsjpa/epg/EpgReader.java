@@ -1,3 +1,4 @@
+
 package com.hawkins.m3utoolsjpa.epg;
 
 import java.io.BufferedOutputStream;
@@ -21,123 +22,103 @@ import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Utility class for reading and processing EPG data.
+ */
 @Slf4j
 public class EpgReader {
-	
-	public static DownloadProperties properties = DownloadProperties.getInstance();
-	private static Document document;
-	private static String szEnd = "";
-	private static String szStart = "";
-		
-	private static final String START = "start";
-	private static final String STOP = "stop";
-	
-	public EpgReader() {
-		super();
-	}
-	
-	public static String changeLocalTime(String timeString) {
-		
-		String epgTimeDifference = DownloadProperties.getInstance().getEpgTimeDifference();
-		
-		// ZonedDateTime defaultZonedDateTime = ZonedDateTime.of(2020, 01, 01, 0, 0, 0, 0, ZoneId.of("UTC"));
-		
 
-		/*
-		 * try { ZonedDateTime zonedDateTime = ZonedDateTime.parse(timeString); }
-		 * catch(DateTimeParseException e) {
-		 * log.info("DateTimeParserEception for String {}", timeString); timeString =
-		 * defaultZonedDateTime.toString(); }
-		 */
-		int position = timeString.lastIndexOf("+");
-		
-		if  (position < 0) position = timeString.lastIndexOf("-");
-		
-		if (position < 0) return timeString;
-		
-		timeString = timeString.substring(0, position) + epgTimeDifference;
-		
-		// String updatedTimeString = timeString.replace("+0000", epgTimeDifference);
-		
-		return timeString;
-		
-	}
+    public static final DownloadProperties properties = DownloadProperties.getInstance();
+    private static Document document;
+    private static String szEnd = "";
+    private static String szStart = "";
 
-	public static void createEPG() {
-		
-			
-		String downloadedXML = Constants.DOWNLOADED_XML;
-		
-			SAXReader reader = new SAXReader();
-			DownloadProperties dp = DownloadProperties.getInstance();
-			
-			StopWatch sw = new StopWatch();
-			sw.start();
-			Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
-			sw.stop();
-			
-			log.info("Downloading {} took {}ms", dp.getStreamXMLUrl(), sw.getTotalTimeMillis());
-			try {
-				
-				
-				sw.start();
-				document = reader.read(downloadedXML);
-				sw.stop();
-				
-				log.info("Reading {} took {}ms", downloadedXML, sw.getTotalTimeMillis());
-				
-				Element rootElement = document.getRootElement();
+    private static final String START = "start";
+    private static final String STOP = "stop";
 
-				/*
-				 * 
-				 *  Now we need to make any adjustments to the programme start and end dates
-				 */
-				
-				
-				Iterator<Element> itProgramme = rootElement.elementIterator("programme");
+    /**
+     * Default constructor.
+     */
+    public EpgReader() {
+        super();
+    }
 
-				while (itProgramme.hasNext() ) {
-					Element pgmElement = (Element) itProgramme.next();
+    /**
+     * Changes the local time in the given time string.
+     *
+     * @param timeString the time string
+     * @return the updated time string
+     */
+    public static String changeLocalTime(String timeString) {
+        String epgTimeDifference = properties.getEpgTimeDifference();
+        int position = timeString.lastIndexOf("+");
 
-					szStart = pgmElement.attribute(START).getStringValue();
-					szEnd = pgmElement.attribute(STOP).getStringValue();
-				
-					String szNewStart = changeLocalTime(szStart);
-					String szNewEnd = changeLocalTime(szEnd);
-					
-					pgmElement.attribute(START).setText(szNewStart);
-					pgmElement.attribute(STOP).setText(szNewEnd);
-				}
-				
-				OutputFormat format = OutputFormat.createPrettyPrint();
-				XMLWriter writer;
-				
-				String epgFile = Constants.EPG_XML;
-						
-				log.info("Writing {}", epgFile);
-				writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(epgFile)), format);
-				
-				writer.write(document);
-				writer.close();
-								
-				// if (xmlFile.exists()) xmlFile.delete();
-				
-				if (dp.isEmbyInstalled()) {
-					EmbyApi.refreshGuide();
-				}
+        if (position < 0) position = timeString.lastIndexOf("-");
 
-			} catch (DocumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        if (position < 0) return timeString;
 
-		}
+        return timeString.substring(0, position) + epgTimeDifference;
+    }
 
+    /**
+     * Creates the EPG by downloading and processing the XML data.
+     */
+    public static void createEPG() {
+        String downloadedXML = Constants.DOWNLOADED_XML;
+        SAXReader reader = new SAXReader();
+        DownloadProperties dp = properties;
 
+        StopWatch sw = new StopWatch();
+        sw.start();
+        Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
+        sw.stop();
+
+        log.info("Downloading {} took {}ms", dp.getStreamXMLUrl(), sw.getTotalTimeMillis());
+
+        try {
+            sw.start();
+            document = reader.read(downloadedXML);
+            sw.stop();
+
+            log.info("Reading {} took {}ms", downloadedXML, sw.getTotalTimeMillis());
+
+            Element rootElement = document.getRootElement();
+            Iterator<Element> itProgramme = rootElement.elementIterator("programme");
+
+            while (itProgramme.hasNext()) {
+                Element pgmElement = itProgramme.next();
+                szStart = pgmElement.attribute(START).getStringValue();
+                szEnd = pgmElement.attribute(STOP).getStringValue();
+
+                String szNewStart = changeLocalTime(szStart);
+                String szNewEnd = changeLocalTime(szEnd);
+
+                pgmElement.attribute(START).setText(szNewStart);
+                pgmElement.attribute(STOP).setText(szNewEnd);
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            String epgFile = Constants.EPG_XML;
+
+            log.info("Writing {}", epgFile);
+            XMLWriter writer = null;
+            try {
+                writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(epgFile)), format);
+                writer.write(document);
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+
+            if (dp.isEmbyInstalled()) {
+                EmbyApi.refreshGuide();
+            }
+
+        } catch (DocumentException | UnsupportedEncodingException e) {
+            log.error("Error processing EPG data: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            log.error("I/O error: {}", e.getMessage(), e);
+        }
+    }
 }

@@ -25,6 +25,7 @@
         <jquery.version>3.7.1</jquery.version>
         <webjars-locator.version>0.52</webjars-locator.version>
         <font-awesome.version>6.5.2</font-awesome.version>
+        <mysql.version>8.0.33</mysql.version>
         <tests.skip>true</tests.skip>
     </properties>
     <dependencies>
@@ -181,10 +182,15 @@
 		    <artifactId>lombok</artifactId>
 		    <scope>provided</scope>
 		</dependency>
+<!--		<dependency>-->
+<!--		    <groupId>com.h2database</groupId>-->
+<!--		    <artifactId>h2</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
-		    <groupId>com.h2database</groupId>
-		    <artifactId>h2</artifactId>
-		</dependency>
+        	<groupId>mysql</groupId>
+        	<artifactId>mysql-connector-java</artifactId>
+        	<version>${mysql.version}</version>
+    	</dependency>
     </dependencies>
     <build>
         <plugins>
