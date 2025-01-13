@@ -1,8 +1,9 @@
 
 package com.hawkins.m3utoolsjpa.epg;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.Objects;
+
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 /**
  * Represents an icon in the XMLTV format.

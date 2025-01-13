@@ -1,11 +1,11 @@
 
 package com.hawkins.m3utoolsjpa.epg;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
-
-import java.util.Objects;
 
 /**
  * Represents a text element in the XMLTV format.

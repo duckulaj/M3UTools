@@ -1,13 +1,10 @@
 package com.hawkins.m3utoolsjpa.service;
 
-import java.io.File;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
-import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;

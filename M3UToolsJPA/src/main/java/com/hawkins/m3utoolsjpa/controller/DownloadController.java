@@ -1,4 +1,6 @@
+
 package com.hawkins.m3utoolsjpa.controller;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -30,64 +32,54 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DownloadController {
 
-	@Autowired
-	M3UItemRepository itemRepository;
-	
-	@Autowired
-	DownloadService downloadService;
-	
-	@GetMapping(value ="newDownload", params = { "downloadName" })
+    @Autowired
+    M3UItemRepository itemRepository;
+
+    @Autowired
+    DownloadService downloadService;
+
+    @GetMapping(value = "newDownload", params = { "downloadName" })
     public void newDownload(@RequestParam String downloadName, HttpServletResponse response) throws IOException {
-        
-		Long contentSize = 0L;
+        Long contentSize = 0L;
         URL url = null;
-		try {
-			log.info("downloadName is {}", downloadName);
-			String storedUrl = Utils.getURLFromName(downloadName, itemRepository); 
-			log.info("StoredUrl is {}", storedUrl);
-			url = new URI(storedUrl).toURL();
-			
-			log.info("Downloading {}", downloadName);
-			contentSize = NetUtils.getContentSizeFromUrl(url);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (NullPointerException npe) {
-			npe.printStackTrace();
-		}
-        
-		int bufferSize = DownloadProperties.getInstance().getBufferSize();
-        BufferedInputStream inputStream = new BufferedInputStream(url.openStream(), bufferSize);
-        // BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
+        try {
+            log.info("downloadName is {}", downloadName);
+            String storedUrl = Utils.getURLFromName(downloadName, itemRepository);
+            log.info("StoredUrl is {}", storedUrl);
+            url = new URI(storedUrl).toURL();
 
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=" + downloadName + ".mp4");
-        response.setHeader("Content-Length", contentSize.toString());
-        response.addHeader(HttpHeaders.CONNECTION, "keep-alive");
-        // response.addHeader("Pragma", "no-cache");
-        // response.addHeader("Cache-Control", "no-cache");
-
-        int bytesRead;
-        OutputStream out = response.getOutputStream();
-        BufferedOutputStream bos = new BufferedOutputStream(out, bufferSize);
-        while ((bytesRead = inputStream.read()) != -1) {
-            // response.getOutputStream().write(bytesRead);
-        	bos.write(bytesRead);
+            log.info("Downloading {}", downloadName);
+            contentSize = NetUtils.getContentSizeFromUrl(url);
+        } catch (MalformedURLException | URISyntaxException | NullPointerException e) {
+            log.error("Error occurred while processing the URL: ", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid URL");
+            return;
         }
 
-        inputStream.close();
-        bos.close();
-        out.close();
+        int bufferSize = DownloadProperties.getInstance().getBufferSize();
+        try (BufferedInputStream inputStream = new BufferedInputStream(url.openStream(), bufferSize);
+             OutputStream out = response.getOutputStream();
+             BufferedOutputStream bos = new BufferedOutputStream(out, bufferSize)) {
+
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment; filename=" + downloadName + ".mp4");
+            response.setHeader("Content-Length", contentSize.toString());
+            response.addHeader(HttpHeaders.CONNECTION, "keep-alive");
+
+            byte[] buffer = new byte[bufferSize];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            log.error("Error occurred while downloading the file: ", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error downloading file");
+        }
     }
-	
-	@GetMapping(value ="downloadToServer", params = { "name" })
+
+    @GetMapping(value = "downloadToServer", params = { "name" })
     public ModelAndView downloadToServer(@RequestParam String name, ModelMap model) throws IOException {
-    
-		CompletableFuture<Void> downloaded = CompletableFuture.runAsync(() -> 
-			downloadService.downloadToserver(name)
-		);
-		
-		return new ModelAndView("forward:/", model);
-	}
+        CompletableFuture.runAsync(() -> downloadService.downloadToserver(name));
+        return new ModelAndView("forward:/", model);
+    }
 }
