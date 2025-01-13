@@ -26,4 +26,9 @@ public static boolean containsRegex(String stringToTest, Pattern pattern) {
 		return stringToParse;
 		
 	}
+	
+	public static boolean containsCountryIdentifier(String stringToParse, String[] charactersToMatch) {
+	    String regexPattern = String.join("|", charactersToMatch);
+	    return Pattern.compile("^(" + regexPattern + ")").matcher(stringToParse).find();
+	}
 }
