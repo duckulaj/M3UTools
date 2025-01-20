@@ -32,6 +32,9 @@ public class CompletableFutureService {
 	@Autowired
 	DatabaseService databaseService;
 	
+	@Autowired
+	ParserService parserService;
+	
 	public void writeEPG() {
 
 		CompletableFuture<List<M3UItem>> m3UItems = CompletableFuture.supplyAsync(() -> 
@@ -87,7 +90,7 @@ public class CompletableFutureService {
 		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
 		
 		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
-			databaseService.DeleteItemsAndGroups();
+			databaseService.deleteItemsAndGroups();
 		});
 		
 		try {

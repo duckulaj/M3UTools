@@ -81,7 +81,7 @@ public class M3UController {
 	public String viewLog(Model model) {
 
 		model.addAttribute("logLevels", LoggerUtils.getLogLevelsAsList());
-		model.addAttribute("logFile", FileUtilsForM3UToolsJPA.fileTail("M3UToolsJPA.log", 200));
+		model.addAttribute("logFile", FileUtilsForM3UToolsJPA.fileTail("M3UToolsJPA.log", 1000));
 		return Constants.VIEW_LOG;
 	}
 

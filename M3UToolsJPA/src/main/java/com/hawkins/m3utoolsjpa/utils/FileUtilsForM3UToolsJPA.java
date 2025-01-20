@@ -20,6 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileUtilsForM3UToolsJPA {
 
+	private static final XmlMapper XML_MAPPER = new XmlMapper();
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     private FileUtilsForM3UToolsJPA() {
     }
 
@@ -47,7 +50,7 @@ public class FileUtilsForM3UToolsJPA {
                 sb.append(object.readLine()).append(lineSeparator);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error reading file", e);
         }
 
         return sb.toString();
@@ -57,17 +60,13 @@ public class FileUtilsForM3UToolsJPA {
         try (BufferedReader br = new BufferedReader(new FileReader(thisFile))) {
             return (int) br.lines().count();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error counting lines in file", e);
         }
         return 0;
     }
 
     public static String getCurrentWorkingDirectory() {
-        String userDirectory = Paths.get("").toAbsolutePath().toString();
-        if (userDirectory.charAt(userDirectory.length() - 1) != File.separatorChar) {
-            userDirectory += File.separator;
-        }
-        return userDirectory;
+        return Paths.get("").toAbsolutePath().toString() + File.separator;
     }
 
     public static void backupFile(String fileName) {
@@ -77,7 +76,7 @@ public class FileUtilsForM3UToolsJPA {
             try {
                 FileUtils.copyFile(file, backupFile);
             } catch (IOException e) {
-                log.debug("Error creating {}", backupFile.toString());
+                log.debug("Error creating {}", backupFile.toString(), e);
             }
         }
     }
@@ -89,21 +88,24 @@ public class FileUtilsForM3UToolsJPA {
             try {
                 FileUtils.copyFile(backupFile, file);
             } catch (IOException e) {
-                log.debug("Error creating {}", file.toString());
+                log.debug("Error creating {}", file.toString(), e);
             }
         }
     }
 
-    public static void XmlToJsonConverter() {
+    public static void xmlToJsonConverter() {
         File xmlFile = new File("./generatedChannels.xml");
-        XmlMapper xmlMapper = new XmlMapper();
-        ObjectMapper objectMapper = new ObjectMapper();
+        if (!xmlFile.exists()) {
+            log.error("XML file not found: {}", xmlFile.getAbsolutePath());
+            return;
+        }
+
         try {
-            JsonNode jsonNode = xmlMapper.readTree(xmlFile);
-            String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
+            JsonNode jsonNode = XML_MAPPER.readTree(xmlFile);
+            String jsonString = OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
             Utils.writeToFile(new File("./epg.json"), jsonString);
         } catch (IOException e) {
-            log.info(e.getMessage());
+            log.error("Error converting XML to JSON", e);
         }
     }
 }

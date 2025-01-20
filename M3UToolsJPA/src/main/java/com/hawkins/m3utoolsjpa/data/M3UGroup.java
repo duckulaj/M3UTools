@@ -1,5 +1,6 @@
 package com.hawkins.m3utoolsjpa.data;
 
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -60,4 +61,16 @@ public class M3UGroup {
 		this.type = type;
 	}
 
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        M3UGroup m3UGroup = (M3UGroup) o;
+        return Objects.equals(name, m3UGroup.name) && Objects.equals(type, m3UGroup.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
+    }
 }

@@ -18,6 +18,7 @@ import org.springframework.util.StopWatch;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileDownloader;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +71,13 @@ public class EpgReader {
 
         StopWatch sw = new StopWatch();
         sw.start();
-        Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
+        // Utils.copyUrlToFile(dp.getStreamXMLUrl(), downloadedXML);
+        try {
+			FileDownloader.downloadFileInSegments(dp.getStreamXMLUrl(), downloadedXML, dp.getBufferSize());
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			log.info("Error in createEPG: "+e.getMessage());
+		}
         sw.stop();
 
         log.info("Downloading {} took {}ms", dp.getStreamXMLUrl(), sw.getTotalTimeMillis());

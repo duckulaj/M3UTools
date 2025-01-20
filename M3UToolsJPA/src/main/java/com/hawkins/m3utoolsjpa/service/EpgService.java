@@ -39,6 +39,7 @@ import com.hawkins.m3utoolsjpa.epg.XmltvUtils;
 import com.hawkins.m3utoolsjpa.epg.XmltvVideo;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileDownloader;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -145,8 +146,14 @@ private List<XmltvProgramme> getSelectedProgrammes(XmltvDoc doc, List<XmltvChann
 
 				String url = dp.getStreamXMLUrl();
 				log.info("Retrieving EPG from remote server");
-				Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
+				// Utils.copyUrlToFileUsingCommonsIO(url, epgFile);
 				// Utils.copyUrlToFileUsingNIO(url, epgFile);
+				try {
+					FileDownloader.downloadFileInSegments(url, epgFile, dp.getBufferSize());
+				} catch (IOException | InterruptedException e) {
+					// TODO Auto-generated catch block
+					log.info("Error in createEPG: "+e.getMessage());
+				}
 			}
 
 			log.info("Reading epg.xml");

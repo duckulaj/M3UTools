@@ -118,19 +118,19 @@ public class Utils {
     }
 
     public static void copyUrlToFileUsingCommonsIO(String url, String fileName) {
-        String epgFile = Constants.EPG_XML;
+        // String epgFile = Constants.EPG_XML;
 
         try {
-            FileUtilsForM3UToolsJPA.backupFile(epgFile);
+            FileUtilsForM3UToolsJPA.backupFile(fileName);
             FileUtils.copyURLToFile(new URI(url).toURL(), new File(fileName), 180000, 600000);
         } catch (MalformedURLException | URISyntaxException e) {
-            FileUtilsForM3UToolsJPA.restoreFile(epgFile);
+            FileUtilsForM3UToolsJPA.restoreFile(fileName);
             log.info("{} - {}", e.getClass().getSimpleName(), e.getMessage());
         } catch (IOException e) {
-            FileUtilsForM3UToolsJPA.restoreFile(epgFile);
+            FileUtilsForM3UToolsJPA.restoreFile(fileName);
             log.info("IOException - {}", e.getMessage());
         } catch (Exception e) {
-            FileUtilsForM3UToolsJPA.restoreFile(epgFile);
+            FileUtilsForM3UToolsJPA.restoreFile(fileName);
             log.info("Exception - {}", e.getMessage());
         }
     }
@@ -151,8 +151,6 @@ public class Utils {
 
     public static URL getFinalLocation(String address) throws IOException {
         long start = System.currentTimeMillis();
-        String originalURL = address;
-
         try {
             URL url = new URI(address).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -286,11 +284,10 @@ public class Utils {
 
     public static boolean fileOlderThan(File fileName, int ageInMinutes) throws IOException {
         BasicFileAttributes attr = Files.readAttributes(fileName.toPath(), BasicFileAttributes.class);
-        FileTime fileTime = attr.creationTime();
-        long diff = System.currentTimeMillis() - fileTime.toMillis();
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
-        log.info("{} is {} minutes old", fileName.toString(), String.valueOf(minutes));
-        return minutes > ageInMinutes;
+        FileTime fileTime = attr.lastModifiedTime();
+        long fileAgeInMinutes = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - fileTime.toMillis());
+        log.info("{} is {} minutes old", fileName.toString(), fileAgeInMinutes);
+        return fileAgeInMinutes > ageInMinutes;
     }
 
     public static int indexOfAny(String search, String[] items) {

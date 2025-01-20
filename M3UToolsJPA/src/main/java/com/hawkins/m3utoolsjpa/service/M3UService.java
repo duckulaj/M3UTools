@@ -50,6 +50,7 @@ import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.properties.OrderedProperties;
+import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
@@ -71,75 +72,83 @@ public class M3UService {
 
 	@Autowired
 	FilterRepository filterRepository;
-	
+
 	@Autowired
 	TvChannelRepository channelRepository;
-	
+
 	@Autowired
 	CompletableFutureService completableFutureService;
-	
+
 	public void resetDatabase() throws M3UItemsNotFoundException {
-			
+
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 
+		DownloadProperties dp = DownloadProperties.getInstance();
+
 		List<M3UItem> items = completableFutureService.reloadDatabase();
-		
+
 		if (items == null) {
 			throw new M3UItemsNotFoundException("No items found from M3UParser, an error occured connecting to streaming service or content is malformed");
 		}
-		
+
 		if (items.size() > 0) {
-			
+
 			completableFutureService.cleanItemsAndGroups();
-			
+
 			List<M3UGroup> groups = new ArrayList<M3UGroup>();
-				
+
 			M3UGroup group = null;
-			
+
 			for (M3UItem item : items) {
-	
-				
+
+
 				if (groups.size() > 0) {
 					group = groups.stream()
-							  .filter(thisGroup -> item.getGroupTitle().equals(thisGroup.getName()))
-							  .parallel()
-							  .unordered()
-							  .findFirst()
-							  .orElse(null);
+							.filter(thisGroup -> item.getGroupTitle().equals(thisGroup.getName()))
+							.parallel()
+							.unordered()
+							.findFirst()
+							.orElse(null);
 				}
 				if (group == null) {
-					M3UGroup newGroup = groupRepository.save(new M3UGroup(item.getGroupTitle(), item.getType()));
-					groups.add(newGroup);
-					item.setGroupId(newGroup.getId());
+					
+						M3UGroup newGroup = groupRepository.save(new M3UGroup(item.getGroupTitle(), item.getType()));
+						groups.add(newGroup);
+						item.setGroupId(newGroup.getId());
+					
+
 				} else {
 					item.setGroupId(group.getId());
-				
+
+				}
+
 			}
-	
-			}
-			StopWatch swSave = new org.springframework.util.StopWatch();
 			
+			// items.removeIf(item -> (item.getGroupId() == null || item.getGroupId() == -1));
+			
+			StopWatch swSave = new org.springframework.util.StopWatch();
+
 			swSave.start();
 			itemRepository.saveAllAndFlush(items);
 			swSave.stop();
 
 			log.info("Saved {} M3UItem(s) in {} milliseconds", items.size(), swSave.getTotalTimeMillis());
 		}
-		
+
 		/*
 		 * It is possible that we will have selected TV Channels. Now that the M3UItem and M3UGroup has been rebuilt
 		 * we need to go through any existing channels and update M3UItem.selected and M3UItem.tvgChNo
 		 */
-		
+
 		Iterable<TvChannel> tvChannels = channelRepository.findAll(); 
 		log.info("Found {} selected TvChannels", IterableUtils.size(tvChannels));
-		
+
 		List<M3UItem> selectedItems = new ArrayList<M3UItem>();
-		
+
 		for (TvChannel tvChannel : tvChannels) {
 			List<M3UItem> theseItems = itemRepository.findByTvgIdAndTvgName(tvChannel.getTvgId(), tvChannel.getTvgName());
-		
+
 			for (M3UItem item : theseItems) {
 				if (item != null) {
 					item.setSelected(true);
@@ -149,7 +158,7 @@ public class M3UService {
 				}
 			}
 		}
-		
+
 		if (selectedItems.size() > 0) {
 			log.debug("Saving {} selected items", selectedItems.size());
 			itemRepository.saveAll(selectedItems);
@@ -158,7 +167,7 @@ public class M3UService {
 
 		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
 		log.info("resetDatabase completed");
-		
+
 		writeTvChannelsM3U();
 
 	}
@@ -179,7 +188,7 @@ public class M3UService {
 		return IteratorUtils.toList(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
 
 	}
-	
+
 	public List<M3UGroup> getM3UGroupsByType(String type) {
 
 		return IteratorUtils.toList(groupRepository.findByType(type, Sort.by(Sort.Direction.ASC, "name")).iterator());
@@ -203,9 +212,9 @@ public class M3UService {
 		return itemRepository.findByGroupTitle(groupTitle, pageable);
 
 	}
-	
+
 	private List<M3UItem> getSelectedTvChannels() {
-		
+
 		return IteratorUtils.toList(itemRepository.findTvChannelsBySelected(true).iterator());
 	}
 
@@ -262,7 +271,7 @@ public class M3UService {
 		}
 		return pageItems;
 	}
-	
+
 	public Page<M3UItem> getPageableTvChannels(Long groupId, int page, int size) {
 
 		Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
@@ -280,17 +289,17 @@ public class M3UService {
 	public M3UGroupSelected getSelectedGroup(Long groupId) {
 
 		Optional<M3UGroup> foundGroup = groupRepository.findById(groupId);
-		
+
 		if (foundGroup.isPresent()) {
 			M3UGroupSelected selectedGroup = new M3UGroupSelected(foundGroup.get().getId(), foundGroup.get().getName(),
 					foundGroup.get().getType());
 			return selectedGroup; 
 		}
-		
+
 		return new M3UGroupSelected();
 
 	}
-	
+
 	public static String getConfigFileName() {
 
 		return Utils.getPropertyFile(Constants.CONFIGPROPERTIES).getAbsolutePath();
@@ -302,7 +311,7 @@ public class M3UService {
 		List<M3UItem> searchResults = new ArrayList<M3UItem>();
 
 		int genreId = 0;
-		
+
 		// If the searchType evaluates to an integer it means that a genre was selected from the search.html form
 		try {
 			genreId = Integer.parseInt(searchType);
@@ -311,12 +320,12 @@ public class M3UService {
 		} catch (NumberFormatException nfe) {
 			genreId = 0;
 		}
-		
+
 		if (criteria != null && criteria.length() > 0) {
 			SearchFactory searchFactory = new SearchFactory();
 			Search search = searchFactory.createSearch(searchType);
 			searchResults = search.search(criteria, itemRepository);
-			
+
 			if (searchResults.size() > 0) {
 				for (M3UItem item : searchResults) {
 					item.setSearch(Utils.normaliseSearch(item.getSearch()));
@@ -326,32 +335,32 @@ public class M3UService {
 
 		return searchResults;
 	}
-	
+
 	public List<Filter> getFilters() {
 
 		return IteratorUtils.toList(filterRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
-		
+
 	}
-	
+
 	public void saveFilter(Filter filter) {
-		
+
 		filterRepository.save(filter);
-		
+
 	}
-	
+
 	public List<TvChannel> getTvChannels() {
 
 		return IteratorUtils.toList(channelRepository.findAll(Sort.by(Sort.Direction.ASC, "channelId")).iterator());
 
 	}
-	
+
 	public void writeTvChannelsM3U() {
-		
+
 		String outputFile = "./M3UToolsJPA.m3u";
-		
+
 		List<M3UItem> channels = getSelectedTvChannels();
-		
-		
+
+
 		try {
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile));
 			Writer.write(channels, bos);
@@ -362,56 +371,56 @@ public class M3UService {
 			log.info("IOException - {}", e.getMessage());
 
 		}
-		
+
 		log.info("Updated m3u file written to {}", outputFile);
-		
-		
+
+
 	}
-	
+
 	public List<M3UGenre> getGenres() {
-		
-			MovieDb movieDb = MovieDb.getInstance();
-			String genreURL = movieDb.getGenreURL();
-			String api = movieDb.getApi();
-			JsonObject obj = new JsonObject();
 
-			try {
+		MovieDb movieDb = MovieDb.getInstance();
+		String genreURL = movieDb.getGenreURL();
+		String api = movieDb.getApi();
+		JsonObject obj = new JsonObject();
 
-				Map<String, String> parameters = new HashMap<>();
-				parameters.put("api_key", api);
-				
-				URL url = new URI(genreURL + "?" + Utils.getParamsString(parameters)).toURL();
-				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-				con.setRequestMethod("GET");
-				con.setRequestProperty("Content-Type", "application/json");
+		try {
 
-				JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
-						new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+			Map<String, String> parameters = new HashMap<>();
+			parameters.put("api_key", api);
 
-				obj = jsonObject;
+			URL url = new URI(genreURL + "?" + Utils.getParamsString(parameters)).toURL();
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.setRequestProperty("Content-Type", "application/json");
 
-			} catch (Exception e) {
-				log.info(e.getMessage());
-			}
-			
-			ObjectMapper objectMapper = new ObjectMapper();
-	        
-			List<M3UGenre> list = null;
-			try {
-				String jsonArray = obj.getAsJsonArray("genres").toString();
-		        TypeReference<List<M3UGenre>> typeReference = new TypeReference<List<M3UGenre>>() {};
+			JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
+					new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
 
-				list = objectMapper.readValue(jsonArray, typeReference);
-			} catch (JsonMappingException e) {
-				log.info("JsonMappingException - {}", e.getMessage());
-			} catch (JsonProcessingException e) {
-				log.info("JsonProcessingException - {}", e.getMessage());			}
+			obj = jsonObject;
 
-			return list;
+		} catch (Exception e) {
+			log.info(e.getMessage());
 		}
 
-		
-		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		List<M3UGenre> list = null;
+		try {
+			String jsonArray = obj.getAsJsonArray("genres").toString();
+			TypeReference<List<M3UGenre>> typeReference = new TypeReference<List<M3UGenre>>() {};
+
+			list = objectMapper.readValue(jsonArray, typeReference);
+		} catch (JsonMappingException e) {
+			log.info("JsonMappingException - {}", e.getMessage());
+		} catch (JsonProcessingException e) {
+			log.info("JsonProcessingException - {}", e.getMessage());			}
+
+		return list;
+	}
+
+
+
 
 
 }

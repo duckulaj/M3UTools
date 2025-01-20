@@ -1,12 +1,11 @@
+
 package com.hawkins.m3utoolsjpa.search;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -18,99 +17,60 @@ import com.hawkins.m3utoolsjpa.utils.Utils;
 
 public class JsonToList {
 
-	public static List<M3UItem> convertJsonToList(JsonObject jsonObj, M3UItemRepository itemRepository,
-			String searchType) {
+    public static List<M3UItem> convertJsonToList(JsonObject jsonObj, M3UItemRepository itemRepository, String searchType) {
+        List<M3UItem> foundItems = new ArrayList<>();
+        LinkedList<String> m3uitems = new LinkedList<>();
 
-		/*
-		 * This List will hold the matched items in the database and returned to the
-		 * search results page
-		 */
-		List<M3UItem> foundItems = new ArrayList<M3UItem>();
+        if (!jsonObj.isJsonNull()) {
+            JsonArray results = jsonObj.getAsJsonArray("results");
 
-		LinkedList<String> m3uitems = new LinkedList<String>();
+            for (JsonElement resultElement : results) {
+                JsonObject result = resultElement.getAsJsonObject();
 
-		if (!jsonObj.isJsonNull()) {
+                switch (searchType) {
+                    case Constants.ACTOR_SEARCH:
+                        processActorSearch(result, m3uitems);
+                        break;
+                    case Constants.YEAR_SEARCH:
+                    case Constants.GENRE_SEARCH:
+                        m3uitems.add(result.get("title").getAsString());
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
-			JsonArray results = (JsonArray) jsonObj.get("results");
-			Iterator<JsonElement> resultsIterator = results.iterator();
+        if (!m3uitems.isEmpty()) {
+            for (String m3uItem : m3uitems) {
+                List<M3UItem> filmList = itemRepository.findByChannelName(Constants.MOVIE, "%" + m3uItem + "%");
+                for (M3UItem m3uItemFromDb : filmList) {
+                    m3uItemFromDb.setSearch(Utils.normaliseSearch(m3uItemFromDb.getChannelName()));
+                    foundItems.add(m3uItemFromDb);
+                }
+            }
+        }
 
-			/*
-			 * Within the resultant Json Object we are interested in the "known_for" section
-			 * This holds all the information we require
-			 */
+        Collections.sort(foundItems, Comparator.comparing(M3UItem::getSearch));
+        return foundItems;
+    }
 
-			while (resultsIterator.hasNext()) {
-				JsonObject result = resultsIterator.next().getAsJsonObject();
+    private static void processActorSearch(JsonObject result, LinkedList<String> m3uitems) {
+        JsonElement knownForDepartment = result.getAsJsonPrimitive("known_for_department");
 
-				switch (searchType) {
-				case Constants.ACTOR_SEARCH:
+        if (knownForDepartment.getAsString().equalsIgnoreCase("Acting")) {
+            JsonArray knownFor = result.getAsJsonArray("known_for");
 
-					JsonElement known_for_department = result.getAsJsonPrimitive("known_for_department");
+            for (JsonElement movieElement : knownFor) {
+                JsonObject movie = movieElement.getAsJsonObject();
+                String mediaType = movie.get("media_type").getAsString();
 
-					if (known_for_department.getAsString().equalsIgnoreCase("Acting")) {
-
-						JsonArray knownfor = (JsonArray) result.get("known_for");
-						Iterator<JsonElement> knownforIt = knownfor.iterator();
-
-						while (knownforIt.hasNext()) {
-							JsonObject movie = knownforIt.next().getAsJsonObject();
-
-							String mediatype = movie.get("media_type").getAsString();
-
-							if (mediatype.equalsIgnoreCase("tv")) {
-								m3uitems.add(movie.get("name").getAsString());
-							} else if (mediatype.equalsIgnoreCase("movie")) {
-								m3uitems.add(movie.get("title").getAsString());
-							}
-
-						}
-					}
-
-					break;
-
-				case Constants.YEAR_SEARCH:
-
-					m3uitems.add(result.get("title").getAsString());
-
-					break;
-
-				case Constants.GENRE_SEARCH:
-
-					m3uitems.add(result.get("title").getAsString());
-
-					break;
-
-				default:
-					break;
-				}
-
-			}
-		}
-
-		/*
-		 * If we have any matches from the Json results returned from the search
-		 * provider let's see if we can find them in our database
-		 */
-
-		if (m3uitems.size() > 0) {
-
-			for (String m3uItem : m3uitems) {
-
-				List<M3UItem> filmList = itemRepository.findByChannelName(Constants.MOVIE, "%" + m3uItem + "%");
-				ListIterator<M3UItem> iFilters = filmList.listIterator();
-
-				while (iFilters.hasNext()) {
-					M3UItem m3uItemFromDb = iFilters.next();
-					m3uItemFromDb.setSearch(Utils.normaliseSearch(m3uItemFromDb.getChannelName()));
-					foundItems.add(m3uItemFromDb);
-				}
-
-			}
-
-		}
-
-		Collections.sort(foundItems, Comparator.comparing(M3UItem::getSearch));
-		
-		return foundItems; 
-	}
+                if (mediaType.equalsIgnoreCase("tv")) {
+                    m3uitems.add(movie.get("name").getAsString());
+                } else if (mediaType.equalsIgnoreCase("movie")) {
+                    m3uitems.add(movie.get("title").getAsString());
+                }
+            }
+        }
+    }
 }

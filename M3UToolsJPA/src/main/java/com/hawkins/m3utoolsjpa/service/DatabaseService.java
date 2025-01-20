@@ -27,22 +27,18 @@ public class DatabaseService {
 	@Autowired
 	M3UGroupRepository groupRepository;
 	
-	public void DeleteItemsAndGroups() {
-		
-		itemRepository.flush();
-		
-		CriteriaBuilder cbItems = em.getCriteriaBuilder();
-		
-		CriteriaDelete<M3UItem> deleteItems = cbItems.createCriteriaDelete(M3UItem.class);
-		
-		this.em.createQuery(deleteItems).executeUpdate();
-		
-		groupRepository.flush();
-		
-		CriteriaBuilder cbGroups = em.getCriteriaBuilder();
-		
-		CriteriaDelete<M3UGroup> deleteGroups = cbGroups.createCriteriaDelete(M3UGroup.class);
-		
-		this.em.createQuery(deleteGroups).executeUpdate();
-	}
+
+public void deleteItemsAndGroups() {
+    itemRepository.flush();
+    groupRepository.flush();
+
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+
+    CriteriaDelete<M3UItem> deleteItems = cb.createCriteriaDelete(M3UItem.class);
+    em.createQuery(deleteItems).executeUpdate();
+
+    CriteriaDelete<M3UGroup> deleteGroups = cb.createCriteriaDelete(M3UGroup.class);
+    em.createQuery(deleteGroups).executeUpdate();
+}
+
 }

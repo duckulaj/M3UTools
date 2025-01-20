@@ -14,7 +14,9 @@ import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileDownloader;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
+import com.hawkins.m3utoolsjpa.utils.ParserUtils;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -23,160 +25,109 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Parser {
 
-	/**
-	 * Parse the m3u file
-	 *
-	 * @param stream pointing to your m3u file
-	 * @return Linked List of m3uItems found within the supplied m3uFile
-	 */
+    public static LinkedList<M3UItem> parse() {
+        StopWatch sw = new StopWatch();
+        sw.start("parse");
 
+        int lineNbr = 0;
+        LinkedList<M3UItem> entries = new LinkedList<>();
+        DownloadProperties dp = DownloadProperties.getInstance();
+        String[] includedCountries = dp.getIncludedCountries();
 
+        boolean getRemoteM3U = false;
+        File m3uFileOnDisk = new File(Constants.M3U_FILE);
 
-	public static LinkedList<M3UItem> parse() {
+        try {
+            getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
+        } catch (MalformedURLException e) {
+            throw new ParsingException(lineNbr, "Cannot open URL", e);
+        } catch (IOException e) {
+            log.info("File {} not found", m3uFileOnDisk.toString());
+            getRemoteM3U = true;
+        }
 
-		int lineNbr = 0;
-		String line;
-		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
-		DownloadProperties dp = DownloadProperties.getInstance();
-
-		StopWatch sw = new org.springframework.util.StopWatch();
-		sw.start();
-
-		boolean getRemoteM3U = false;
-
-		File m3uFileOnDisk = new File(Constants.M3U_FILE);
-
-		try {
-
-			getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
-
-		} catch (MalformedURLException e) {
-			throw new ParsingException(lineNbr, "Cannot open URL", e);
-		} catch (IOException e) {
-			log.info("File {} not found", m3uFileOnDisk.toString());
-			getRemoteM3U = true;
-		}
-
-		if (getRemoteM3U) {
-			
-			if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
-			
-			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
-			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
-		}
-
-		try (var buffer = Files.newBufferedReader(m3uFileOnDisk.toPath())) {
-
-			line = buffer.readLine();
-			if (line == null) {
-				throw new ParsingException(0, "Empty stream");
+        if (getRemoteM3U) {
+            if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
+            log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
+            // Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
+            try {
+				FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());
+			} catch (IOException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				log.info("Error in parse: "+e.getMessage());
 			}
+        }
 
-			if (line.trim().equalsIgnoreCase("")) {
-				line = buffer.readLine();
-			}
-			lineNbr++;
+        try (var buffer = Files.newBufferedReader(m3uFileOnDisk.toPath())) {
+            String line = buffer.readLine();
+            if (line == null || line.trim().isEmpty()) {
+                throw new ParsingException(0, "Empty stream");
+            }
+            lineNbr++;
+            checkStart(line);
 
-			checkStart(line);
+            PatternMatcher patternMatcher = PatternMatcher.getInstance();
+            M3UItem entry = null;
 
-			PatternMatcher patternMatcher = PatternMatcher.getInstance();
-			M3UItem entry = null;
+            while ((line = buffer.readLine()) != null) {
+                lineNbr++;
+                if (isExtInfo(line)) {
+                    entry = extractExtInfo(patternMatcher, line, includedCountries);
+                } else if (entry != null) {
+                    entry.setType(Utils.deriveGroupTypeByUrl(line));
+                    entry.setChannelUri(line);
+                    entry.setChannelName(RegexUtils.removeCountryIdentifier(entry.getChannelName(), dp.getIncludedCountries()));
+                    entry.setTvgName(RegexUtils.removeCountryIdentifier(entry.getTvgName(), dp.getIncludedCountries()));
+                    entries.add(entry);
+                }
+            }
+        } catch (IOException e) {
+            FileUtilsForM3UToolsJPA.restoreFile(m3uFileOnDisk.toString());
+            throw new ParsingException(lineNbr, "Cannot read file", e);
+        }
 
-			String[] includedCountries = dp.getIncludedCountries();
+        sw.stop();
+        log.info("Total time in milliseconds for parsing: {}", sw.getTotalTimeMillis());
+        return entries;
+    }
 
-			while ((line = buffer.readLine()) != null) {
-				lineNbr++;
-				if (isExtInfo(line)) {
-					entry = extractExtInfo(patternMatcher, line, includedCountries);
-				} else {
-					if (entry != null) {
-						String type = Utils.deriveGroupTypeByUrl(line);
-						entry.setType(type);
-						entry.setChannelUri(line);
-						entry.setChannelName(RegexUtils.removeCountryIdentifier(entry.getChannelName(), dp.getIncludedCountries()));
-						entry.setTvgName(RegexUtils.removeCountryIdentifier(entry.getTvgName(), dp.getIncludedCountries()));
-						entries.add(entry);
-					}
-				}
-			}
-		} catch (IOException e) {
-			FileUtilsForM3UToolsJPA.restoreFile(m3uFileOnDisk.toString());
-			throw new ParsingException(lineNbr, "Cannot read file", e);
-		} 
+    private static void checkStart(String line) {
+        if (line != null && !line.contains(Patterns.M3U_START_MARKER)) {
+            throw new ParsingException(1, "First line of the file should be " + Patterns.M3U_START_MARKER);
+        }
+    }
 
-		sw.stop();
-		log.info("Total time in milliseconds for parsing : {}", sw.getTotalTimeMillis());
-		return entries;
-	}
+    private static boolean isExtInfo(String line) {
+        return line.contains(Patterns.M3U_INFO_MARKER);
+    }
 
-	/*
-	 * If the m3uFile exists determine that the start of the file as #EXTM3U
-	 */
-	private static void checkStart(String line) {
-		if (line != null) {
-			if (!line.contains(Patterns.M3U_START_MARKER)) {
-				throw new ParsingException(1, "First line of the file should be " + Patterns.M3U_START_MARKER);
-			}
-		}
-	}
+    private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
+        DownloadProperties dp = DownloadProperties.getInstance();
 
-	private static boolean isExtInfo(String line) {
-		return line.contains(Patterns.M3U_INFO_MARKER);
-	}
+        String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
+        if (tvgName == null || tvgName.startsWith("#####") || tvgName.isEmpty()) return null;
 
-	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
+        String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
+        if (groupTitle == null || !ParserUtils.isIncludedCountry(includedCountries, groupTitle)) return null;
 
-		DownloadProperties dp = DownloadProperties.getInstance();
-		
-		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
-		// String tvgName = patternMatcher.extract(line, Patterns.SQUARE_BRACKET_COUNTRY);
-		if (tvgName == null) return null;
-		if (tvgName.startsWith("#####")) return null;
+        tvgName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr()));
+        String channelName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX), dp.getCountryRegExpr()));
 
-		int endIndex = -1;
-		
-		if (tvgName.length() ==  0) {
-			return null;
-		}
-		
-		endIndex = Utils.indexOfAny(tvgName.substring(0, 3), includedCountries);
-
-		if (endIndex == -1) return null;
-
-		tvgName = StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr());
-		tvgName = StringUtils.cleanTextContent(tvgName);
-
-		String channelName = patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX);
-		channelName = StringUtils.removeCountryIdentifierUsingRegExpr(channelName, dp.getCountryRegExpr());
-		channelName = StringUtils.cleanTextContent(channelName);
-
-		String duration = patternMatcher.extract(line, Patterns.DURATION_REGEX);
-		String tvgId = patternMatcher.extract(line, Patterns.TVG_ID_REGEX);
-		String tvgShift = patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX);
-		String radio = patternMatcher.extract(line, Patterns.RADIO_REGEX);
-		String tvgLogo = patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX);
-		String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
-		Long groupId = -1L;
-
-
-
-		return new M3UItem(
-				duration,
-				groupTitle,
-				groupId,
-				tvgId,
-				tvgName,
-				"",
-				tvgLogo,
-				tvgShift,
-				radio,
-				"",
-				channelName,
-				"",
-				channelName,
-				false);
-
-	
-
-	}
+        return new M3UItem(
+            patternMatcher.extract(line, Patterns.DURATION_REGEX),
+            groupTitle,
+            -1L,
+            patternMatcher.extract(line, Patterns.TVG_ID_REGEX),
+            tvgName,
+            "",
+            patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX),
+            patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX),
+            patternMatcher.extract(line, Patterns.RADIO_REGEX),
+            "",
+            channelName,
+            "",
+            channelName,
+            false
+        );
+    }
 }
