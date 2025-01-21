@@ -88,55 +88,7 @@ public class M3UService {
 
 		List<M3UItem> items = completableFutureService.reloadDatabase();
 
-		if (items == null) {
-			throw new M3UItemsNotFoundException("No items found from M3UParser, an error occured connecting to streaming service or content is malformed");
-		}
-
-		if (items.size() > 0) {
-
-			completableFutureService.cleanItemsAndGroups();
-
-			List<M3UGroup> groups = new ArrayList<M3UGroup>();
-
-			M3UGroup group = null;
-
-			for (M3UItem item : items) {
-
-
-				if (groups.size() > 0) {
-					group = groups.stream()
-							.filter(thisGroup -> item.getGroupTitle().equals(thisGroup.getName()))
-							.parallel()
-							.unordered()
-							.findFirst()
-							.orElse(null);
-				}
-				if (group == null) {
-					
-						M3UGroup newGroup = groupRepository.save(new M3UGroup(item.getGroupTitle(), item.getType()));
-						groups.add(newGroup);
-						item.setGroupId(newGroup.getId());
-					
-
-				} else {
-					item.setGroupId(group.getId());
-
-				}
-
-			}
-			
-			// items.removeIf(item -> (item.getGroupId() == null || item.getGroupId() == -1));
-			
-			StopWatch swSave = new org.springframework.util.StopWatch();
-
-			swSave.start();
-			itemRepository.saveAllAndFlush(items);
-			swSave.stop();
-
-			log.info("Saved {} M3UItem(s) in {} milliseconds", items.size(), swSave.getTotalTimeMillis());
-		}
-
-		/*
+				/*
 		 * It is possible that we will have selected TV Channels. Now that the M3UItem and M3UGroup has been rebuilt
 		 * we need to go through any existing channels and update M3UItem.selected and M3UItem.tvgChNo
 		 */

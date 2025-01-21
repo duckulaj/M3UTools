@@ -46,7 +46,8 @@ public class CompletableFutureService {
 				);
 		
 		CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
-		Parser.parse()
+			Parser.parse()
+		
 				);
 
 		CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(m3UItemsFromParser, m3UItems, xmlTvDoc);
@@ -75,7 +76,8 @@ public class CompletableFutureService {
 		try {
 			log.info("Starting m3UItemsFromParser at {}", Utils.printNow());
 			CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
-			Parser.parse()
+			// Parser.parse()
+			parserService.parseM3UFile()
 					);
 			return m3UItemsFromParser.get();
 		} catch (InterruptedException | ExecutionException e) {

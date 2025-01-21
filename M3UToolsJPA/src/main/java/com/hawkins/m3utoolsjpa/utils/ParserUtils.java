@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -119,7 +118,11 @@ public class ParserUtils {
 			if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
 			
 			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
-			Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
+			try {
+				FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());
+			} catch (IOException | InterruptedException e) {
+				log.info("Error in parse: " + e.getMessage());
+			}
 		}
 
 		try (var buffer = Files.newBufferedReader(m3uFileOnDisk.toPath())) {
@@ -189,81 +192,33 @@ public class ParserUtils {
 	}
 
 	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
+        DownloadProperties dp = DownloadProperties.getInstance();
 
-		DownloadProperties dp = DownloadProperties.getInstance();
-		
-		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
-		// String tvgName = patternMatcher.extract(line, Patterns.SQUARE_BRACKET_COUNTRY);
-		if (tvgName == null) return null;
-		if (tvgName.startsWith("#####")) return null;
+        String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
+        if (tvgName == null || tvgName.startsWith("#####") || tvgName.isEmpty()) return null;
 
-		int endIndex = -1;
-		
-		if (tvgName.length() ==  0) {
-			return null;
-		}
-		
-		endIndex = Utils.indexOfAny(tvgName.substring(0, 3), includedCountries);
+        String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
+        if (groupTitle == null || !ParserUtils.isIncludedCountry(includedCountries, groupTitle)) return null;
 
-		if (endIndex == -1) return null;
+        tvgName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr()));
+        String channelName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX), dp.getCountryRegExpr()));
 
-		tvgName = StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr());
-		tvgName = StringUtils.cleanTextContent(tvgName);
-
-		String channelName = patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX);
-		channelName = StringUtils.removeCountryIdentifierUsingRegExpr(channelName, dp.getCountryRegExpr());
-		channelName = StringUtils.cleanTextContent(channelName);
-
-		String duration = patternMatcher.extract(line, Patterns.DURATION_REGEX);
-		String tvgId = patternMatcher.extract(line, Patterns.TVG_ID_REGEX);
-		String tvgShift = patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX);
-		String radio = patternMatcher.extract(line, Patterns.RADIO_REGEX);
-		String tvgLogo = patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX);
-		String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
-		Long groupId = -1L;
-
-
-
-		return new M3UItem(
-				duration,
-				groupTitle,
-				groupId,
-				tvgId,
-				tvgName,
-				"",
-				tvgLogo,
-				tvgShift,
-				radio,
-				"",
-				channelName,
-				"",
-				channelName,
-				false);
-
-	
-
-	}
-	
-	public static Set<M3UGroup> removeGroupsNotInIncludedCountries(Set<M3UGroup> groups, String[] includedCountries) {
-        
-		Set<M3UGroup> countryGroups = new HashSet<>();
-		
-		Iterator<M3UGroup> iterator = groups.iterator();
-        while (iterator.hasNext()) {
-            M3UGroup group = iterator.next();
-            boolean isIncluded = false;
-            for (String country : includedCountries) {
-                if (group.getName().startsWith(country)) {
-                    isIncluded = true;
-                    break;
-                }
-            }
-            if (isIncluded) {
-                countryGroups.add(group);
-            }
-        }
-        
-        return countryGroups;
+        return new M3UItem(
+            patternMatcher.extract(line, Patterns.DURATION_REGEX),
+            groupTitle,
+            -1L,
+            patternMatcher.extract(line, Patterns.TVG_ID_REGEX),
+            tvgName,
+            "",
+            patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX),
+            patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX),
+            patternMatcher.extract(line, Patterns.RADIO_REGEX),
+            "",
+            channelName,
+            "",
+            channelName,
+            false
+        );
     }
 	
 	public static LinkedList	<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, List<M3UItem> m3uItems) {
@@ -271,6 +226,7 @@ public class ParserUtils {
         for (M3UItem item : m3uItems) {
             for (M3UGroup group : uniqueGroups) {
                 if (group.getName().equals(item.getGroupTitle())) {
+                	item.setGroupId(group.getId());
                     filteredItems.add(item);
                     break;
                 }
