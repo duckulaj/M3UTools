@@ -3,10 +3,13 @@ package com.hawkins.m3utoolsjpa.service;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
+import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
+import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.ParserUtils;
@@ -25,10 +28,16 @@ public class ParserService {
 		 * 5. Create list of M3Uitems associated with those groups defined in step 4
 		 */
 	
+	@Autowired
+	M3UGroupRepository groupRepository;
+	
+	@Autowired
+	M3UItemRepository itemRepository;
+	
 	DownloadProperties dp = DownloadProperties.getInstance();
 	String[] includedCountries = dp.getIncludedCountries();
 	
-	public LinkedList<M3UItem> parseM3UFile() {
+	public void parseM3UFile() {
 		log.info("Parsing M3U File");
 		
 		ParserUtils.loadM3UFileFromUrl(dp.getStreamChannels(), Constants.M3U_FILE);
@@ -38,13 +47,15 @@ public class ParserService {
 		Set<M3UGroup> uniqueGroups = ParserUtils.extractUniqueTvgGroups(m3uItems);
 		log.info("Number of unique tvg-groups: {}", uniqueGroups.size());
 		
-		uniqueGroups = ParserUtils.removeGroupsNotInIncludedCountries(uniqueGroups, includedCountries);
-		log.info("Number of unique tvg-groups after removing groups not in includedCountries: {}", uniqueGroups.size());
+		// uniqueGroups = ParserUtils.removeGroupsNotInIncludedCountries(uniqueGroups, includedCountries);
+		// log.info("Number of unique tvg-groups after removing groups not in includedCountries: {}", uniqueGroups.size());
 		
 		LinkedList<M3UItem> filteredItems = ParserUtils.createM3UItemsListIfGroupExists(uniqueGroups, m3uItems);
 		log.info("Number of M3UItems after filtering: {}", filteredItems.size());
 		
-		return filteredItems;
+		groupRepository.saveAllAndFlush(uniqueGroups);
+		itemRepository.saveAllAndFlush(filteredItems);
+		
 	}
 	
 		

@@ -34,7 +34,7 @@ public class epgController {
 	@GetMapping("/showEPG")
 	public ModelAndView showEPG(ModelMap model) {
 		
-		model.addAttribute("channels", epgService.getEPGJson());
+		// model.addAttribute("channels", epgService.getEPGJson());
 		
 		return new ModelAndView("epg", model);
 		
