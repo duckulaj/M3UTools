@@ -50,7 +50,6 @@ import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.properties.OrderedProperties;
-import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
@@ -84,9 +83,7 @@ public class M3UService {
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 
-		DownloadProperties dp = DownloadProperties.getInstance();
-
-		List<M3UItem> items = completableFutureService.reloadDatabase();
+		completableFutureService.reloadDatabase();
 
 				/*
 		 * It is possible that we will have selected TV Channels. Now that the M3UItem and M3UGroup has been rebuilt

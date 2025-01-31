@@ -1,7 +1,5 @@
 package com.hawkins.m3utoolsjpa.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -13,10 +11,7 @@ import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
-import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.FileDownloader;
 import com.hawkins.m3utoolsjpa.utils.ParserUtils;
-import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 

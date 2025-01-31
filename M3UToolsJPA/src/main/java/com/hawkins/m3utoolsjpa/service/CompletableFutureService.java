@@ -25,16 +25,16 @@ public class CompletableFutureService {
 
 	@Autowired
 	M3UGroupRepository groupRepository;
-	
+
 	@Autowired 
 	EpgService epgService;
 
 	@Autowired
 	DatabaseService databaseService;
-	
+
 	@Autowired
 	ParserService parserService;
-	
+
 	public void writeEPG() {
 
 		CompletableFuture<List<M3UItem>> m3UItems = CompletableFuture.supplyAsync(() -> 
@@ -44,14 +44,14 @@ public class CompletableFutureService {
 		CompletableFuture<XmltvDoc> xmlTvDoc = CompletableFuture.supplyAsync(() -> 
 		epgService.getXmlTvDoc()
 				);
-		
+
 		CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
-			Parser.parse()
-		
+		Parser.parse()
+
 				);
 
 		CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(m3UItemsFromParser, m3UItems, xmlTvDoc);
-		
+
 		try {
 			log.info("Starting combinedFuture.get() at {}", Utils.printNow());
 			combinedFuture.get();
@@ -67,34 +67,26 @@ public class CompletableFutureService {
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		
+
 		log.info("CompletableFutures completed");
 	}
 
-	public List<M3UItem> reloadDatabase() {
-		
-		try {
-			log.info("Starting m3UItemsFromParser at {}", Utils.printNow());
-			CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
-			// Parser.parse()
-			parserService.parseM3UFile()
-					);
-			return m3UItemsFromParser.get();
-		} catch (InterruptedException | ExecutionException e) {
-			log.info("Execution Excption - {}", e.getMessage());
-			return null;
-		}		
+	public void reloadDatabase() {
+
+
+		log.info("Starting m3UItemsFromParser at {}", Utils.printNow());
+		parserService.parseM3UFile();
 
 	}
-	
+
 	public void cleanItemsAndGroups() {
-		
+
 		log.info("Starting cleanItemsAndGroups at {}", Utils.printNow());
-		
+
 		CompletableFuture<Void> cleanItemsAndGroups = CompletableFuture.runAsync(() -> {
 			databaseService.deleteItemsAndGroups();
 		});
-		
+
 		try {
 			log.info("Starting cleanItemsAndGroups.get() at {}", Utils.printNow());
 			cleanItemsAndGroups.get();
@@ -105,5 +97,5 @@ public class CompletableFutureService {
 		if (cleanItemsAndGroups.isDone()) log.info("cleanItemsAndGroups.isDone() at {}", Utils.printNow());
 		log.info("CompletableFutures completed");
 	}
-	
+
 }
