@@ -15,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ApplicationService {
 
     @Autowired
-    private EpgService epgService;
-
-    @Autowired
     private M3UService m3uService;
 
     public void runAtStartup() {
@@ -34,15 +31,6 @@ public class ApplicationService {
             log.info("m3uService.resetDatabase() took {}ms", swUpdateDatabase.getTotalTimeMillis());
         }
 
-        // Create the epg file with latest programmes for the updated m3u items
-        StopWatch swReadEPG = new StopWatch();
-        try {
-            swReadEPG.start();
-            log.info("Running epgService.readEPG() at {}", Utils.printNow());
-            epgService.readEPG();
-        } finally {
-            swReadEPG.stop();
-            log.info("epgService.readEPG() took {}ms", swReadEPG.getTotalTimeMillis());
-        }
+  
     }
 }

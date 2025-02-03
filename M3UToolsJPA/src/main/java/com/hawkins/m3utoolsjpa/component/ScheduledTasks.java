@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.hawkins.m3utoolsjpa.service.ApplicationService;
+import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UtoStrmService;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -20,6 +21,8 @@ public class ScheduledTasks {
 	@Autowired
 	ApplicationService  applicationService;
 
+	@Autowired
+	EpgService epgService;
 
 	@Scheduled(cron = "0 0 2 * * ?") // 02:00 AM every day
 	public void createStreams() {
@@ -37,6 +40,12 @@ public class ScheduledTasks {
 		log.info("Scheduled Task updateApplication completed at {}", Utils.printNow());
 	}
 
+	@Scheduled(cron = "0 0 5 * * ?") // 01:00 AM every day
+	public void reloadEPG() {
+
+		epgService.readEPG();
+		log.info("Scheduled Task updateApplication completed at {}", Utils.printNow());
+	}
 
 
 }
