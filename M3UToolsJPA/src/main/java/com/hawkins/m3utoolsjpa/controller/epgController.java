@@ -18,8 +18,7 @@ public class epgController {
 	public ModelAndView readEPG(ModelMap model) {
 		
 		epgService.readEPG();
-		// epgService.readEPGUsingSax();
-		
+				
 		return new ModelAndView("forward:/", model);
 	}
 	
