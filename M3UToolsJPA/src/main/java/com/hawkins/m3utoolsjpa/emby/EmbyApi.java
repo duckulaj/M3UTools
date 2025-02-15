@@ -1,7 +1,13 @@
 package com.hawkins.m3utoolsjpa.emby;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Iterator;
 
 import org.springframework.http.HttpEntity;
@@ -51,19 +57,8 @@ public class EmbyApi {
 		String refreshGuideUrl = embyUrl + "ScheduledTasks/Running/" + refreshGuideId + "?api_key=" + embyApi;
 
 		try {
-			URI uri = new URI(refreshGuideUrl);
-
-			HttpHeaders headers = new HttpHeaders();   
-			headers.set("X-COM-LOCATION", "UK");     
-
-			HttpEntity<String> request = new HttpEntity<>(refreshGuideId, headers);
-
-			String result = restTemplate.postForObject(uri, request, String.class);
-
-			log.info(result);
-
-
-		} catch (URISyntaxException e) {
+			refreshEmbyGuide(refreshGuideUrl);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -101,5 +96,34 @@ public class EmbyApi {
 		}
 
 
+	}
+
+	private static void refreshEmbyGuide(String apiUrl) throws IOException {
+		// Create a URL object from the API URL
+
+		URL url = null;
+		try {
+			url = new URI(apiUrl).toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
+			log.error("Failed to create URL object from API URL: " + apiUrl);
+		}
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+		// Set the request method to POST or GET depending on the API behaviour (GET is generally fine for this request)
+		connection.setRequestMethod("POST");
+
+		// Connect to the server
+		connection.connect();
+
+		// Get the response code (to check if the request was successful)
+		int responseCode = connection.getResponseCode();
+		if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+			log.info("Live TV guide refresh triggered successfully (HTTP 204 - No Content).");
+		} else {
+			log.info("Failed to refresh Live TV guide. HTTP Code: " + responseCode);
+		}
+
+		// Disconnect when done
+		connection.disconnect();
 	}
 }
