@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
@@ -53,61 +54,61 @@ public class EpgService {
 
 	private DownloadProperties dp = DownloadProperties.getInstance();
 
-
 	public void readEPG() {
 		log.info("readEPG started at {}", Utils.printNow());
 
-		XmltvDoc doc = getXmlTvDoc();
-		List<M3UItem> m3uItems = itemRepository.findTvChannelsBySelected(true);
+		CompletableFuture<XmltvDoc> docFuture = CompletableFuture.supplyAsync(this::getXmlTvDoc);
+		docFuture.thenAccept(doc -> {
+			List<M3UItem> m3uItems = itemRepository.findTvChannelsBySelected(true);
 
-		List<XmltvChannel> selectedXmltvChannels = getSelectedChannels(doc, m3uItems);
-		List<XmltvProgramme> selectedXmltvProgrammes = getSelectedProgrammes(doc, selectedXmltvChannels);
+			List<XmltvChannel> selectedXmltvChannels = getSelectedChannels(doc, m3uItems);
+			List<XmltvProgramme> selectedXmltvProgrammes = getSelectedProgrammes(doc, selectedXmltvChannels);
 
-		log.info("Found {} programmes", selectedXmltvProgrammes.size());
+			log.info("Found {} programmes", selectedXmltvProgrammes.size());
 
-		XmltvDoc selectedXmltvDoc = new XmltvDoc();
-		selectedXmltvDoc.setGeneratorName(doc.getGeneratorName());
-		selectedXmltvDoc.setSourceInfoName(doc.getSourceInfoName());
-		selectedXmltvDoc.setChannels(selectedXmltvChannels);
-		selectedXmltvDoc.setProgrammes(selectedXmltvProgrammes);
+			XmltvDoc selectedXmltvDoc = new XmltvDoc();
+			selectedXmltvDoc.setGeneratorName(doc.getGeneratorName());
+			selectedXmltvDoc.setSourceInfoName(doc.getSourceInfoName());
+			selectedXmltvDoc.setChannels(selectedXmltvChannels);
+			selectedXmltvDoc.setProgrammes(selectedXmltvProgrammes);
 
-		writeXmltvDocToFile(selectedXmltvDoc, "./generatedChannels.xml");
+			writeXmltvDocToFile(selectedXmltvDoc, "./generatedChannels.xml");
 
-		if (dp.isEmbyInstalled()) {
-			EmbyApi.refreshGuide();
-		}
+			if (dp.isEmbyInstalled()) {
+				CompletableFuture.runAsync(() -> EmbyApi.refreshGuide());
+			}
 
-		log.info("readEPG finished at {}", Utils.printNow());
+			log.info("readEPG finished at {}", Utils.printNow());
+		});
+	}
+
+	private List<XmltvChannel> getSelectedChannels(XmltvDoc doc, List<M3UItem> m3uItems) {
+		List<XmltvChannel> selectedXmltvChannels = m3uItems.stream()
+				.map(m3uItem -> doc.getChannelsByIdAndName(m3uItem.getTvgId(), m3uItem.getTvgName()))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+
+		log.info("Processing {} selected channels", selectedXmltvChannels.size());
+		return selectedXmltvChannels;
 	}
 
 
-private List<XmltvChannel> getSelectedChannels(XmltvDoc doc, List<M3UItem> m3uItems) {
-    List<XmltvChannel> selectedXmltvChannels = m3uItems.stream()
-        .map(m3uItem -> doc.getChannelsByIdAndName(m3uItem.getTvgId(), m3uItem.getTvgName()))
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
 
-    log.info("Processing {} selected channels", selectedXmltvChannels.size());
-    return selectedXmltvChannels;
-}
-
-
-
-private List<XmltvProgramme> getSelectedProgrammes(XmltvDoc doc, List<XmltvChannel> selectedXmltvChannels) {
-    return selectedXmltvChannels.stream()
-        .map(channel -> doc.getProgrammesById(channel.getId()))
-        .filter(Objects::nonNull)
-        .flatMap(List::stream)
-        .peek(xmltvProgramme -> {
-            xmltvProgramme.setChannel(xmltvProgramme.getChannel());
-            xmltvProgramme.setIcon(new XmltvIcon("", "", ""));
-            xmltvProgramme.setCredits("");
-            xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
-            xmltvProgramme.setStart(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString()));
-            xmltvProgramme.setStop(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString()));
-        })
-        .collect(Collectors.toList());
-}
+	private List<XmltvProgramme> getSelectedProgrammes(XmltvDoc doc, List<XmltvChannel> selectedXmltvChannels) {
+		return selectedXmltvChannels.stream()
+				.map(channel -> doc.getProgrammesById(channel.getId()))
+				.filter(Objects::nonNull)
+				.flatMap(List::stream)
+				.peek(xmltvProgramme -> {
+					xmltvProgramme.setChannel(xmltvProgramme.getChannel());
+					xmltvProgramme.setIcon(new XmltvIcon("", "", ""));
+					xmltvProgramme.setCredits("");
+					xmltvProgramme.setVideo(new XmltvVideo("HDTV"));
+					xmltvProgramme.setStart(EpgReader.changeLocalTime(xmltvProgramme.getStart().toString()));
+					xmltvProgramme.setStop(EpgReader.changeLocalTime(xmltvProgramme.getStop().toString()));
+				})
+				.collect(Collectors.toList());
+	}
 
 
 	private void writeXmltvDocToFile(XmltvDoc doc, String filePath) {
@@ -170,11 +171,9 @@ private List<XmltvProgramme> getSelectedProgrammes(XmltvDoc doc, List<XmltvChann
 	}
 
 	private static void writeJson(List<XmltvChannel> channels, XmltvDoc doc) {
-
 		JsonArray jsonChannels = new JsonArray();
 
 		for (XmltvChannel channel : channels) {
-
 			JsonObject thisChannel = new JsonObject();
 			thisChannel.addProperty("display_name", channel.getDisplayNames().get(0).getText());
 
@@ -182,12 +181,11 @@ private List<XmltvProgramme> getSelectedProgrammes(XmltvDoc doc, List<XmltvChann
 
 			List<XmltvProgramme> foundByStream = doc.getProgrammesById(channel.getId());
 
-			if (foundByStream != null && foundByStream.isEmpty()) {
+			if (foundByStream != null && !foundByStream.isEmpty()) {
 				for (XmltvProgramme programme : foundByStream) {
 					JsonObject thisProgramme = new JsonObject();
 					thisProgramme.addProperty("start", formatTime(programme.getStart()));
 					thisProgramme.addProperty("stop", formatTime(programme.getStop()));
-					// thisProgramme.addProperty("title", programme.getTitle().getText());
 					thisProgramme.addProperty("title", programme.getTitle().map(XmltvText::getText).orElse(""));
 
 					programmes.add(thisProgramme);
@@ -196,35 +194,25 @@ private List<XmltvProgramme> getSelectedProgrammes(XmltvDoc doc, List<XmltvChann
 				thisChannel.add("programmes", programmes);
 				jsonChannels.add(thisChannel);
 			}
-
-			// jsonEPG.add("EPG", jsonChannels);
-
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			JsonElement jsonElement = JsonParser.parseString(jsonChannels.toString());
-			String prettyJson = gson.toJson(jsonElement);
-
-			log.info(prettyJson);
-			try (FileWriter fileWriter = new FileWriter(new File("./epg.json"))){
-
-				fileWriter.write(prettyJson);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
 		}
 
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		JsonElement jsonElement = JsonParser.parseString(jsonChannels.toString());
+		String prettyJson = gson.toJson(jsonElement);
+
+		log.info(prettyJson);
+		try (FileWriter fileWriter = new FileWriter(new File("./epg.json"))) {
+			fileWriter.write(prettyJson);
+		} catch (IOException e) {
+			log.error("Error writing JSON to file: {}", e.getMessage());
+		}
 	}
 
 	private static String formatTime(String datetimeString) {
-
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss X");
 		ZonedDateTime zonedDateTime = ZonedDateTime.parse(datetimeString, formatter);
-
 		LocalTime time = zonedDateTime.toLocalTime();
-		return time.format(DateTimeFormatter.ofPattern("HH:mm")).toString();
-
-
+		return time.format(DateTimeFormatter.ofPattern("HH:mm"));
 	}
 
 	public List<Channel> getEPGJson() {
