@@ -10,6 +10,8 @@ import com.hawkins.m3utoolsjpa.regex.Patterns;
 
 public class StringUtils {
 
+    private static final Pattern CLEAN_TEXT_PATTERN = Pattern.compile("[^\\x00-\\x7F]|[\\p{Cntrl}&&[^\r\n\t]]|\\p{C}");
+
     private StringUtils() {
         throw new IllegalStateException("Utility class");
     }
@@ -49,7 +51,8 @@ public class StringUtils {
     public static String removeCountryIdentifierUsingRegExpr(String toParse, String regExpr) {
         Objects.requireNonNull(toParse, "String to parse cannot be null");
         Objects.requireNonNull(regExpr, "Regular expression cannot be null");
-        Matcher matcher = Pattern.compile(regExpr).matcher(toParse);
+        Pattern pattern = Pattern.compile(regExpr);
+        Matcher matcher = pattern.matcher(toParse);
         if (matcher.find()) {
             toParse = matcher.replaceFirst("");
         }
@@ -58,7 +61,7 @@ public class StringUtils {
 
     public static String cleanTextContent(String text) {
         Objects.requireNonNull(text, "Text cannot be null");
-        return text.replaceAll("[^\\x00-\\x7F]|[\\p{Cntrl}&&[^\r\n\t]]|\\p{C}", "").trim();
+        return CLEAN_TEXT_PATTERN.matcher(text).replaceAll("").trim();
     }
 
     public static String removeCountryAndDelimiter(String name, String delimiter) {
