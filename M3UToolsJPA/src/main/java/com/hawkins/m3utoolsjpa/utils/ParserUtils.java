@@ -10,13 +10,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.util.StopWatch;
 
+import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.parser.ParsingException;
@@ -36,6 +39,7 @@ public class ParserUtils {
 	 * @return Set of unique tvg-groups
 	 */
 
+	@TrackExecutionTime
 	public static Set<M3UGroup> extractUniqueTvgGroups(LinkedList<M3UItem> m3uItems) {
 		Set<M3UGroup> uniqueTvgGroups = new HashSet<>();
 
@@ -49,10 +53,10 @@ public class ParserUtils {
 			}
 		}
 
-		log.info("Number of unique tvg-groups: {}", uniqueTvgGroups.size());
 		return uniqueTvgGroups;
 	}
 
+	@TrackExecutionTime 
 	public static void loadM3UFileFromUrl(String fileUrl, String outputFileName) {
 		HttpURLConnection connection = null;
 		BufferedInputStream in = null;
@@ -87,6 +91,7 @@ public class ParserUtils {
 
 	}
 	
+	@TrackExecutionTime
 	public static LinkedList<M3UItem> parse() {
 
 		int lineNbr = 0;
@@ -94,36 +99,12 @@ public class ParserUtils {
 		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
 		DownloadProperties dp = DownloadProperties.getInstance();
 		String[] includedCountries = dp.getIncludedCountries();
+		File m3uFileOnDisk = new File(Constants.M3U_FILE);
 		
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 
-		boolean getRemoteM3U = false;
-
-		File m3uFileOnDisk = new File(Constants.M3U_FILE);
-
-		try {
-
-			getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
-
-		} catch (MalformedURLException e) {
-			throw new ParsingException(lineNbr, "Cannot open URL", e);
-		} catch (IOException e) {
-			log.info("File {} not found", m3uFileOnDisk.toString());
-			getRemoteM3U = true;
-		}
-
-		if (getRemoteM3U) {
-			
-			if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
-			
-			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
-			try {
-				FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());
-			} catch (IOException | InterruptedException e) {
-				log.info("Error in parse: " + e.getMessage());
-			}
-		}
+		FileUtilsForM3UToolsJPA.getM3UFile(m3uFileOnDisk);
 
 		try (var buffer = Files.newBufferedReader(m3uFileOnDisk.toPath())) {
 
@@ -221,19 +202,25 @@ public class ParserUtils {
         );
     }
 	
-	public static LinkedList	<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, List<M3UItem> m3uItems) {
-        LinkedList<M3UItem> filteredItems = new LinkedList<>();
-        for (M3UItem item : m3uItems) {
-            for (M3UGroup group : uniqueGroups) {
-                if (group.getName().equals(item.getGroupTitle())) {
-                	item.setGroupId(group.getId());
-                    filteredItems.add(item);
-                    break;
-                }
-            }
-        }
-        return filteredItems;
-    }
+	@TrackExecutionTime
+	public static LinkedList<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, List<M3UItem> m3uItems) {
+	    LinkedList<M3UItem> filteredItems = new LinkedList<>();
+	    Map<String, M3UGroup> groupMap = new HashMap<>();
+
+	    for (M3UGroup group : uniqueGroups) {
+	        groupMap.put(group.getName(), group);
+	    }
+
+	    for (M3UItem item : m3uItems) {
+	        M3UGroup group = groupMap.get(item.getGroupTitle());
+	        if (group != null) {
+	            item.setGroupId(group.getId());
+	            filteredItems.add(item);
+	        }
+	    }
+
+	    return filteredItems;
+	}
 	
 	public static boolean isIncludedCountry(String[] includedCountries, String country) {
 		for (String includedCountry : includedCountries) {

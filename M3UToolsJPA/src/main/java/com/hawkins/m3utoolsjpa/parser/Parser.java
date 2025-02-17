@@ -37,26 +37,7 @@ public class Parser {
         boolean getRemoteM3U = false;
         File m3uFileOnDisk = new File(Constants.M3U_FILE);
 
-        try {
-            getRemoteM3U = Utils.fileOlderThan(m3uFileOnDisk, dp.getFileAgeM3U());
-        } catch (MalformedURLException e) {
-            throw new ParsingException(lineNbr, "Cannot open URL", e);
-        } catch (IOException e) {
-            log.info("File {} not found", m3uFileOnDisk.toString());
-            getRemoteM3U = true;
-        }
-
-        if (getRemoteM3U) {
-            if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
-            log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
-            // Utils.copyUrlToFileUsingCommonsIO(dp.getStreamChannels(), m3uFileOnDisk.toString());
-            try {
-				FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());
-			} catch (IOException | InterruptedException e) {
-				// TODO Auto-generated catch block
-				log.info("Error in parse: "+e.getMessage());
-			}
-        }
+        FileUtilsForM3UToolsJPA.getM3UFile(m3uFileOnDisk);
 
         try (var buffer = Files.newBufferedReader(m3uFileOnDisk.toPath())) {
             String line = buffer.readLine();

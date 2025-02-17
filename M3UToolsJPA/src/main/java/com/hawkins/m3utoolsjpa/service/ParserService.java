@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
@@ -39,6 +40,7 @@ public class ParserService {
 	DownloadProperties dp = DownloadProperties.getInstance();
 	String[] includedCountries = dp.getIncludedCountries();
 	
+	@TrackExecutionTime
 	public LinkedList<M3UItem> parseM3UFile() {
 		log.info("Parsing M3U File");
 		
@@ -49,7 +51,7 @@ public class ParserService {
 		log.info("Number of unique tvg-groups: {}", uniqueGroups.size());
 		
 		databaseService.deleteItemsAndGroups();
-		groupRepository.saveAllAndFlush(uniqueGroups);
+		databaseService.groupsSaveAllAndFlush(uniqueGroups);
 		// uniqueGroups = ParserUtils.removeGroupsNotInIncludedCountries(uniqueGroups, includedCountries);
 		// log.info("Number of unique tvg-groups after removing groups not in includedCountries: {}", uniqueGroups.size());
 		
@@ -57,7 +59,7 @@ public class ParserService {
 		log.info("Number of M3UItems after filtering: {}", filteredItems.size());
 		
 		
-		itemRepository.saveAllAndFlush(filteredItems);
+		databaseService.itemsSaveAllAndFlush(filteredItems);
 		
 		return filteredItems;
 		

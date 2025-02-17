@@ -273,13 +273,11 @@ public class Utils {
     }
 
     public static String getURLFromName(String filmName, M3UItemRepository m3uItemRepository) {
-        List<M3UItem> filmList = m3uItemRepository.findByTvgName(filmName);
-        for (M3UItem m3uItem : filmList) {
-            if (m3uItem.getTvgName().equalsIgnoreCase(filmName)) {
-                return m3uItem.getChannelUri();
-            }
-        }
-        return null;
+        return m3uItemRepository.findByTvgName(filmName).stream()
+            .filter(m3uItem -> m3uItem.getTvgName().equalsIgnoreCase(filmName))
+            .map(M3UItem::getChannelUri)
+            .findFirst()
+            .orElse(null);
     }
 
     public static boolean fileOlderThan(File fileName, int ageInMinutes) throws IOException {
