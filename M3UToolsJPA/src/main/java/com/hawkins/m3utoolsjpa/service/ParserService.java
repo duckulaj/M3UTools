@@ -12,7 +12,6 @@ import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
-import com.hawkins.m3utoolsjpa.utils.ParserUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,17 +36,24 @@ public class ParserService {
 	@Autowired
 	DatabaseService databaseService;
 	
+	
+	@Autowired
+	ParserUtilsService parserUtilsService;
+	
 	DownloadProperties dp = DownloadProperties.getInstance();
 	String[] includedCountries = dp.getIncludedCountries();
+	
 	
 	@TrackExecutionTime
 	public LinkedList<M3UItem> parseM3UFile() {
 		log.info("Parsing M3U File");
 		
-		LinkedList<M3UItem> m3uItems = ParserUtils.parse();
+		
+		
+		LinkedList<M3UItem> m3uItems = parserUtilsService.parse();
 		log.info("Number of M3UItems: {}", m3uItems.size());
 		
-		Set<M3UGroup> uniqueGroups = ParserUtils.extractUniqueTvgGroups(m3uItems);
+		Set<M3UGroup> uniqueGroups = parserUtilsService.extractUniqueTvgGroups(m3uItems);
 		log.info("Number of unique tvg-groups: {}", uniqueGroups.size());
 		
 		databaseService.deleteItemsAndGroups();
@@ -55,7 +61,7 @@ public class ParserService {
 		// uniqueGroups = ParserUtils.removeGroupsNotInIncludedCountries(uniqueGroups, includedCountries);
 		// log.info("Number of unique tvg-groups after removing groups not in includedCountries: {}", uniqueGroups.size());
 		
-		LinkedList<M3UItem> filteredItems = ParserUtils.createM3UItemsListIfGroupExists(uniqueGroups, m3uItems);
+		LinkedList<M3UItem> filteredItems = parserUtilsService.createM3UItemsListIfGroupExists(uniqueGroups, m3uItems);
 		log.info("Number of M3UItems after filtering: {}", filteredItems.size());
 		
 		

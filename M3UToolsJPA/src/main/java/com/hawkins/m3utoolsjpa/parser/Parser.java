@@ -2,10 +2,10 @@ package com.hawkins.m3utoolsjpa.parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.util.LinkedList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
@@ -13,10 +13,9 @@ import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
+import com.hawkins.m3utoolsjpa.service.ParserUtilsService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.FileDownloader;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
-import com.hawkins.m3utoolsjpa.utils.ParserUtils;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -25,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Parser {
 
+	@Autowired
+	static ParserUtilsService pu;
+	
     public static LinkedList<M3UItem> parse() {
         StopWatch sw = new StopWatch();
         sw.start("parse");
@@ -89,7 +91,7 @@ public class Parser {
         if (tvgName == null || tvgName.startsWith("#####") || tvgName.isEmpty()) return null;
 
         String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
-        if (groupTitle == null || !ParserUtils.isIncludedCountry(includedCountries, groupTitle)) return null;
+        if (groupTitle == null || !pu.isIncludedCountry(includedCountries, groupTitle)) return null;
 
         tvgName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr()));
         String channelName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX), dp.getCountryRegExpr()));

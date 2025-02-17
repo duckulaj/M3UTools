@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.FilterRepository;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
@@ -303,6 +304,7 @@ public class M3UService {
 
 	}
 
+	@TrackExecutionTime
 	public void writeTvChannelsM3U() {
 
 		String outputFile = "./M3UToolsJPA.m3u";

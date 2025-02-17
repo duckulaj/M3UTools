@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
@@ -35,6 +36,7 @@ public class CompletableFutureService {
 	@Autowired
 	ParserService parserService;
 
+	@TrackExecutionTime
 	public void writeEPG() {
 
 		CompletableFuture<List<M3UItem>> m3UItems = CompletableFuture.supplyAsync(() -> 

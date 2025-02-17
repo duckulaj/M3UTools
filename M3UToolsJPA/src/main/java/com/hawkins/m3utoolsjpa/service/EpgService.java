@@ -26,6 +26,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.emby.EmbyApi;
@@ -54,6 +55,7 @@ public class EpgService {
 
 	private DownloadProperties dp = DownloadProperties.getInstance();
 
+	@TrackExecutionTime
 	public void readEPG() {
 		log.info("readEPG started at {}", Utils.printNow());
 
@@ -122,7 +124,7 @@ public class EpgService {
 	}
 
 
-
+	@TrackExecutionTime
 	public XmltvDoc getXmlTvDoc() {
 
 		// Make the call to this a CompletableFuture

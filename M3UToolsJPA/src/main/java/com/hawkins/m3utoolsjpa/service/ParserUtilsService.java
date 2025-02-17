@@ -1,11 +1,10 @@
-package com.hawkins.m3utoolsjpa.utils;
+package com.hawkins.m3utoolsjpa.service;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
@@ -27,11 +27,16 @@ import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
+import com.hawkins.m3utoolsjpa.utils.Constants;
+import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
+import com.hawkins.m3utoolsjpa.utils.StringUtils;
+import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ParserUtils {
+@Service	
+public class ParserUtilsService {
 
 	/**
 	 * Extract unique tvg-groups from the parsed M3U file
@@ -40,7 +45,7 @@ public class ParserUtils {
 	 */
 
 	@TrackExecutionTime
-	public static Set<M3UGroup> extractUniqueTvgGroups(LinkedList<M3UItem> m3uItems) {
+	public Set<M3UGroup> extractUniqueTvgGroups(LinkedList<M3UItem> m3uItems) {
 		Set<M3UGroup> uniqueTvgGroups = new HashSet<>();
 
 		for (M3UItem item : m3uItems) {
@@ -57,7 +62,7 @@ public class ParserUtils {
 	}
 
 	@TrackExecutionTime 
-	public static void loadM3UFileFromUrl(String fileUrl, String outputFileName) {
+	public void loadM3UFileFromUrl(String fileUrl, String outputFileName) {
 		HttpURLConnection connection = null;
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
@@ -92,7 +97,7 @@ public class ParserUtils {
 	}
 	
 	@TrackExecutionTime
-	public static LinkedList<M3UItem> parse() {
+	public LinkedList<M3UItem> parse() {
 
 		int lineNbr = 0;
 		String line;
@@ -160,7 +165,7 @@ public class ParserUtils {
 	/*
 	 * If the m3uFile exists determine that the start of the file as #EXTM3U
 	 */
-	private static void checkStart(String line) {
+	private void checkStart(String line) {
 		if (line != null) {
 			if (!line.contains(Patterns.M3U_START_MARKER)) {
 				throw new ParsingException(1, "First line of the file should be " + Patterns.M3U_START_MARKER);
@@ -168,18 +173,18 @@ public class ParserUtils {
 		}
 	}
 
-	private static boolean isExtInfo(String line) {
+	private boolean isExtInfo(String line) {
 		return line.contains(Patterns.M3U_INFO_MARKER);
 	}
 
-	private static M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
+	private M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
         DownloadProperties dp = DownloadProperties.getInstance();
 
         String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
         if (tvgName == null || tvgName.startsWith("#####") || tvgName.isEmpty()) return null;
 
         String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
-        if (groupTitle == null || !ParserUtils.isIncludedCountry(includedCountries, groupTitle)) return null;
+        if (groupTitle == null || !isIncludedCountry(includedCountries, groupTitle)) return null;
 
         tvgName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr()));
         String channelName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX), dp.getCountryRegExpr()));
@@ -203,7 +208,7 @@ public class ParserUtils {
     }
 	
 	@TrackExecutionTime
-	public static LinkedList<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, List<M3UItem> m3uItems) {
+	public LinkedList<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, List<M3UItem> m3uItems) {
 	    LinkedList<M3UItem> filteredItems = new LinkedList<>();
 	    Map<String, M3UGroup> groupMap = new HashMap<>();
 
@@ -222,7 +227,7 @@ public class ParserUtils {
 	    return filteredItems;
 	}
 	
-	public static boolean isIncludedCountry(String[] includedCountries, String country) {
+	public boolean isIncludedCountry(String[] includedCountries, String country) {
 		for (String includedCountry : includedCountries) {
 			if (country.startsWith(includedCountry)) {
 				return true;
@@ -230,6 +235,5 @@ public class ParserUtils {
 		}
 		return false;
 	}
+
 }
-
-
