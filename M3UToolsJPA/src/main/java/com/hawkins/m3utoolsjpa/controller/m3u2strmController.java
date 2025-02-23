@@ -6,6 +6,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.service.M3UtoStrmService;
 
@@ -21,6 +22,7 @@ public class m3u2strmController {
 	@Autowired
 	M3UtoStrmService m3UtoStrm;
 	
+	@TrackExecutionTime
 	@GetMapping("/convertToStream") 
 	public ModelAndView convertM3UtoStream(ModelMap model) {
 		
