@@ -1,6 +1,5 @@
 package com.hawkins.m3utoolsjpa.service;
 
-import java.util.LinkedList;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +34,7 @@ public class ParserService {
 	
 	@Autowired
 	DatabaseService databaseService;
-	
-	
+		
 	@Autowired
 	ParserUtilsService parserUtilsService;
 	
@@ -45,12 +43,12 @@ public class ParserService {
 	
 	
 	@TrackExecutionTime
-	public LinkedList<M3UItem> parseM3UFile() {
+	public Set<M3UItem> parseM3UFile() {
 		log.info("Parsing M3U File");
 		
 		
 		
-		LinkedList<M3UItem> m3uItems = parserUtilsService.parse();
+		Set<M3UItem> m3uItems = parserUtilsService.parse();
 		log.info("Number of M3UItems: {}", m3uItems.size());
 		
 		Set<M3UGroup> uniqueGroups = parserUtilsService.extractUniqueTvgGroups(m3uItems);
@@ -61,14 +59,15 @@ public class ParserService {
 		// uniqueGroups = ParserUtils.removeGroupsNotInIncludedCountries(uniqueGroups, includedCountries);
 		// log.info("Number of unique tvg-groups after removing groups not in includedCountries: {}", uniqueGroups.size());
 		
-		LinkedList<M3UItem> filteredItems = parserUtilsService.createM3UItemsListIfGroupExists(uniqueGroups, m3uItems);
+		Set<M3UItem> filteredItems = parserUtilsService.createM3UItemsListIfGroupExists(uniqueGroups, m3uItems);
 		log.info("Number of M3UItems after filtering: {}", filteredItems.size());
 		
 		
 		databaseService.itemsSaveAllAndFlush(filteredItems);
 		
-		return filteredItems;
 		
+		return filteredItems;
+				
 	}
 	
 		

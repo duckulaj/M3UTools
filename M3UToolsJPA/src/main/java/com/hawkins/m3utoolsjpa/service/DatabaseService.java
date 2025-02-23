@@ -53,23 +53,9 @@ public class DatabaseService {
 	}
 	
 	@TrackExecutionTime
-	public void itemsSaveAllAndFlush(LinkedList<M3UItem> filteredItems) {
-	    int parallelism = Runtime.getRuntime().availableProcessors();
-	    try (ForkJoinPool customThreadPool = new ForkJoinPool(parallelism)) {
-			try {
-			    customThreadPool.submit(() -> 
-			        filteredItems.parallelStream()
-			                     .collect(Collectors.groupingByConcurrent(item -> filteredItems.indexOf(item) / 1000))
-			                     .values()
-			                     .parallelStream()
-			                     .forEach(batch -> itemRepository.saveAllAndFlush(batch))
-			    ).get();
-			} catch (Exception e) {
-			    e.printStackTrace();
-			} finally {
-			    customThreadPool.shutdown();
-			}
-		}
+	@Transactional
+	public void itemsSaveAllAndFlush(Set<M3UItem> filteredItems) {
+	    itemRepository.saveAllAndFlush(filteredItems);
 	}
 
 }

@@ -17,11 +17,14 @@ public class ExecutionTimeAdvice {
 
     @Around("@annotation(com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime)")
     public Object executionTime(ProceedingJoinPoint point) throws Throwable {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         Object object = point.proceed();
-        long endtime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
 
-        log.info("Class Name: " + point.getSignature().getDeclaringTypeName() + ". Method Name: " + point.getSignature().getName() + ". Time taken for Execution is : " + (endtime - startTime) + "ms");
+        log.info(String.format("Class Name: %s. Method Name: %s. Time taken for Execution is : %d ms",
+                point.getSignature().getDeclaringTypeName(),
+                point.getSignature().getName(),
+                (endTime - startTime) / 1_000_000));
         return object;
     }
 }

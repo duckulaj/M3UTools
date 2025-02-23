@@ -11,8 +11,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,7 +43,7 @@ public class ParserUtilsService {
 	 */
 
 	@TrackExecutionTime
-	public Set<M3UGroup> extractUniqueTvgGroups(LinkedList<M3UItem> m3uItems) {
+	public Set<M3UGroup> extractUniqueTvgGroups(Set<M3UItem> m3uItems) {
 		Set<M3UGroup> uniqueTvgGroups = new HashSet<>();
 
 		for (M3UItem item : m3uItems) {
@@ -97,11 +95,11 @@ public class ParserUtilsService {
 	}
 	
 	@TrackExecutionTime
-	public LinkedList<M3UItem> parse() {
+	public Set<M3UItem> parse() {
 
 		int lineNbr = 0;
 		String line;
-		LinkedList<M3UItem> entries = new LinkedList<M3UItem>();
+		Set<M3UItem> entries = new HashSet<>();
 		DownloadProperties dp = DownloadProperties.getInstance();
 		String[] includedCountries = dp.getIncludedCountries();
 		File m3uFileOnDisk = new File(Constants.M3U_FILE);
@@ -208,8 +206,8 @@ public class ParserUtilsService {
     }
 	
 	@TrackExecutionTime
-	public LinkedList<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, List<M3UItem> m3uItems) {
-	    LinkedList<M3UItem> filteredItems = new LinkedList<>();
+	public Set<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, Set<M3UItem> m3uItems) {
+	    Set<M3UItem> filteredItems = new HashSet<>();
 	    Map<String, M3UGroup> groupMap = new HashMap<>();
 
 	    for (M3UGroup group : uniqueGroups) {
