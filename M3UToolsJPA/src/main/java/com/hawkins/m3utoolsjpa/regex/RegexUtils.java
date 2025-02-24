@@ -8,26 +8,25 @@ public class RegexUtils {
 
     private static final Pattern COUNTRY_IDENTIFIER_PATTERN = Pattern.compile("^(%s)");
 
-    public static boolean containsRegex(String stringToTest, Pattern pattern) {
-        Matcher matcher = pattern.matcher(stringToTest);
-        return matcher.matches();
+    public static boolean matchesPattern(String input, Pattern pattern) {
+        return pattern.matcher(input).matches();
     }
 
-    public static String removeCountryIdentifier(String stringToParse, String[] charactersToMatch) {
-        String regexPattern = String.join("|", charactersToMatch);
+    public static String removeCountryIdentifier(String input, String[] identifiers) {
+        String regexPattern = String.join("|", identifiers);
         Pattern pattern = Pattern.compile(String.format(COUNTRY_IDENTIFIER_PATTERN.pattern(), regexPattern));
-        Matcher matcher = pattern.matcher(stringToParse);
+        Matcher matcher = pattern.matcher(input);
 
         if (matcher.find()) {
-            stringToParse = stringToParse.substring(matcher.end()).trim();
+            input = input.substring(matcher.end()).trim();
         }
 
-        return stringToParse;
+        return input;
     }
 
-    public static boolean containsCountryIdentifier(String stringToParse, String[] charactersToMatch) {
-        String regexPattern = String.join("|", charactersToMatch);
+    public static boolean containsCountryIdentifier(String input, String[] identifiers) {
+        String regexPattern = String.join("|", identifiers);
         Pattern pattern = Pattern.compile(String.format(COUNTRY_IDENTIFIER_PATTERN.pattern(), regexPattern));
-        return pattern.matcher(stringToParse).find();
+        return pattern.matcher(input).find();
     }
 }

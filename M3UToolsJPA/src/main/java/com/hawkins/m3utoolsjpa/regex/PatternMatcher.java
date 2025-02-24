@@ -1,3 +1,4 @@
+
 package com.hawkins.m3utoolsjpa.regex;
 
 import java.util.regex.Matcher;
@@ -5,38 +6,32 @@ import java.util.regex.Pattern;
 
 public class PatternMatcher implements Runnable {
 
-	private static PatternMatcher thisInstance = null;
-	private static Matcher matcher = null;
-	
-	public PatternMatcher( ) {
+    private static class SingletonHelper {
+        private static final PatternMatcher INSTANCE = new PatternMatcher();
+    }
 
-		Pattern defaultPattern = Pattern.compile("");
-		matcher = defaultPattern.matcher("");
-		
-	}
-	
-	public static synchronized PatternMatcher getInstance()
-	{
-		if (PatternMatcher.thisInstance == null)
-		{
-			PatternMatcher.thisInstance = new PatternMatcher();
-		}
+    private static final ThreadLocal<Matcher> threadLocalMatcher = ThreadLocal.withInitial(() -> Pattern.compile("").matcher(""));
 
-		return PatternMatcher.thisInstance;
-	}
-	
-	public String extract(String line, Pattern pattern) {
-		
-		matcher.reset();
-		matcher = pattern.matcher(line);
-		if (matcher.matches()) {
-			return matcher.group(1);
-		}
-		return null;
-	}
-		
-	@Override
-	public void run() {
-		throw new UnsupportedOperationException();
-	}
+    private PatternMatcher() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static PatternMatcher getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
+
+    public String extract(String line, Pattern pattern) {
+        Matcher matcher = threadLocalMatcher.get();
+        matcher.reset(line);
+        matcher.usePattern(pattern);
+        if (matcher.matches()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException();
+    }
 }
