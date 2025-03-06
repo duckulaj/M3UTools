@@ -21,7 +21,7 @@ public class MovieDb implements Runnable {
 	
 	public MovieDb() {
 		
-		Properties props = Utils.readProperties(Constants.CONFIGPROPERTIES);
+		Properties props = Utils.readProperties();
 		
 		this.setApi(props.getProperty("moviedb.apikey"));
 		this.setUrl(props.getProperty("moviedb.searchURL"));

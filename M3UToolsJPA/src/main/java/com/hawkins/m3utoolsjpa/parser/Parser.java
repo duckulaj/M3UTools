@@ -36,7 +36,6 @@ public class Parser {
         DownloadProperties dp = DownloadProperties.getInstance();
         String[] includedCountries = dp.getIncludedCountries();
 
-        boolean getRemoteM3U = false;
         File m3uFileOnDisk = new File(Constants.M3U_FILE);
 
         FileUtilsForM3UToolsJPA.getM3UFile(m3uFileOnDisk);

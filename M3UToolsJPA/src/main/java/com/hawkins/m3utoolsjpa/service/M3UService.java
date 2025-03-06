@@ -1,6 +1,7 @@
 package com.hawkins.m3utoolsjpa.service;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -78,7 +79,9 @@ public class M3UService {
 
 	@Autowired
 	CompletableFutureService completableFutureService;
-
+	
+	private static DownloadProperties downloadProperties = DownloadProperties.getInstance();
+	
 	public void resetDatabase() throws M3UItemsNotFoundException {
 
 		StopWatch sw = new org.springframework.util.StopWatch();
@@ -172,10 +175,11 @@ public class M3UService {
 
 		SortedProperties sortedProperties = new SortedProperties();
 		OrderedProperties properties = new OrderedProperties();
+		File propertyFile = Utils.getPropertyFile();
 		try {
-			properties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
+			properties.load(new FileReader(propertyFile));
 			properties = OrderedProperties.copyOf(properties);
-			sortedProperties.load(new FileReader(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
+			sortedProperties.load(new FileReader(propertyFile));
 		} catch (IOException ioe) {
 			log.info("IOException occurred - {}", ioe.getMessage());
 		}
@@ -188,7 +192,7 @@ public class M3UService {
 
 		OrderedProperties properties = new OrderedProperties();
 		try {
-			properties.loadFromXML(new FileInputStream(Utils.getPropertyFile(Constants.CONFIGPROPERTIES)));
+			properties.loadFromXML(new FileInputStream(new File(downloadProperties.getPropertiesFile())));
 			properties = OrderedProperties.copyOf(properties);
 		} catch (IOException ioe) {
 			log.info("IOException occurred - {}", ioe.getMessage());
@@ -252,7 +256,8 @@ public class M3UService {
 
 	public static String getConfigFileName() {
 
-		return Utils.getPropertyFile(Constants.CONFIGPROPERTIES).getAbsolutePath();
+		return new File(DownloadProperties.getInstance().getFileName()).getAbsolutePath();
+		
 
 	}
 

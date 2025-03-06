@@ -47,10 +47,11 @@ public class DownloadProperties implements Runnable {
 	private String[] includedCountries = null;
 	private int bufferSize = 0;
 	private String CountryRegExpr = null;
+	private String propertiesFile = null;
 
 	public DownloadProperties() {
 
-		this.props = Utils.readProperties(Constants.CONFIGPROPERTIES);
+		this.props = Utils.readProperties();
 
 		// this.setChannels(props.getProperty("channels"));
 
@@ -84,6 +85,7 @@ public class DownloadProperties implements Runnable {
 		this.setIncludedCountries(props.getProperty("includedCountries").split(","));
 		this.setBufferSize(Integer.valueOf(props.getProperty("download.buffersize")));
 		this.setCountryRegExpr(props.getProperty("country.regExpr"));
+		this.setPropertiesFile(new File(Constants.CONFIGPROPERTIES).getAbsolutePath());
 	}
 
 	
@@ -102,8 +104,8 @@ public class DownloadProperties implements Runnable {
 	public DownloadProperties updateProperty(ConfigProperty configProperty) {
 
 		try {
-			Path sourceFile = Utils.getPropertyFile(Constants.CONFIGPROPERTIES).toPath();
-			Path targetFile = Utils.getPropertyFile(Constants.CONFIGPROPERTIES_BU).toPath();
+			Path sourceFile = Utils.getPropertyFile().toPath();
+			Path targetFile = new File(Constants.CONFIGPROPERTIES_BU).toPath();
 
 			Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
 
@@ -342,6 +344,16 @@ public class DownloadProperties implements Runnable {
 
 	public void setCountryRegExpr(String countryRegExpr) {
 		CountryRegExpr = countryRegExpr;
+	}
+
+
+	public String getPropertiesFile() {
+		return propertiesFile;
+	}
+
+
+	public void setPropertiesFile(String propertiesFile) {
+		this.propertiesFile = propertiesFile;
 	}
 
 

@@ -27,6 +27,7 @@ public class DuplicateService {
                         .filter(pair -> {
                             String tvgName1 = pair[0].getTvgName();
                             String tvgName2 = pair[1].getTvgName();
+                            log.info("Comparing {} and {}", tvgName1, tvgName2);
                             return tvgName1 != null && tvgName2 != null && similarity.apply(tvgName1, tvgName2) >= threshold;
                         }))
                 .collect(Collectors.toList());

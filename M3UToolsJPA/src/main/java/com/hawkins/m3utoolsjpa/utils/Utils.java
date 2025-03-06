@@ -46,8 +46,8 @@ public class Utils {
 
     private static DownloadProperties dp = DownloadProperties.getInstance();
 
-    public static File getPropertyFile(String propertyType) {
-        File configFile = new File(FileUtilsForM3UToolsJPA.getCurrentWorkingDirectory() + propertyType);
+    public static File getPropertyFile() {
+        File configFile = new File(FileUtilsForM3UToolsJPA.getCurrentWorkingDirectory() + Constants.CONFIGPROPERTIES);
         log.info("Reading properties from {}", configFile.getAbsolutePath());
 
         if (!configFile.exists() && log.isDebugEnabled()) {
@@ -57,17 +57,13 @@ public class Utils {
         return configFile;
     }
 
-    public static Properties readProperties(String propertyType) {
+    public static Properties readProperties() {
         long start = System.currentTimeMillis();
         Properties props = new Properties();
 
-        try (FileInputStream fis = new FileInputStream(getPropertyFile(propertyType))) {
-            if (propertyType.equals(Constants.DMPROPERTIES)) {
-                props.load(fis);
-            } else {
-                props.loadFromXML(fis);
-            }
-            props.putIfAbsent("fileName", getPropertyFile(propertyType).getPath());
+        try (FileInputStream fis = new FileInputStream(getPropertyFile())) {
+            props.loadFromXML(fis);
+            props.putIfAbsent("fileName", new File(Constants.CONFIGPROPERTIES).getPath());
         } catch (FileNotFoundException fnfe) {
             log.debug(fnfe.toString());
         } catch (IOException ioe) {
@@ -82,7 +78,7 @@ public class Utils {
     }
 
     public static Properties saveProperties(ConfigProperty configProperty) {
-        try (OutputStream output = new FileOutputStream(Utils.getPropertyFile(Constants.CONFIGPROPERTIES))) {
+        try (OutputStream output = new FileOutputStream(Utils.getPropertyFile())) {
             Properties props = DownloadProperties.getInstance().getProps();
             props.forEach((key, value) -> {
                 if (key.equals(configProperty.getKey())) {
@@ -95,7 +91,7 @@ public class Utils {
                 log.debug(io.getMessage());
             }
         }
-        return readProperties(Constants.CONFIGPROPERTIES);
+        return readProperties();
     }
 
     public static void copyUrlToFile(String url, String fileName) {
