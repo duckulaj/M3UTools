@@ -26,7 +26,7 @@ public class WebAppSecurityConfig {
         http
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
+                    .requestMatchers("/webjars/**", "/css/**", "/js/**", "/style/**").permitAll()
                     .anyRequest().authenticated()
                     
             )
