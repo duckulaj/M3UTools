@@ -19,31 +19,20 @@ public class JsonToList {
 
     public static List<M3UItem> convertJsonToList(JsonObject jsonObj, M3UItemRepository itemRepository, String searchType) {
         List<M3UItem> foundItems = new ArrayList<>();
-        LinkedList<String> m3uitems = new LinkedList<>();
+        LinkedList<String> searchItems = new LinkedList<>();
 
         if (!jsonObj.isJsonNull()) {
             JsonArray results = jsonObj.getAsJsonArray("results");
 
             for (JsonElement resultElement : results) {
                 JsonObject result = resultElement.getAsJsonObject();
-
-                switch (searchType) {
-                    case Constants.ACTOR_SEARCH:
-                        processActorSearch(result, m3uitems);
-                        break;
-                    case Constants.YEAR_SEARCH:
-                    case Constants.GENRE_SEARCH:
-                        m3uitems.add(result.get("title").getAsString());
-                        break;
-                    default:
-                        break;
-                }
+                processSearchResult(result, searchType, searchItems);
             }
         }
 
-        if (!m3uitems.isEmpty()) {
-            for (String m3uItem : m3uitems) {
-                List<M3UItem> filmList = itemRepository.findByChannelName(Constants.MOVIE, "%" + m3uItem + "%");
+        if (!searchItems.isEmpty()) {
+            for (String searchItem : searchItems) {
+                List<M3UItem> filmList = itemRepository.findByChannelName(Constants.MOVIE, "%" + searchItem + "%");
                 for (M3UItem m3uItemFromDb : filmList) {
                     m3uItemFromDb.setSearch(Utils.normaliseSearch(m3uItemFromDb.getChannelName()));
                     foundItems.add(m3uItemFromDb);
@@ -55,7 +44,21 @@ public class JsonToList {
         return foundItems;
     }
 
-    private static void processActorSearch(JsonObject result, LinkedList<String> m3uitems) {
+    private static void processSearchResult(JsonObject result, String searchType, LinkedList<String> searchItems) {
+        switch (searchType) {
+            case Constants.ACTOR_SEARCH:
+                processActorSearch(result, searchItems);
+                break;
+            case Constants.YEAR_SEARCH:
+            case Constants.GENRE_SEARCH:
+                searchItems.add(result.get("title").getAsString());
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static void processActorSearch(JsonObject result, LinkedList<String> searchItems) {
         JsonElement knownForDepartment = result.getAsJsonPrimitive("known_for_department");
 
         if (knownForDepartment.getAsString().equalsIgnoreCase("Acting")) {
@@ -66,9 +69,9 @@ public class JsonToList {
                 String mediaType = movie.get("media_type").getAsString();
 
                 if (mediaType.equalsIgnoreCase("tv")) {
-                    m3uitems.add(movie.get("name").getAsString());
+                    searchItems.add(movie.get("name").getAsString());
                 } else if (mediaType.equalsIgnoreCase("movie")) {
-                    m3uitems.add(movie.get("title").getAsString());
+                    searchItems.add(movie.get("title").getAsString());
                 }
             }
         }

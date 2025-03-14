@@ -1,3 +1,4 @@
+
 package com.hawkins.m3utoolsjpa.search;
 
 import java.io.InputStreamReader;
@@ -19,38 +20,37 @@ import com.hawkins.m3utoolsjpa.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SearchByGenre implements Search {@Override
-	
-	public List<M3UItem> search(String genre, M3UItemRepository itemRepository) {
-		
-	MovieDb movieDb = MovieDb.getInstance();
-	String searchDiscoverURL = movieDb.getDiscoverURL();
-	String api = movieDb.getApi();
-	JsonObject obj = new JsonObject();
+public class SearchByGenre implements Search {
 
-	try {
+    @Override
+    public List<M3UItem> search(String genre, M3UItemRepository itemRepository) {
+        JsonObject jsonResponse = fetchGenreData(genre);
+        return JsonToList.convertJsonToList(jsonResponse, itemRepository, Constants.GENRE_SEARCH);
+    }
 
-		Map<String, String> parameters = new HashMap<>();
-		parameters.put("api_key", api);
-		parameters.put("with_genres", genre);
+    private JsonObject fetchGenreData(String genre) {
+        MovieDb movieDb = MovieDb.getInstance();
+        String searchDiscoverURL = movieDb.getDiscoverURL();
+        String apiKey = movieDb.getApi();
+        JsonObject jsonResponse = new JsonObject();
 
-		URL url = new URI(searchDiscoverURL + "?" + Utils.getParamsString(parameters)).toURL();
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod("GET");
-		con.setRequestProperty("Content-Type", "application/json");
+        try {
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("api_key", apiKey);
+            parameters.put("with_genres", genre);
 
-		JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
-				new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+            URL url = new URI(searchDiscoverURL + "?" + Utils.getParamsString(parameters)).toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Content-Type", "application/json");
 
-		obj = jsonObject;
+            jsonResponse = JsonParser.parseReader(
+                new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
 
-	} catch (Exception e) {
-		log.info(e.getMessage());
-	}
+        } catch (Exception e) {
+            log.error("Error fetching genre data: {}", e.getMessage());
+        }
 
-	return JsonToList.convertJsonToList(obj, itemRepository, Constants.GENRE_SEARCH);
-
-	}
-	
-
+        return jsonResponse;
+    }
 }

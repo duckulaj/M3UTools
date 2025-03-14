@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Items</title>
+</head>
+<body>
+    <div th:fragment="itemsTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.tvgId}">ID</td>
+                    <td th:text="${item.tvgName}">Name</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

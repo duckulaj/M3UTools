@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>M3U Groups</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+</head>
+<body>
+    <h1>Select M3U Group</h1>
+    <select id="groupSelect" hx-get="/m3uitems" hx-target="#itemsTable" hx-swap="outerHTML" hx-trigger="change" name="groupId">
+        <option value="">Select a group</option>
+        <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}"></option>
+    </select>
+
+    <h2>Group Items</h2>
+    <div id="itemsTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Item URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Items will be populated here -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

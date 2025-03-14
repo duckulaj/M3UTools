@@ -2,7 +2,6 @@ package com.hawkins.m3utoolsjpa.search;
 
 import java.util.Properties;
 
-import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;

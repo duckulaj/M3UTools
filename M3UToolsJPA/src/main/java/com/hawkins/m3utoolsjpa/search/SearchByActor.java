@@ -1,3 +1,4 @@
+
 package com.hawkins.m3utoolsjpa.search;
 
 import java.io.InputStreamReader;
@@ -21,35 +22,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SearchByActor implements Search {
 
-	@Override
-	public List<M3UItem> search(String actor, M3UItemRepository itemRepository) {
+    @Override
+    public List<M3UItem> search(String actor, M3UItemRepository itemRepository) {
+        JsonObject jsonResponse = fetchActorData(actor);
+        return JsonToList.convertJsonToList(jsonResponse, itemRepository, Constants.ACTOR_SEARCH);
+    }
 
-		MovieDb movieDb = MovieDb.getInstance();
-		String searchPersonURL = movieDb.getPersonURL();
-		String api = movieDb.getApi();
-		JsonObject obj = new JsonObject();
+    private JsonObject fetchActorData(String actor) {
+        MovieDb movieDb = MovieDb.getInstance();
+        String searchPersonURL = movieDb.getPersonURL();
+        String apiKey = movieDb.getApi();
+        JsonObject jsonResponse = new JsonObject();
 
-		try {
+        try {
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("api_key", apiKey);
+            parameters.put("query", actor);
 
-			Map<String, String> parameters = new HashMap<>();
-			parameters.put("api_key", api);
-			parameters.put("query", actor);
+            URL url = new URI(searchPersonURL + "?" + Utils.getParamsString(parameters)).toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Content-Type", "application/json");
 
-			URL url = new URI(searchPersonURL + "?" + Utils.getParamsString(parameters)).toURL();
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.setRequestProperty("Content-Type", "application/json");
+            jsonResponse = JsonParser.parseReader(
+                new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
 
-			JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
-					new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            log.error("Error fetching actor data: {}", e.getMessage());
+        }
 
-			obj = jsonObject;
-
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
-
-		return JsonToList.convertJsonToList(obj, itemRepository, Constants.ACTOR_SEARCH);
-	}
-
+        return jsonResponse;
+    }
 }

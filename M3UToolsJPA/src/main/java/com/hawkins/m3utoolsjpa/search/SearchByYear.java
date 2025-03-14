@@ -1,3 +1,4 @@
+
 package com.hawkins.m3utoolsjpa.search;
 
 import java.io.InputStreamReader;
@@ -21,40 +22,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SearchByYear implements Search {
 
-	@Override
-	public List<M3UItem> search(String year, M3UItemRepository itemRepository) {
+    @Override
+    public List<M3UItem> search(String year, M3UItemRepository itemRepository) {
+        JsonObject jsonResponse = fetchYearData(year);
+        return JsonToList.convertJsonToList(jsonResponse, itemRepository, Constants.YEAR_SEARCH);
+    }
 
-		MovieDb movieDb = MovieDb.getInstance();
-		String discoverURL = movieDb.getDiscoverURL();
-		String api = movieDb.getApi();
-		JsonObject obj = new JsonObject();
+    private JsonObject fetchYearData(String year) {
+        MovieDb movieDb = MovieDb.getInstance();
+        JsonObject jsonResponse = new JsonObject();
 
-		try {
+        try {
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("api_key", movieDb.getApi());
+            parameters.put("language", "en-GB");
+            parameters.put("region", "GB");
+            parameters.put("primary_release_year", year);
 
-			Map<String, String> parameters = new HashMap<>();
-			parameters.put("api_key", api);
-			parameters.put("language", "en-GB");
-			parameters.put("region", "GB");
-			parameters.put("primary_release_year", year);
-			// parameters.put("release_date.gte", year + "-01-01");
-			// parameters.put("release_date.lte", year + "-12-31");
+            URL url = new URI(movieDb.getDiscoverURL() + "?" + Utils.getParamsString(parameters)).toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Content-Type", "application/json");
 
-			URL url = new URI(discoverURL + "?" + Utils.getParamsString(parameters)).toURL();
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.setRequestProperty("Content-Type", "application/json");
+            jsonResponse = JsonParser.parseReader(
+                new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
 
-			JsonObject jsonObject = (JsonObject)JsonParser.parseReader(
-					new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            log.error("Error fetching year data: {}", e.getMessage());
+        }
 
-			obj = jsonObject;
-
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
-
-		return JsonToList.convertJsonToList(obj, itemRepository, Constants.YEAR_SEARCH);
-
-	}
-
+        return jsonResponse;
+    }
 }

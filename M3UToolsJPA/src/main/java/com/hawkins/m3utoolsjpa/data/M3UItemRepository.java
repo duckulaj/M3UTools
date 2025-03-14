@@ -51,6 +51,8 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
     Page<M3UItem> findByGroupTitle(String groupTitle, Pageable pageable);
 
     Page<M3UItem> findByGroupId(Long groupId, Pageable pageable);
+    
+    List<M3UItem> findByGroupId(Long tvgId);
 
     @Transactional(readOnly = true)
     @Query(FIND_BY_TYPE_AND_CHANNEL_NAME)

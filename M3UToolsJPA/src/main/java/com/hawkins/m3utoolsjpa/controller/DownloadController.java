@@ -43,15 +43,12 @@ public class DownloadController {
         Long contentSize = 0L;
         URL url = null;
         try {
-            log.info("downloadName is {}", downloadName);
+            log.info("Processing download for {}", downloadName);
             String storedUrl = Utils.getURLFromName(downloadName, itemRepository);
-            log.info("StoredUrl is {}", storedUrl);
             url = new URI(storedUrl).toURL();
-
-            log.info("Downloading {}", downloadName);
             contentSize = NetUtils.getContentSizeFromUrl(url);
         } catch (MalformedURLException | URISyntaxException | NullPointerException e) {
-            log.error("Error occurred while processing the URL: ", e);
+            log.error("Error processing URL for {}: ", downloadName, e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid URL");
             return;
         }
@@ -72,7 +69,7 @@ public class DownloadController {
                 bos.write(buffer, 0, bytesRead);
             }
         } catch (IOException e) {
-            log.error("Error occurred while downloading the file: ", e);
+            log.error("Error downloading file for {}: ", downloadName, e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error downloading file");
         }
     }
