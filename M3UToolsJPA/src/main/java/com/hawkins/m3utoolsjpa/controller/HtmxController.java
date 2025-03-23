@@ -1,6 +1,8 @@
 package com.hawkins.m3utoolsjpa.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.data.SelectedChannel;
 import com.hawkins.m3utoolsjpa.data.SelectedChannelsCreationDto;
-import com.hawkins.m3utoolsjpa.service.EpgService;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.service.SelectedChannelService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
@@ -39,10 +40,7 @@ public class HtmxController {
     @Autowired
     private M3UService m3uService;
     
-    @Autowired
-    private EpgService epgService;
-
-    
+   
 	@GetMapping("/m3ugroups")
 	public String getM3UGroups(Model model) {
 		List<M3UGroup> groups = m3uGroupRepository.findAll();
@@ -69,6 +67,8 @@ public class HtmxController {
 		channelsService.find(groupId)
 		.iterator()
 		.forEachRemaining(channels::add);
+		
+		Collections.sort(channels, Comparator.comparing(SelectedChannel::getTvgName));
 
 		model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
 		model.addAttribute("groupId", groupId);
@@ -86,6 +86,8 @@ public class HtmxController {
         channelsService.find(true)
             .iterator()
             .forEachRemaining(channels::add);
+        
+        Collections.sort(channels, Comparator.comparing(SelectedChannel::getTvgName));
 
         model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
         model.addAttribute("groups", m3uService.getM3UGroups());

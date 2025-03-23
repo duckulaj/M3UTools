@@ -50,7 +50,7 @@ public class M3UController {
         model.addAttribute("groups", m3uService.getM3UGroups());
         model.addAttribute("items", new ArrayList<M3UItem>());
         model.addAttribute("name", "");
-        model.addAttribute(Constants.SELECTEDGROUP, new M3UGroupSelected());
+        model.addAttribute(Constants.SELECTEDGROUP, new M3UGroupSelected(null, null, null));
         return new ModelAndView("forward:/", model);
     }
 

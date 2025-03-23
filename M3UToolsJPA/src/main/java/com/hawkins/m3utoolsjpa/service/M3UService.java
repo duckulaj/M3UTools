@@ -82,10 +82,8 @@ public class M3UService {
 	
 	private static DownloadProperties downloadProperties = DownloadProperties.getInstance();
 	
+	@TrackExecutionTime
 	public void resetDatabase() throws M3UItemsNotFoundException {
-
-		StopWatch sw = new org.springframework.util.StopWatch();
-		sw.start();
 
 		completableFutureService.reloadDatabase();
 
@@ -116,9 +114,7 @@ public class M3UService {
 			log.debug("Saving {} selected items", selectedItems.size());
 			itemRepository.saveAll(selectedItems);
 		}
-		sw.stop();
-
-		log.info("Total time in milliseconds for all tasks : " + sw.getTotalTimeMillis());
+		
 		log.info("resetDatabase completed");
 
 		writeTvChannelsM3U();
@@ -250,7 +246,7 @@ public class M3UService {
 			return selectedGroup; 
 		}
 
-		return new M3UGroupSelected();
+		return new M3UGroupSelected(null, null, null);
 
 	}
 

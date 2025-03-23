@@ -1,6 +1,8 @@
 package com.hawkins.m3utoolsjpa.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,8 @@ public class MultipleChannelsController {
             .iterator()
             .forEachRemaining(channels::add);
 
+        Collections.sort(channels, Comparator.comparing(SelectedChannel::getTvgName));
+        
         model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
         model.addAttribute("groupId", groupId);
         // model.addAttribute("groups", m3uService.getM3UGroups());
@@ -68,6 +72,8 @@ public class MultipleChannelsController {
             .iterator()
             .forEachRemaining(channels::add);
 
+        Collections.sort(channels, Comparator.comparing(SelectedChannel::getTvgName));
+        
         model.addAttribute(Constants.SELECTEDGROUP, m3uService.getSelectedGroup(groupId));
         model.addAttribute("groups", m3uService.getM3UGroups());
         model.addAttribute("groupId", groupId);
