@@ -43,10 +43,10 @@ public class VideoController {
 
 	@Autowired
 	M3UItemRepository m3uItemRepository;
-	
+
 	@Autowired
 	StreamingService service;
-	
+
 	private static DownloadProperties dp = DownloadProperties.getInstance();
 
 	@GetMapping(value ="stream", params = { "streamName" })
@@ -73,128 +73,41 @@ public class VideoController {
 	}
 
 
+
 	@GetMapping(value = "media")
 	@ResponseBody
 	public final ResponseEntity<InputStreamResource> retrieveResource(@RequestParam String streamUrl, @RequestHeader HttpHeaders headers) throws Exception {
+		List<HttpRange> rangeList = headers.getRange();
+		long contentLength = NetUtils.getContentSizeFromUrl(streamUrl);
+		int bufferSize = 1024 * 1024; // 1 MB buffer size
 
-		// HttpHeaders headers = new HttpHeaders();
-		// InputStream targetStream = service.getInputStream(streamUrl, headers);
-		
-		
-		Long contentLength = NetUtils.getContentSizeFromUrl(streamUrl);
-		
-		NetUtils.printHeaders(headers);
-		
-		HttpURLConnection con = (HttpURLConnection) new URI(streamUrl).toURL().openConnection(); 
-	    
-		
+		if (rangeList.isEmpty()) {
+			// No Range header present, return the entire content
+			HttpURLConnection con = (HttpURLConnection) new URI(streamUrl).toURL().openConnection();
+			return ResponseEntity.ok()
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.contentLength(contentLength)
+					.body(new InputStreamResource(new BufferedInputStream(con.getInputStream())));
+		} else {
+			// Handle Range request
+			HttpRange range = rangeList.get(0);
+			long start = range.getRangeStart(contentLength);
+			long end = Math.min(start + bufferSize - 1, contentLength - 1);
 
-	    List<HttpRange> rangeList = headers.getRange();
-	    HttpRange range = rangeList.get(0);
-	    long start = range.getRangeStart(contentLength);
-	    long end = range.getRangeEnd(contentLength);
-	    	    
-	    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-	    headers.set("Accept-Ranges", "bytes");
-	    headers.set("Expires", "0");
-	    headers.set("Cache-Control", "no-cache, no-store");
-	    headers.set("Connection", "keep-alive");
-	    headers.set("Content-Transfer-Encoding", "binary");
-	    headers.setContentLength(contentLength);
-	    headers.set("range", "bytes=" + start + "-" + (end) + "/" + contentLength);
+			HttpURLConnection con = (HttpURLConnection) new URI(streamUrl).toURL().openConnection();
+			con.setRequestProperty("Range", "bytes=" + start + "-" + end);
+			con.connect();
 
-	    log.info("URL is {}", streamUrl);
-	    log.info("Content Length is {}", contentLength);
-	    log.info("Content Type is {}", NetUtils.getContentTypeFromUrl(streamUrl));
-	    
-	    return new ResponseEntity<>(new InputStreamResource(new BufferedInputStream(con.getInputStream())), headers, HttpStatus.OK);
+			long contentLengthRange = end - start + 1;
+			HttpHeaders responseHeaders = new HttpHeaders();
+			responseHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			responseHeaders.set("Accept-Ranges", "bytes");
+			responseHeaders.setContentLength(contentLengthRange);
+			responseHeaders.set("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
 
+			return new ResponseEntity<>(new InputStreamResource(new BufferedInputStream(con.getInputStream(), bufferSize)), responseHeaders, HttpStatus.PARTIAL_CONTENT);
+		}
 	}
-	
-	@GetMapping(value = "videoOld")
-	@ResponseBody
-	public ResponseEntity<byte[]> video(@RequestParam String streamUrl, @RequestHeader(value = "Range",required = false) String range) throws IOException {
-        
-		long contentSize = NetUtils.getContentSizeFromUrl(streamUrl).longValue();
-		long rangeStart = Long.parseLong(service.getRangeStart(range));
-		long rangeEnd = Long.parseLong(service.getRangeEnd(range));
-		
-		if (range == null) {
-			
-			byte[] rangeData = null;
-			try {
-				rangeData = service.readByteRange(streamUrl, rangeStart, rangeEnd);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            return ResponseEntity.status(HttpStatus.OK)
-                    .header("Content-Type", "video/mp4")
-                    .header("Accept-Ranges", "bytes")
-                    .header("Content-Length", String.valueOf(contentSize))
-                    .body(rangeData);
-        }
-		
-		contentSize = 128;
-		
-        byte[] data = service.getVideo(streamUrl, range, contentSize);
 
-        return  ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                .header("Content-Type", "video/mp4")
-                .header("Accept-Ranges", "bytes")
-                .header("Content-Length", String.valueOf(contentSize))
-                .header("Content-Range", "bytes" + " " + String.valueOf(rangeStart) + "-" + String.valueOf(rangeEnd) + "/" + String.valueOf(contentSize))
-                .body(data);
-	
-
-	}
-	
-	@GetMapping("video")
-    public ResponseEntity<Resource> streamVideo(@RequestParam String streamName,
-                                                @RequestHeader(value = "Range", required = false) String rangeHeader) {
-        try {
-            
-        	
-            Resource resource = null;
-			try {
-				resource = new UrlResource(new URI(Utils.getURLFromName(streamName, m3uItemRepository)).toURL());
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-            if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            // Get total file size
-            long fileSize = 0;
-			try {
-				fileSize = resource.contentLength();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-            // Parse range header
-            Range range = Range.parse(rangeHeader, fileSize, resource);
-            
-
-            // Determine content range
-            String contentRange = range.getContentRangeHeader();
-
-            // Send appropriate partial content with 206 status code
-            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                    .contentType(MediaType.valueOf("video/mp4"))
-                    .header(HttpHeaders.CONTENT_RANGE, contentRange)
-                    .body(range.getResource());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-    }
 }
-	
+
