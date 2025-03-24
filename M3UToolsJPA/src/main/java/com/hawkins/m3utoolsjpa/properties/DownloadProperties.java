@@ -8,15 +8,18 @@ import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.hawkins.m3utoolsjpa.service.PropertiesService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
-import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DownloadProperties implements Runnable {
 
+	@Autowired
+	PropertiesService ps;
 
 	private static DownloadProperties thisInstance = null;
 	private Properties props = null;
@@ -51,7 +54,7 @@ public class DownloadProperties implements Runnable {
 
 	public DownloadProperties() {
 
-		this.props = Utils.readProperties();
+		this.props = PropertiesService.readProperties();
 
 		// this.setChannels(props.getProperty("channels"));
 
@@ -104,7 +107,7 @@ public class DownloadProperties implements Runnable {
 	public DownloadProperties updateProperty(ConfigProperty configProperty) {
 
 		try {
-			Path sourceFile = Utils.getPropertyFile().toPath();
+			Path sourceFile = PropertiesService.getPropertyFile().toPath();
 			Path targetFile = new File(Constants.CONFIGPROPERTIES_BU).toPath();
 
 			Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
@@ -119,7 +122,7 @@ public class DownloadProperties implements Runnable {
 			}
 		}
 
-		Utils.saveProperties(configProperty);
+		PropertiesService.saveProperties(configProperty);
 
 		thisInstance = new DownloadProperties();
 

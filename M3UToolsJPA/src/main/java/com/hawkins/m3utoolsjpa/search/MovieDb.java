@@ -2,9 +2,14 @@ package com.hawkins.m3utoolsjpa.search;
 
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.hawkins.m3utoolsjpa.service.PropertiesService;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
+
+
 
 @Slf4j
 public class MovieDb implements Runnable {
@@ -18,9 +23,14 @@ public class MovieDb implements Runnable {
 	
 	private static MovieDb thisInstance = null;
 	
+	@Autowired
+	PropertiesService ps;
+	
 	public MovieDb() {
 		
-		Properties props = Utils.readProperties();
+		
+		
+		Properties props = PropertiesService.readProperties();
 		
 		this.setApi(props.getProperty("moviedb.apikey"));
 		this.setUrl(props.getProperty("moviedb.searchURL"));

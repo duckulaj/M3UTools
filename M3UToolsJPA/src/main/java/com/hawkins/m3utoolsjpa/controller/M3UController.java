@@ -24,6 +24,7 @@ import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.service.M3UService;
+import com.hawkins.m3utoolsjpa.service.PropertiesService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.LoggerUtils;
@@ -37,6 +38,9 @@ public class M3UController {
 
     @Autowired
     private M3UService m3uService;
+    
+    @Autowired
+    PropertiesService ps;
 
     @GetMapping("/resetDatabase")
     public ModelAndView resetDatabase(ModelMap model) {
@@ -89,7 +93,7 @@ public class M3UController {
 
     @GetMapping("/properties")
     public String getProperties(Model model) {
-        model.addAttribute("properties", M3UService.getOrderedPropertiesEntrySet());
+        model.addAttribute("properties", PropertiesService.getOrderedPropertiesEntrySet());
         model.addAttribute("configProperty", new ConfigProperty());
         model.addAttribute("propertyFile", M3UService.getConfigFileName());
         model.addAttribute("logLevels", LoggerUtils.getLogLevelsAsList());
@@ -98,8 +102,8 @@ public class M3UController {
 
     @PostMapping("/updateProperty")
     public String updateProperty(Model model, @ModelAttribute ConfigProperty configProperty) {
-        M3UService.updateProperty(configProperty);
-        model.addAttribute("properties", M3UService.getOrderedPropertiesEntrySet());
+        PropertiesService.updateProperty(configProperty);
+        model.addAttribute("properties", PropertiesService.getOrderedPropertiesEntrySet());
         model.addAttribute("configProperty", new ConfigProperty());
         model.addAttribute("propertyFile", M3UService.getConfigFileName());
         return Constants.PROPERTIES;

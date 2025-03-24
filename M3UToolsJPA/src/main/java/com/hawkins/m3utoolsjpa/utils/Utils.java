@@ -44,56 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Utils {
 
-    private static DownloadProperties dp = DownloadProperties.getInstance();
-
-    public static File getPropertyFile() {
-        File configFile = new File(FileUtilsForM3UToolsJPA.getCurrentWorkingDirectory() + Constants.CONFIGPROPERTIES);
-        log.info("Reading properties from {}", configFile.getAbsolutePath());
-
-        if (!configFile.exists() && log.isDebugEnabled()) {
-            log.debug(configFile.getAbsolutePath() + " does not exist");
-        }
-
-        return configFile;
-    }
-
-    public static Properties readProperties() {
-        long start = System.currentTimeMillis();
-        Properties props = new Properties();
-
-        try (FileInputStream fis = new FileInputStream(getPropertyFile())) {
-            props.loadFromXML(fis);
-            props.putIfAbsent("fileName", new File(Constants.CONFIGPROPERTIES).getPath());
-        } catch (FileNotFoundException fnfe) {
-            log.debug(fnfe.toString());
-        } catch (IOException ioe) {
-            log.debug(ioe.toString());
-        }
-
-        long end = System.currentTimeMillis();
-        if (log.isDebugEnabled()) {
-            log.debug("readProperties executed in {} ms", (end - start));
-        }
-        return props;
-    }
-
-    public static Properties saveProperties(ConfigProperty configProperty) {
-        try (OutputStream output = new FileOutputStream(Utils.getPropertyFile())) {
-            Properties props = DownloadProperties.getInstance().getProps();
-            props.forEach((key, value) -> {
-                if (key.equals(configProperty.getKey())) {
-                    props.replace(configProperty.getKey(), configProperty.getValue());
-                }
-            });
-            props.storeToXML(output, "");
-        } catch (IOException io) {
-            if (log.isDebugEnabled()) {
-                log.debug(io.getMessage());
-            }
-        }
-        return readProperties();
-    }
-
+    
     public static void copyUrlToFile(String url, String fileName) {
         long start = System.currentTimeMillis();
 
@@ -230,7 +181,7 @@ public class Utils {
 
         filmName = Utils.removeFromString(filmName, Patterns.STRIP_COUNTRY_IDENTIFIER);
         filmName = Utils.removeFromString(filmName, Patterns.BRACKETS_AND_CONTENT);
-        filmName = RegexUtils.removeCountryIdentifier(filmName, dp.getIncludedCountries());
+        filmName = RegexUtils.removeCountryIdentifier(filmName, DownloadProperties.getInstance().getIncludedCountries());
         return filmName.trim();
     }
 

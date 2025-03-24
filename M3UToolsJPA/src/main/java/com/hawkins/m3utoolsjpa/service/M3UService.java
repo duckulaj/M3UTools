@@ -80,6 +80,9 @@ public class M3UService {
 	@Autowired
 	CompletableFutureService completableFutureService;
 	
+	@Autowired
+	PropertiesService propertiesService;
+	
 	private static DownloadProperties downloadProperties = DownloadProperties.getInstance();
 	
 	@TrackExecutionTime
@@ -167,42 +170,7 @@ public class M3UService {
 		return IteratorUtils.toList(itemRepository.findTvChannelsBySelected(true).iterator());
 	}
 
-	public static OrderedProperties getOrderProperties() {
-
-		SortedProperties sortedProperties = new SortedProperties();
-		OrderedProperties properties = new OrderedProperties();
-		File propertyFile = Utils.getPropertyFile();
-		try {
-			properties.load(new FileReader(propertyFile));
-			properties = OrderedProperties.copyOf(properties);
-			sortedProperties.load(new FileReader(propertyFile));
-		} catch (IOException ioe) {
-			log.info("IOException occurred - {}", ioe.getMessage());
-		}
-
-		return properties;
-
-	}
-
-	public static Set<Entry<String, String>> getOrderedPropertiesEntrySet() {
-
-		OrderedProperties properties = new OrderedProperties();
-		try {
-			properties.loadFromXML(new FileInputStream(new File(downloadProperties.getPropertiesFile())));
-			properties = OrderedProperties.copyOf(properties);
-		} catch (IOException ioe) {
-			log.info("IOException occurred - {}", ioe.getMessage());
-		}
-
-		return properties.entrySet();
-	}
-
-	public static void updateProperty(ConfigProperty configProperty) {
-
-		log.info(configProperty.toString());
-		DownloadProperties.getInstance().updateProperty(configProperty);
-	}
-
+	
 	public Page<M3UItem> getPageableItems(Long groupId, int page, int size) {
 
 		Pageable paging = PageRequest.of(page - 1, size, Sort.by("tvgName"));
