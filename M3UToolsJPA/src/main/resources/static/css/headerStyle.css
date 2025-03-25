@@ -16,3 +16,10 @@ body {
 label{
 	background-color: rgb(227, 218, 238);
 }
+
+
+/* headerStyle.css */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0; /* Adjust as needed */
+}

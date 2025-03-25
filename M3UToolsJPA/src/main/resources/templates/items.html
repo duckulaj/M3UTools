@@ -1,131 +1,97 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport"
-	content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
-<title>M3UToolsJPA</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+    <title>M3UToolsJPA</title>
 
-<script type="text/javascript" th:src="@{webjars/jquery/jquery.min.js}"></script>
-<!-- <script th:src="@{webjars/bootstrap/js/bootstrap.min.js}"></script> -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
-<link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
+    <script type="text/javascript" th:src="@{webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css}" />
 
-
-<script type="text/javascript">
-	function groupChange(selectObj) {
-		var idx = selectObj.selectedIndex;
-		var which = selectObj.options[idx].value;
-		// alert("id:" + idx + " name:" + encodeURIComponent(which));
-		if (selectObj.value) {
-			selectObj.form.submit(which);
-		}
-	}
-</script>
-<div th:replace="~{fragments/informationModalScript :: script}"></div>
+    <script type="text/javascript">
+        function groupChange(selectObj) {
+            var idx = selectObj.selectedIndex;
+            var which = selectObj.options[idx].value;
+            if (selectObj.value) {
+                selectObj.form.submit(which);
+            }
+        }
+    </script>
+    <div th:replace="~{fragments/informationModalScript :: script}"></div>
 </head>
 
 <body>
-	<div th:replace="~{fragments/header :: header}"></div>
+    <div th:replace="~{fragments/header :: header}"></div>
 
-	<div class="container-fluid" style="max-width: 1024px; margin: 0 auto;">
-		<h3 class="text-center">Films</h3>
+    <div class="container mt-4">
+        <h3 class="text-center">Films</h3>
 
-		<div th:if="${message != null}"
-			class="alert alert-success alert-dismissible fade show text-center message"
-			role="alert">
-			[[${message}]]
-			<button type="button" class="close btn-sm" data-dismiss="alert"
-				aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<div class="container">
-			<form th:action="@{/}" id="searchForm">
-				<div class="row align-items-start">
-					<div class="col">
-						<div class="input-group mt-2">
-							<div class="input-group-prepend">
-								<label class="input-group-text" for="${group.id}">Category</label> 
-								<select form="searchForm" name="groupId"
-									th:onchange="'groupChange(this)'";>
-									<option th:each="group : ${groups}" th:value="${group.id}"
-										th:text="${group.name}"
-										th:selected="${group.id==selectedGroup.id}">Groups</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="col">
-					<div class="input-group mt-2">
-						<div class="input-group-prepend">
-							<label class="input-group-text" for="pageSize">Items per
-								page:</label> <select form="searchForm" name="size"
-								th:value="${pageSize}" onchange="changePageSize()"
-								class="size-select" id="pageSize">
-								<option th:each="s : ${ {5, 10, 15} }" th:value="${s}"
-									th:text="${s}" th:selected="${s == pageSize}"></option>
-							</select>
-						</div>
-					</div>
-					</div>
-				</div>
-			</form>
-		</div>
+        <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            [[${message}]]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-		<div th:replace="~{fragments/itemsTable :: itemsTable}"></div>
-		
-		<div th:unless="${items.size() > 0}" style="color: crimson;">
-			<p style="text-align:center">No Titles found!</p>
-		</div>
+        <form th:action="@{/}" id="searchForm" class="row g-3">
+            <div class="col-md-6">
+                <label for="groupId" class="form-label">Category</label>
+                <select id="groupId" name="groupId" class="form-select" th:onchange="'groupChange(this)'">
+                    <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}" th:selected="${group.id==selectedGroup.id}">Groups</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="pageSize" class="form-label">Items per page</label>
+                <select id="pageSize" name="size" class="form-select" th:value="${pageSize}" onchange="changePageSize()">
+                    <option th:each="s : ${ {5, 10, 15} }" th:value="${s}" th:text="${s}" th:selected="${s == pageSize}"></option>
+                </select>
+            </div>
+        </form>
 
-		<nav aria-label="Pagination" th:if="${totalPages > 0}">
-			<ul class="pagination justify-content-center">
-				<li class="page-item"
-					th:classappend="${currentPage == 1} ? 'disabled'"><a
-					th:replace="~{fragments/paging :: paging(1, '<<', 'First Page')}"></a>
-				</li>
-				<li class="page-item font-weight-bold"
-					th:classappend="${currentPage == 1} ? 'disabled'"><a
-					th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page')}"></a>
-				</li>
-				<li class="page-item disabled" th:if="${currentPage - 2 > 1}">
-					<a class="page-link" href="#">...</a>
-				</li>
-				<li class="page-item"
-					th:classappend="${page == currentPage} ? 'active'"
-					th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
-					<a
-					th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page})}"></a>
-				</li>
-				<li class="page-item disabled"
-					th:if="${currentPage + 2 < totalPages}"><a class="page-link"
-					href="#">...</a></li>
-				<li class="page-item font-weight-bold"
-					th:classappend="${currentPage == totalPages} ? 'disabled'"><a
-					th:replace="~{fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page')}"></a>
-				</li>
-				<li class="page-item"
-					th:classappend="${currentPage == totalPages} ? 'disabled'"><a
-					th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page')}"></a>
-				</li>
-			</ul>
-		</nav>
-	</div>
+        <div th:replace="~{fragments/itemsTable :: itemsTable}" class="mt-4"></div>
 
-	<div th:replace="~{fragments/informationModal :: informationModal}"></div>
-	
-	<div th:replace="~{fragments/movieDbApi :: movieDbApi}"></div>
+        <div th:unless="${items.size() > 0}" class="text-center text-danger mt-4">
+            <p>No Titles found!</p>
+        </div>
 
-	<div th:replace="~{fragments/footer :: footer}"></div>
+        <nav aria-label="Pagination" th:if="${totalPages > 0}" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page')}" class="page-link"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page')}" class="page-link"></a>
+                </li>
+                <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                    <a class="page-link" href="#">...</a>
+                </li>
+                <li class="page-item" th:classappend="${page == currentPage} ? 'active'" th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                    <a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page})}" class="page-link"></a>
+                </li>
+                <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                    <a class="page-link" href="#">...</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(${currentPage + 1}, 'Next', 'Next Page')}" class="page-link"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page')}" class="page-link"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 
-	<script type="text/javascript">
-		function changePageSize() {
-			$("#searchForm").submit();
-		}
-	</script>
+    <div th:replace="~{fragments/informationModal :: informationModal}"></div>
+    <div th:replace="~{fragments/movieDbApi :: movieDbApi}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script type="text/javascript">
+        function changePageSize() {
+            $("#searchForm").submit();
+        }
+    </script>
 </body>
 
 </html>

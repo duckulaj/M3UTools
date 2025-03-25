@@ -4,27 +4,17 @@ package com.hawkins.m3utoolsjpa.data;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hawkins.m3utoolsjpa.utils.Constants;
 
 public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
-
-    @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
-    public static int batchSize = 1000;
-    
-    @Autowired
-    static JdbcTemplate jdbcTemplate = new JdbcTemplate();
-
 
     String FIND_BY_TYPE_AND_CHANNEL_NAME = "SELECT m0 FROM M3UItem m0 WHERE type = ?1 AND channelName LIKE ?2";
     String FIND_ALL_BY_TYPE = "SELECT m0 FROM M3UItem m0 WHERE type = ?1";
@@ -51,7 +41,7 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
     Page<M3UItem> findByGroupTitle(String groupTitle, Pageable pageable);
 
     Page<M3UItem> findByGroupId(Long groupId, Pageable pageable);
-    
+
     List<M3UItem> findByGroupId(Long tvgId);
 
     @Transactional(readOnly = true)
@@ -99,10 +89,4 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
     @Modifying
     @Query("update M3UItem m0 set m0.tvgChNo = :tvgChNo where m0.id = :id")
     void updateTvgChNo(@Param(value = "id") long id, @Param(value = "tvgChNo") String tvgChNo);
-    
-    @Transactional
-    public static void truncateTable() {
-        String sql = "TRUNCATE TABLE M3UITEM";
-        jdbcTemplate.execute(sql);
-    }
 }
