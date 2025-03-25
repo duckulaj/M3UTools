@@ -75,7 +75,7 @@ public class VideoController {
 	public final ResponseEntity<InputStreamResource> retrieveResource(@RequestParam String streamUrl, @RequestHeader HttpHeaders headers) throws Exception {
 		List<HttpRange> rangeList = headers.getRange();
 		long contentLength = NetUtils.getContentSizeFromUrl(streamUrl);
-		int bufferSize = 1024 * 1024; // 1 MB buffer size
+		int bufferSize = 1024 * 1024 * 4; // 4 MB buffer size
 
 		if (rangeList.isEmpty()) {
 			// No Range header present, return the entire content

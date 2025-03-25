@@ -5,7 +5,6 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hawkins.m3utoolsjpa.service.PropertiesService;
-import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
