@@ -1,4 +1,3 @@
-
 package com.hawkins.m3utoolsjpa.epg;
 
 import java.io.BufferedOutputStream;
@@ -6,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -27,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 public class XmltvUtils {
 
     public static final XmlMapper xmltvMapper = createMapper();
-    private static final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     /**
      * Creates and configures an XmlMapper for XMLTV data.
@@ -84,18 +81,16 @@ public class XmltvUtils {
      * @return the serialized byte array
      */
     public static byte[] writeXmltv(XmltvDoc xmltv) {
-        try {
-            bos.reset();
-            try (GZIPOutputStream gos = new GZIPOutputStream(bos);
-                 BufferedOutputStream bbos = new BufferedOutputStream(gos)) {
-                bbos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE tv SYSTEM \"xmltv.dtd\">\n".getBytes(StandardCharsets.UTF_8));
-                xmltvMapper.writeValue(bbos, xmltv);
-                bbos.flush();
-            }
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             GZIPOutputStream gos = new GZIPOutputStream(bos);
+             BufferedOutputStream bbos = new BufferedOutputStream(gos)) {
+
+            xmltvMapper.writeValue(bbos, xmltv);
+            bbos.flush();
             return bos.toByteArray();
         } catch (IOException e) {
             log.error("Error serializing XMLTV data: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to serialize XMLTV data", e);
         }
     }
 }
