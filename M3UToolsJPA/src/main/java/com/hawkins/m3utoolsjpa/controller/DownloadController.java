@@ -76,7 +76,7 @@ public class DownloadController {
 
     @GetMapping(value = "downloadToServer", params = { "name" })
     public ModelAndView downloadToServer(@RequestParam String name, ModelMap model) throws IOException {
-        CompletableFuture.runAsync(() -> downloadService.downloadToserver(name));
+        CompletableFuture.runAsync(() -> downloadService.downloadToServer(name));
         return new ModelAndView("forward:/", model);
     }
 }

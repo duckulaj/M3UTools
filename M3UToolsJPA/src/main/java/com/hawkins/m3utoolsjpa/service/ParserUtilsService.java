@@ -139,10 +139,11 @@ public class ParserUtilsService {
 							String type = Utils.deriveGroupTypeByUrl(line);
 							entry.setType(type);
 							entry.setChannelUri(line);
-							entry.setChannelName(RegexUtils.removeCountryIdentifier(entry.getChannelName(),
-									dp.getIncludedCountries()));
-							entry.setTvgName(
-									RegexUtils.removeCountryIdentifier(entry.getTvgName(), dp.getIncludedCountries()));
+							String commonName = RegexUtils.removeCountryIdentifier(entry.getTvgName(), dp.getIncludedCountries());
+							
+							entry.setChannelName(commonName);
+							entry.setTvgName(commonName);
+							entry.setSearch(commonName);
 							entries.add(entry);
 						}
 					}

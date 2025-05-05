@@ -19,56 +19,68 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileDownloader {
 
-    public static void downloadFileInSegments(String fileUrl, String outputFilePath, int segmentSize) throws IOException, InterruptedException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start("downloadFileInSegments");
+	public static void downloadFileInSegments(String fileUrl, String outputFilePath, int segmentSize) throws IOException, InterruptedException {
+	    StopWatch stopWatch = new StopWatch();
+	    stopWatch.start("downloadFileInSegments");
 
-        // Connect to the URL and get file info (like file size)
-        URL url = null;
-        try {
-            url = new URI(fileUrl).toURL();
-        } catch (MalformedURLException | URISyntaxException e) {
-            log.info("Error in downloadFileInSegments: " + e.getMessage());
-        }
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("HEAD");
-        connection.connect();
+	    // Connect to the URL and get file info (like file size)
+	    URL url = null;
+	    try {
+	        url = new URI(fileUrl).toURL();
+	    } catch (MalformedURLException | URISyntaxException e) {
+	        log.info("Error in downloadFileInSegments: " + e.getMessage());
+	    }
+	    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	    connection.setRequestMethod("HEAD");
+	    connection.connect();
 
-        int contentLength = connection.getContentLength();  // Total file size
-        connection.disconnect();
+	    int contentLength = connection.getContentLength();  // Total file size
+	    connection.disconnect();
 
-        if (contentLength == -1) {
-            throw new IOException("Could not retrieve file size");
-        }
+	    if (contentLength == -1 || contentLength == 0) {
+	        log.info("Content length could not be determined. Downloading file sequentially.");
+	        try (InputStream inputStream = url.openStream();
+	             RandomAccessFile outputFile = new RandomAccessFile(outputFilePath, "rw")) {
 
-        // Open RandomAccessFile to write the downloaded file in segments
-        try (RandomAccessFile outputFile = new RandomAccessFile(outputFilePath, "rw")) {
-            outputFile.setLength(contentLength);  // Set the length of the output file
+	            byte[] buffer = new byte[8192];  // Buffer size
+	            int bytesRead;
+	            while ((bytesRead = inputStream.read(buffer)) != -1) {
+	                outputFile.write(buffer, 0, bytesRead);
+	            }
+	        }
+	        stopWatch.stop();
+	        log.info("Time taken for sequential download: {} ms", stopWatch.getTotalTimeMillis());
+	        return;
+	    }
 
-            // Create a thread pool
-            ExecutorService executor = Executors.newFixedThreadPool(10);
+	    // Open RandomAccessFile to write the downloaded file in segments
+	    try (RandomAccessFile outputFile = new RandomAccessFile(outputFilePath, "rw")) {
+	        outputFile.setLength(contentLength);  // Set the length of the output file
 
-            // Download file in segments
-            for (int i = 0; i < contentLength; i += segmentSize) {
-                int rangeStart = i;
-                int rangeEnd = Math.min(i + segmentSize - 1, contentLength - 1);
-                executor.submit(() -> {
-                    try {
-                        downloadSegment(fileUrl, outputFile, rangeStart, rangeEnd);
-                    } catch (IOException e) {
-                        log.info("Error in downloadSegment: " + e.getMessage());
-                    }
-                });
-            }
+	        // Create a thread pool
+	        ExecutorService executor = Executors.newFixedThreadPool(10);
 
-            // Shutdown the executor and wait for all tasks to complete
-            executor.shutdown();
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        }
+	        // Download file in segments
+	        for (int i = 0; i < contentLength; i += segmentSize) {
+	            int rangeStart = i;
+	            int rangeEnd = Math.min(i + segmentSize - 1, contentLength - 1);
+	            executor.submit(() -> {
+	                try {
+	                    downloadSegment(fileUrl, outputFile, rangeStart, rangeEnd);
+	                } catch (IOException e) {
+	                    log.info("Error in downloadSegment: " + e.getMessage());
+	                }
+	            });
+	        }
 
-        stopWatch.stop();
-        log.info("Time taken for downloadFileInSegments: {} ms", stopWatch.getTotalTimeMillis());
-    }
+	        // Shutdown the executor and wait for all tasks to complete
+	        executor.shutdown();
+	        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+	    }
+
+	    stopWatch.stop();
+	    log.info("Time taken for downloadFileInSegments: {} ms", stopWatch.getTotalTimeMillis());
+	}
 
     // Download a specific segment of the file
     public static void downloadSegment(String fileUrl, RandomAccessFile outputFile, int rangeStart, int rangeEnd) throws IOException {

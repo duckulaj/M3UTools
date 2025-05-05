@@ -174,7 +174,7 @@ public class M3UService {
 
 		if (pageItems.getSize() > 0) {
 			for (M3UItem item : pageItems) {
-				item.setSearch(Utils.normaliseSearch(item.getSearch()));
+				item.setSearch(item.getSearch());
 			}
 		}
 		return pageItems;

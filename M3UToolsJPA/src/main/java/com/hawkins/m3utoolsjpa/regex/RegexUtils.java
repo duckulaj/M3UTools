@@ -21,8 +21,14 @@ public class RegexUtils {
             input = input.substring(matcher.end()).trim();
         }
 
+        // Remove leading hyphen or colon if present
+        while (input.startsWith("-") || input.startsWith(":")) {
+            input = input.substring(1).trim();
+        }
+
         return input;
     }
+
 
     public static boolean containsCountryIdentifier(String input, String[] identifiers) {
         String regexPattern = String.join("|", identifiers);

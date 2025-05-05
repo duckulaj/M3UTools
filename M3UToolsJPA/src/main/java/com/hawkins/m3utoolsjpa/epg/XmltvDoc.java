@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -14,6 +15,7 @@ import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.StringUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "tv")
 public class XmltvDoc {
     @JacksonXmlProperty(isAttribute = true, localName = "generator-info-name")
