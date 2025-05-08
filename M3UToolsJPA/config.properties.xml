@@ -8,7 +8,7 @@
 <entry key="fullM3U">./allChannels.m3u</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
 <entry key="moviedb.genreURL">https://api.themoviedb.org/3/genre/movie/list</entry>
-<entry key="moviedb.apikey">a950a3d8d9a21129ea3d512b28af8f4d</entry>
+<entry key="moviedb.apikey">ece01dd1bcf176689f3ea0a8d051c744</entry>
 <entry key="emby.api">69331163aedf4065a9d1fe51dbae7032</entry>
 <entry key="downloadPath">/home/jonathan/M3UToolsJPA/</entry>
 <entry key="fileAge.m3u">480</entry>
@@ -22,5 +22,5 @@
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
 <entry key="stream.playlist">http://hi-ott.me/xmltv.php?username=2e9b136751&amp;password=1af6e4a2c3</entry>
-<entry key="includedCountries">EN,UK,4K</entry>
+<entry key="includedCountries">EN,UK</entry>
 </properties>

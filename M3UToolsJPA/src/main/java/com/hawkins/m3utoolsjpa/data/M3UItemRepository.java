@@ -45,6 +45,10 @@ public interface M3UItemRepository extends JpaRepository<M3UItem, Long> {
     List<M3UItem> findByGroupId(Long tvgId);
 
     @Transactional(readOnly = true)
+    @Query("SELECT m FROM M3UItem m WHERE LOWER(m.tvgName) LIKE LOWER(CONCAT('%', :filmName, '%'))")
+    List<M3UItem> findByTvgNameLike(@Param("filmName") String filmName);
+    
+    @Transactional(readOnly = true)
     @Query(FIND_BY_TYPE_AND_CHANNEL_NAME)
     List<M3UItem> findByChannelName(String type, String channelName);
 

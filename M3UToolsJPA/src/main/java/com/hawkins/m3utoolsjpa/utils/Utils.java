@@ -20,6 +20,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -214,11 +215,13 @@ public class Utils {
     }
 
     public static String getURLFromName(String filmName, M3UItemRepository m3uItemRepository) {
-        return m3uItemRepository.findByTvgName(filmName).stream()
-            .filter(m3uItem -> m3uItem.getTvgName().equalsIgnoreCase(filmName))
-            .map(M3UItem::getChannelUri)
-            .findFirst()
-            .orElse(null);
+        List<M3UItem> m3uItem = m3uItemRepository.findByTvgNameLike(filmName);
+		if (m3uItem.size() > 0) {
+			return m3uItem.get(0).getChannelUri();
+		} else {
+			return null;
+		}
+        
     }
 
     public static boolean fileOlderThan(File fileName, int ageInMinutes) throws IOException {

@@ -145,6 +145,7 @@ public class ParserUtilsService {
 							entry.setTvgName(commonName);
 							entry.setSearch(commonName);
 							entries.add(entry);
+							entry = null;
 						}
 					}
 				}

@@ -121,7 +121,10 @@ public class NetUtils {
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug("Invalid URL: {}", e.getMessage());
             return 0L;
-        }
+		} catch (IllegalArgumentException e) {
+			log.debug("URI is not absolute: {}", e.getMessage());
+			return 0L;
+		}
     }
 
     public static Long getContentSizeFromUrl(URL url) {

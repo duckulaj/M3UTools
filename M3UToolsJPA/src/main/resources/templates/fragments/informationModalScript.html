@@ -2,51 +2,58 @@
 
 function openInformationModal(row) { // begin function
 
-	var val = row.getAttribute("value");
-	var api = document.getElementById("moviedbapi").value;
-	var url = document.getElementById("moviedbsearchURL").value;
-	var movieurl = document.getElementById("moviedbsearchMovieURL").value;
-	
-	$.ajax({ // begin ajax
-    	url: url,
+    var val = row.getAttribute("value");
+    var api = document.getElementById("moviedbapi").value;
+    var url = document.getElementById("moviedbsearchURL").value;
+    var movieurl = document.getElementById("moviedbsearchMovieURL").value;
+
+    $.ajax({ // begin ajax
+        url: url,
         data: {
             api_key: api,
             language: "en-GB",
             query: val
         },
-        dataType : 'json',
-        context : this,
+        dataType: 'json',
+        context: this,
         success: function(data) {
-        	$.ajax({
-            	url: movieurl + "/" + data.results[0].id,
-	            data: {
-	                api_key: api,
-	                language: "en-GB"
-	            },
-	            dataType : 'json',
-	            context : this,
-	            error: function() {
-	            	alert("No information available");
-	            },
-                success: function(data) {
-                	console.log(data);
-                    console.log(data.overview);
-                    $("#modalTitleH4").html(data.title);
-                    $("#modalBodyDiv").html(data.overview);
-                    $("#releaseDate").html(convertDateFormat(data.release_date));
-                    $("#downloadName").val(data.title);
-                    $("#streamName").val(data.title);
-                    //document.getElementById("posterPath").style.backgroundImage = "url('https://image.tmdb.org/t/p/original" + data.poster_path + "')"
-                    document.getElementById("posterPath").src = "https://image.tmdb.org/t/p/original" + data.poster_path + ""
-                    $("#informationModal").modal("show");
-                }
-        	})
+            if (data.results && data.results.length > 0) { // Check if results exist
+                var movieId = data.results[0].id;
+                $.ajax({
+                    url: movieurl + "/" + movieId,
+                    data: {
+                        api_key: api,
+                        language: "en-GB"
+                    },
+                    dataType: 'json',
+                    context: this,
+                    error: function() {
+                        console.log("Error URL: " + movieurl + "/" + movieId + "?api_key=" + api + "&language=en-GB");
+                        alert("No information available");
+                    },
+                    success: function(data) {
+                        console.log("Movie URL: " + movieurl + "/" + movieId + "?api_key=" + api + "&language=en-GB");
+                        console.log(data);
+                        console.log(data.overview);
+                        $("#modalTitleH4").html(data.title);
+                        $("#modalBodyDiv").html(data.overview);
+                        $("#releaseDate").html(convertDateFormat(data.release_date));
+                        $("#downloadName").val(data.title);
+                        $("#streamName").val(data.title);
+                        document.getElementById("posterPath").src = "https://image.tmdb.org/t/p/original" + data.poster_path + "";
+                        $("#informationModal").modal("show");
+                    }
+                });
+            } else {
+                console.log("Search URL: " + url + "?api_key=" + api + "&language=en-GB&query=" + val);
+                alert("No results found for the given query.");
+            }
         }
-    }) //end ajax
+    }); // end ajax
 } // end function
 
-
 </script>
+
 
 <script>
 	function convertDateFormat(inputDate) {

@@ -18,7 +18,13 @@
 		});
 
 	</script>
-
+	<script>
+    window.addEventListener("beforeunload", function () {
+        // Send a request to notify the server
+        navigator.sendBeacon("/navigation/handle");
+    });
+</script>
+	
 </head>
 
 <body>
