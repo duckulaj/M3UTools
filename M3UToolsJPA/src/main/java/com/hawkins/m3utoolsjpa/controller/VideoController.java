@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.service.StreamingService;
+import com.hawkins.m3utoolsjpa.utils.FileDownloader;
 import com.hawkins.m3utoolsjpa.utils.NetUtils;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -124,50 +127,67 @@ public class VideoController {
 	}
 
 	private String convertMkvToMp4(String inputUrl, String sessionId) throws IOException, InterruptedException {
-    String outputFilePath = "/tmp/output.mp4";
-    log.info("Converting MKV to MP4: " + inputUrl + " to " + outputFilePath);
+	    // Download the file to /tmp
+		
+		String tempFilePath = "/tmp/input.mkv";
+		FileDownloader.downloadFileInSegments(inputUrl, tempFilePath, DownloadProperties.getInstance().getBufferSize());
+	    
+	    // Prepare output file path
+	    String outputFilePath = "/tmp/output.mp4";
 
-    ProcessBuilder processBuilder = new ProcessBuilder(
-        "ffmpeg", "-hwaccel", "cuda", "-i", inputUrl, "-c:v", "h264_nvenc", "-c:a", "copy", "-movflags", "faststart", outputFilePath
-    );
+	    // Add shutdown hook to clean up the temporary file if the process is killed
+	    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+	        try {
+	            Files.deleteIfExists(Paths.get(tempFilePath));
+	            log.info("Temporary file deleted: " + tempFilePath);
+	        } catch (IOException e) {
+	            log.error("Failed to delete temporary file: " + tempFilePath, e);
+	        }
+	    }));
 
-    processBuilder.redirectErrorStream(true);
-    Process process = processBuilder.start();
-    ProcessManager.addProcess(sessionId, process);
-    log.info("FFmpeg process started with PID: " + process.pid());
-    
- // Capture and log progress
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.contains("frame=") || line.contains("time=")) {
-                log.info("FFmpeg Progress: " + line);
-            } else if (line.contains("version")) {
-				log.info("FFmpeg Version: " + line);
-			} else if (line.contains("error")) {
-				log.error("FFmpeg Error: " + line);
-			} else if (line.contains("fps=")) {
-				log.info("FFmpeg FPS: " + line);
-			} else if (line.contains("size=")) {
-				log.info("FFmpeg Size: " + line);
-			} else if (line.contains("bitrate=")) {
-				log.info("FFmpeg Bitrate: " + line);
-			} else if (line.contains("time=")) {
-				log.info("FFmpeg Time: " + line);
-            }
-        }
-    }
+	    try {
+	        // Start FFmpeg process
+	        ProcessBuilder processBuilder = new ProcessBuilder(
+	            "ffmpeg",
+	            "-hwaccel", "cuda", // Use GPU acceleration
+	            "-i", tempFilePath, 
+	            "-c:v", "h264_nvenc", // Use NVIDIA encoder
+	            "-preset", "fast", // Faster encoding preset
+	            "-c:a", "copy", // Copy audio without re-encoding
+	            "-movflags", "faststart", // Optimize for streaming
+	            "-threads", "4", // Explicitly set thread count
+	            outputFilePath
+	        );
 
-    int exitCode = process.waitFor();
-    ProcessManager.terminateProcess(sessionId);
-    log.info("FFmpeg process exited with code: " + exitCode);
+	        processBuilder.redirectErrorStream(true);
+	        Process process = processBuilder.start();
+	        ProcessManager.addProcess(sessionId, process);
+	        log.info("FFmpeg process started with PID: " + process.pid());
 
-    if (exitCode != 0) {
-        throw new IOException("FFmpeg conversion failed");
-    }
+	        // Capture and log progress
+	        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                log.info("FFmpeg Output: " + line);
+	            }
+	        }
 
-    return outputFilePath;
-}
+	        int exitCode = process.waitFor();
+	        ProcessManager.terminateProcess(sessionId);
+	        log.info("FFmpeg process exited with code: " + exitCode);
+
+	        if (exitCode != 0) {
+	            throw new IOException("FFmpeg conversion failed");
+	        }
+
+	        return outputFilePath;
+	    } finally {
+	        // Ensure the temporary file is deleted
+	        Files.deleteIfExists(Paths.get(tempFilePath));
+	        log.info("Temporary file deleted: " + tempFilePath);
+	    }
+	}
+
 
 
 }

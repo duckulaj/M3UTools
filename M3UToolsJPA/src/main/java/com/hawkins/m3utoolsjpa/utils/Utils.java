@@ -164,20 +164,28 @@ public class Utils {
     }
 
     public static String normaliseSearch(String filmName) {
-        int startIndex = 0;
-        int endIndex = StringUtils.indexOfAny(filmName, new String[]{"SD", "FHD", "UHD", "HD", "4K"});
+        if (filmName == null || filmName.isEmpty()) {
+            return "";
+        }
 
+        filmName = filmName.trim();
+
+        // Remove resolution identifiers like SD, FHD, UHD, etc.
+        int endIndex = StringUtils.indexOfAny(filmName, new String[]{"SD", "FHD", "UHD", "HD", "4K", "4K-EN - "});
         if (endIndex != -1) {
-            filmName = filmName.substring(startIndex, endIndex - 1); // Exclude left bracket (
+            filmName = filmName.substring(0, endIndex).trim();
         }
 
-        if (filmName.contains("(MULTISUB)")) {
-            filmName = filmName.replace("(MULTISUB)", "").trim();
-        }
+        // Remove "(MULTISUB)" if present
+        filmName = filmName.replace("(MULTISUB)", "").trim();
 
+        // Remove country identifiers and bracketed content
         filmName = Utils.removeFromString(filmName, Patterns.STRIP_COUNTRY_IDENTIFIER);
         filmName = Utils.removeFromString(filmName, Patterns.BRACKETS_AND_CONTENT);
+
+        // Remove additional country identifiers using RegexUtils
         filmName = RegexUtils.removeCountryIdentifier(filmName, DownloadProperties.getInstance().getIncludedCountries());
+
         return filmName.trim();
     }
 
