@@ -14,7 +14,7 @@ public class AppConfig {
     private int batchSize;
 
     @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+    JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
