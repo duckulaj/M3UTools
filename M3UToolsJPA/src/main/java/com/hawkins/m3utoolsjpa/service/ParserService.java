@@ -10,6 +10,7 @@ import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class ParserService {
 	
 	
 	@TrackExecutionTime
-	public Set<M3UItem> parseM3UFile() {
+	public Set<M3UItem> parseM3UFile() throws DownloadFailureException {
 		log.info("Parsing M3U File");
 		
 		

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -23,7 +24,12 @@ public class ApplicationService {
         try {
             swUpdateDatabase.start();
             log.info("Running m3uService.resetDatabase() at {}", Utils.printNow());
-            m3uService.resetDatabase();
+            try {
+				m3uService.resetDatabase();
+			} catch (DownloadFailureException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } catch (M3UItemsNotFoundException e) {
             log.error("Error resetting database", e);
         } finally {

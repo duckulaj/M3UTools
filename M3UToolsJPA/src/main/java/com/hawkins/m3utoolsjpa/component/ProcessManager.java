@@ -17,7 +17,7 @@ public class ProcessManager {
     }
 
     public static void terminateAllProcesses() {
-        processMap.forEach((sessionId, process) -> {
+        processMap.forEach((p, process) -> {
             if (process.isAlive()) {
                 process.destroy();
             }

@@ -20,6 +20,7 @@ import org.springframework.util.StopWatch;
 import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.parser.ParsingException;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
@@ -95,7 +96,7 @@ public class ParserUtilsService {
 	}
 	
 	@TrackExecutionTime
-	public Set<M3UItem> parse() {
+	public Set<M3UItem> parse() throws DownloadFailureException {
 
 		int lineNbr = 0;
 		String line;

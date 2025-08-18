@@ -62,7 +62,7 @@ public class PropertiesService {
     public static Properties saveProperties(ConfigProperty configProperty) {
         try (OutputStream output = new FileOutputStream(getPropertyFile())) {
             Properties props = DownloadProperties.getInstance().getProps();
-            props.forEach((key, value) -> {
+            props.forEach((key, k) -> {
                 if (key.equals(configProperty.getKey())) {
                     props.replace(configProperty.getKey(), configProperty.getValue());
                 }

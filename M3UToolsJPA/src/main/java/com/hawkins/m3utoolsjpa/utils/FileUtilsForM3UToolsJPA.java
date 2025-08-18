@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -113,7 +114,7 @@ public class FileUtilsForM3UToolsJPA {
 	}
 
 	@TrackExecutionTime
-	public static void getM3UFile(File m3uFileOnDisk) {
+	public static void getM3UFile(File m3uFileOnDisk) throws DownloadFailureException {
 
 		boolean getRemoteM3U = false;
 
@@ -135,9 +136,11 @@ public class FileUtilsForM3UToolsJPA {
 			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
 			try {
 				FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());
-			} catch (IOException | InterruptedException e) {
+				// XtreamCodeDownloader.downloadM3UFile();
+			 } catch (IOException | InterruptedException e) {
 				log.info("Error in parse: " + e.getMessage());
-			}
+				throw new DownloadFailureException("Failed to download M3U file", e);
+			} 
 		}
 	}
 

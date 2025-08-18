@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
 import com.hawkins.m3utoolsjpa.data.M3UItem;
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.regex.PatternMatcher;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
@@ -27,7 +28,7 @@ public class Parser {
 	@Autowired
 	static ParserUtilsService pu;
 	
-    public static LinkedList<M3UItem> parse() {
+    public static LinkedList<M3UItem> parse() throws DownloadFailureException {
         StopWatch sw = new StopWatch();
         sw.start("parse");
 
@@ -38,7 +39,11 @@ public class Parser {
 
         File m3uFileOnDisk = new File(Constants.M3U_FILE);
 
-        FileUtilsForM3UToolsJPA.getM3UFile(m3uFileOnDisk);
+        try {
+        	FileUtilsForM3UToolsJPA.getM3UFile(m3uFileOnDisk);
+        	} catch (DownloadFailureException e) {
+            throw new DownloadFailureException("Failed to get M3U file", e);
+        }
 
         try (var buffer = Files.newBufferedReader(m3uFileOnDisk.toPath())) {
             String line = buffer.readLine();

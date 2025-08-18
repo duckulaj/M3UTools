@@ -12,6 +12,7 @@ import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.epg.XmltvDoc;
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.parser.Parser;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
@@ -48,7 +49,15 @@ public class CompletableFutureService {
 				);
 
 		CompletableFuture<List<M3UItem>> m3UItemsFromParser = CompletableFuture.supplyAsync(() -> 
-		Parser.parse()
+		{
+			try {
+				return Parser.parse();
+			} catch (DownloadFailureException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
 
 				);
 
@@ -73,7 +82,7 @@ public class CompletableFutureService {
 		log.info("CompletableFutures completed");
 	}
 
-	public void reloadDatabase() {
+	public void reloadDatabase() throws DownloadFailureException {
 
 
 		log.info("Starting m3UItemsFromParser at {}", Utils.printNow());

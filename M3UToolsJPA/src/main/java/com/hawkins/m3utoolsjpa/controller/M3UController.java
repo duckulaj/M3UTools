@@ -1,4 +1,3 @@
-
 package com.hawkins.m3utoolsjpa.controller;
 
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.hawkins.m3utoolsjpa.data.Filter;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
@@ -28,6 +28,8 @@ import com.hawkins.m3utoolsjpa.service.PropertiesService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.LoggerUtils;
+import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
+import com.hawkins.m3utoolsjpa.redis.M3UGroupRedisService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +44,34 @@ public class M3UController {
     @Autowired
     PropertiesService ps;
 
+    @Autowired
+    private M3UItemRedisService m3UItemRedisService;
+
+    @Autowired
+    private M3UGroupRedisService m3UGroupRedisService;
+
     @GetMapping("/resetDatabase")
     public ModelAndView resetDatabase(ModelMap model) {
         try {
-            m3uService.resetDatabase();
+            try {
+				m3uService.resetDatabase();
+			} catch (DownloadFailureException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				model.addAttribute("message", e.getMessage());
+			}
+            // Purge all M3UItems from Redis
+            m3UItemRedisService.deleteAll();
+            // Repopulate Redis cache with current DB items
+            for (M3UItem item : m3uService.getM3UItems()) {
+                m3UItemRedisService.save(item);
+            }
+            // Purge all M3UGroups from Redis
+            m3UGroupRedisService.deleteAll();
+            // Repopulate Redis cache with current DB groups
+            for (M3UGroup group : m3uService.getM3UGroups()) {
+                m3UGroupRedisService.save(group);
+            }
         } catch (M3UItemsNotFoundException e) {
             model.addAttribute("message", e.getMessage());
             log.error(e.getMessage());

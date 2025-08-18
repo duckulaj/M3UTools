@@ -2,10 +2,10 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <entry key="fileName">./config.properties</entry>
-<entry key="stream.channels">http://hi-ott.me/get.php?username=2e9b136751&amp;password=1af6e4a2c3&amp;type=m3u_plus&amp;output=ts</entry>
+<entry key="stream.channels">https://cf.gofhd.live/get.php?username=6c501c0bea66&amp;password=f72eb64ae0&amp;type=m3u_plus&amp;output=ts</entry>
 <entry key="fileAge.epg">30</entry>
-<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="fullM3U">./allChannels.m3u</entry>
+<entry key="moviedb.searchPersonURL">https://api.themoviedb.org/3/search/person</entry>
 <entry key="epg.filename">./M3UToolsJPA.xml</entry>
 <entry key="moviedb.genreURL">https://api.themoviedb.org/3/genre/movie/list</entry>
 <entry key="moviedb.apikey">ece01dd1bcf176689f3ea0a8d051c744</entry>
@@ -16,11 +16,11 @@
 <entry key="moviedb.discoverURL">https://api.themoviedb.org/3/discover/movie</entry>
 <entry key="emby.url">http://192.168.0.110:8096/emby/</entry>
 <entry key="moviedb.searchURL">https://api.themoviedb.org/3/search/movie</entry>
-<entry key="emby.installed">true</entry>
+<entry key="emby.installed">false</entry>
 <entry key="download.buffersize">129536</entry>
 <entry key="country.regExpr">\[.*?\]</entry>
 <entry key="filewatcher.pollingDuration">10000</entry>
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
-<entry key="stream.playlist">http://hi-ott.me/xmltv.php?username=2e9b136751&amp;password=1af6e4a2c3</entry>
+<entry key="stream.playlist">https://cf.its-cdn.me/xmltv.php?username=6c501c0bea66&amp;password=f72eb64ae0</entry>
 <entry key="includedCountries">EN,UK</entry>
 </properties>

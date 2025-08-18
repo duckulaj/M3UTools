@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
@@ -40,10 +41,13 @@ import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.data.TvChannel;
 import com.hawkins.m3utoolsjpa.data.TvChannelRepository;
+import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
 import com.hawkins.m3utoolsjpa.m3u.M3UGenre;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.redis.M3UGroupRedisService;
+import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
@@ -75,8 +79,14 @@ public class M3UService {
 	@Autowired
 	PropertiesService propertiesService;
 	
+	@Autowired
+	private M3UGroupRedisService m3UGroupRedisService;
+	
+	@Autowired
+	private M3UItemRedisService m3UItemRedisService;
+	
 	@TrackExecutionTime
-	public void resetDatabase() throws M3UItemsNotFoundException {
+	public void resetDatabase() throws M3UItemsNotFoundException, DownloadFailureException {
 
 		completableFutureService.reloadDatabase();
 
@@ -120,16 +130,23 @@ public class M3UService {
 	}
 
 	public List<M3UItem> getM3UItems() {
-
-		return IteratorUtils.toList(itemRepository.findAll(Sort.by(Sort.Direction.ASC, "tvgName")).iterator());
+        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
+        if (cachedItems != null && !cachedItems.isEmpty()) {
+            log.info("Reading from cache");
+            return cachedItems;
+        }
+        return IteratorUtils.toList(itemRepository.findAll(Sort.by(Sort.Direction.ASC, "tvgName")).iterator());
 
 	}
 
 	public List<M3UGroup> getM3UGroups() {
-
-		return IteratorUtils.toList(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
-
-	}
+        List<M3UGroup> cachedGroups = m3UGroupRedisService.findAll();
+        if (cachedGroups != null && !cachedGroups.isEmpty()) {
+            log.info("Reading from cache");
+            return cachedGroups;
+        }
+        return IteratorUtils.toList(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
+    }
 
 	public List<M3UGroup> getM3UGroupsByType(String type) {
 
@@ -138,14 +155,22 @@ public class M3UService {
 	}
 
 	public List<M3UItem> getM3UItemsByGroupTitle(String groupTitle) {
-
-		return IteratorUtils.toList(itemRepository.findByGroupTitle(groupTitle).iterator());
+        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
+        if (cachedItems != null && !cachedItems.isEmpty()) {
+            log.info("Reading from cache");
+            return cachedItems.stream().filter(item -> groupTitle.equals(item.getGroupTitle())).collect(Collectors.toList());
+        }
+        return IteratorUtils.toList(itemRepository.findByGroupTitle(groupTitle).iterator());
 
 	}
 
 	public List<M3UItem> getM3UItemsByType(String type) {
-
-		return IteratorUtils.toList(itemRepository.findAllByType(type).iterator());
+        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
+        if (cachedItems != null && !cachedItems.isEmpty()) {
+            log.info("Reading from cache");
+            return cachedItems.stream().filter(item -> type.equals(item.getType())).collect(Collectors.toList());
+        }
+        return IteratorUtils.toList(itemRepository.findAllByType(type).iterator());
 
 	}
 

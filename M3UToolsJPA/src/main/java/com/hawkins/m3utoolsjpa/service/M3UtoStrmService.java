@@ -1,4 +1,3 @@
-
 package com.hawkins.m3utoolsjpa.service;
 
 import java.io.File;
@@ -22,6 +21,7 @@ import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.Utils;
+import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,28 +31,37 @@ public class M3UtoStrmService {
 
     @Autowired
     M3UService m3uService;
+    @Autowired
+    private M3UItemRedisService m3UItemRedisService;
 
     private static final DownloadProperties dp = DownloadProperties.getInstance();
     private static final Pattern SEASON_PATTERN = Pattern.compile("[S]{1}[0-9]{2}", Pattern.CASE_INSENSITIVE);
 
     @TrackExecutionTime
     public void convertM3UtoStream() {
-        CompletableFuture<Void> createMovies = CompletableFuture.runAsync(() -> {
-            List<M3UItem> movies = m3uService.getM3UItemsByType(Constants.MOVIE);
-            log.info("{} Movies", movies.size());
-            createMovieFolders(movies);
-            log.info("Created HD Movies folders");
-        });
+        List<M3UItem> allItems = getAllM3UItemsFromCache();
+        List<M3UItem> movies = filterItems(allItems, ofType(Constants.MOVIE));
+        log.info("{} Movies", movies.size());
+        createMovieFolders(movies);
+        log.info("Created HD Movies folders");
 
-        createMovies.thenRunAsync(() -> {
-            List<M3UItem> tvshows = m3uService.getM3UItemsByType(Constants.SERIES);
-            log.info("{} TV Shows", tvshows.size());
-            createTVshowFolders(tvshows);
-            log.info("Created TV Shows folders");
-        });
+        List<M3UItem> tvshows = filterItems(allItems, ofType(Constants.SERIES));
+        log.info("{} TV Shows", tvshows.size());
+        createTVshowFolders(tvshows);
+        log.info("Created TV Shows folders");
     }
 
-    
+    private List<M3UItem> getAllM3UItemsFromCache() {
+        // Now fetch all items from Redis cache
+        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
+        if (cachedItems != null && !cachedItems.isEmpty()) {
+            log.info("Reading from cache");
+            return cachedItems;
+        }
+        // Fallback to DB if cache is empty
+        return m3uService.getM3UItems();
+    }
+
     public static Predicate<M3UItem> ofType(String type) {
         return p -> p.getType().equals(type);
     }
@@ -65,7 +74,6 @@ public class M3UtoStrmService {
         return items.stream().filter(predicate).collect(Collectors.toList());
     }
 
-    
     private void createMovieFolders(List<M3UItem> movies) {
         log.debug("Starting createMovieFolders");
         log.debug("Processing {} movies", movies.size());
