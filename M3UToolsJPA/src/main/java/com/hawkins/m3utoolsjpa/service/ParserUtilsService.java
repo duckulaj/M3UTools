@@ -50,7 +50,7 @@ public class ParserUtilsService {
 		for (M3UItem item : m3uItems) {
 			String groupTitle = item.getGroupTitle();
 			if (groupTitle != null && !groupTitle.isEmpty()) {
-				M3UGroup group = new M3UGroup(groupTitle, Utils.deriveGroupTypeByUrl(item.getChannelUri()));
+				M3UGroup group = new M3UGroup(groupTitle, Utils.deriveGroupTypeByUrl(item.getChannelUri()), "");
 				if (!uniqueTvgGroups.contains(group)) {
 					uniqueTvgGroups.add(group);
 				}

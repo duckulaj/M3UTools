@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.0</version>
+		<version>3.5.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.hawkins</groupId>
@@ -27,6 +27,7 @@
 		<webjars-htmx.version>2.0.4</webjars-htmx.version>
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<dom4j.version>2.1.4</dom4j.version>
+		<jackson.version>2.19.0</jackson.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
 		<tests.skip>true</tests.skip>
 	</properties>
@@ -222,6 +223,24 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>
+		<!-- Jackson Databind for JSON parsing -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            
+        </dependency>
+        <!-- Jackson Core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            
+        </dependency>
+        <!-- Jackson Annotations -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>

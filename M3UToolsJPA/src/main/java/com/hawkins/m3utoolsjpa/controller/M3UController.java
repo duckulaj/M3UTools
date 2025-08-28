@@ -22,14 +22,14 @@ import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.ConfigProperty;
+import com.hawkins.m3utoolsjpa.redis.M3UGroupRedisService;
+import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.service.M3UService;
 import com.hawkins.m3utoolsjpa.service.PropertiesService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.utils.FileUtilsForM3UToolsJPA;
 import com.hawkins.m3utoolsjpa.utils.LoggerUtils;
-import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
-import com.hawkins.m3utoolsjpa.redis.M3UGroupRedisService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

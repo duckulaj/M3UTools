@@ -1,13 +1,14 @@
 package com.hawkins.m3utoolsjpa.redis;
 
-import com.hawkins.m3utoolsjpa.data.M3UGroup;
-import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
+import com.hawkins.m3utoolsjpa.data.M3UGroup;
+import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 
 @Configuration
 public class M3UGroupCacheInitializer {

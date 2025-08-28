@@ -1,4 +1,3 @@
-
 package com.hawkins.m3utoolsjpa.utils;
 
 import java.io.BufferedReader;
@@ -10,6 +9,7 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.ReversedLinesFileReader;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +17,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.service.XtreamService;
+import com.hawkins.m3utoolsjpa.xtream.XtreamCodes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +28,14 @@ public class FileUtilsForM3UToolsJPA {
 
 	private static final XmlMapper XML_MAPPER = new XmlMapper();
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	static DownloadProperties dp = DownloadProperties.getInstance();
+	
+	private static final String API_URL = dp.getxTreamUrl();
+	private static final String USERNAME = dp.getxTreamUser();
+	private static final String PASSWORD = dp.getxTreamPassword();
+	
+	@Autowired
+	static XtreamService xtreamService;
 
 	private FileUtilsForM3UToolsJPA() {
 	}
@@ -133,15 +143,30 @@ public class FileUtilsForM3UToolsJPA {
 
 			if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
 
+			String streamChannels = dp.getStreamChannels();
 			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
 			try {
-				FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());
-				// XtreamCodeDownloader.downloadM3UFile();
-			 } catch (IOException | InterruptedException e) {
+				try {
+					if (dp.getxTreamUrl() != null && !dp.getxTreamUrl().isEmpty()) {
+						xtreamService = new XtreamService();
+						
+					} else {
+						FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				
+				
+			 } catch (IOException e) {
 				log.info("Error in parse: " + e.getMessage());
 				throw new DownloadFailureException("Failed to download M3U file", e);
 			} 
 		}
 	}
 
+	
 }

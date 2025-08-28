@@ -1,14 +1,15 @@
 package com.hawkins.m3utoolsjpa.redis;
 
-import com.hawkins.m3utoolsjpa.data.M3UGroup;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.hawkins.m3utoolsjpa.data.M3UGroup;
 
 @Service
 public class M3UGroupRedisService {

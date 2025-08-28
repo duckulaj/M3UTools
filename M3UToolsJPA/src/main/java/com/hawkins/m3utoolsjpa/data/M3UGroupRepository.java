@@ -27,6 +27,8 @@ public interface M3UGroupRepository extends JpaRepository<M3UGroup, Long> {
 	M3UGroup findByName(String name);
 	
 	M3UGroup findById(long id, Sort sort);
+	
+	M3UGroup findByCategoryid(String categoryid);
 
 	
 	

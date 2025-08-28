@@ -85,11 +85,14 @@ public class M3UService {
 	@Autowired
 	private M3UItemRedisService m3UItemRedisService;
 	
+	@Autowired
+	private XtreamService xtreamService;
+	
 	@TrackExecutionTime
 	public void resetDatabase() throws M3UItemsNotFoundException, DownloadFailureException {
 
-		completableFutureService.reloadDatabase();
-
+		// completableFutureService.reloadDatabase();
+		xtreamService.GetXtreamData();
 				/*
 		 * It is possible that we will have selected TV Channels. Now that the M3UItem and M3UGroup has been rebuilt
 		 * we need to go through any existing channels and update M3UItem.selected and M3UItem.tvgChNo

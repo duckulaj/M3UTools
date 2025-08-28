@@ -51,6 +51,10 @@ public class DownloadProperties implements Runnable {
 	private int bufferSize = 0;
 	private String CountryRegExpr = null;
 	private String propertiesFile = null;
+	private String xTreamUrl = null;
+	private String xTreamUser = null;
+	private String xTreamPassword = null;
+	
 
 	public DownloadProperties() {
 
@@ -88,6 +92,9 @@ public class DownloadProperties implements Runnable {
 		this.setIncludedCountries(props.getProperty("includedCountries").split(","));
 		this.setBufferSize(Integer.valueOf(props.getProperty("download.buffersize")));
 		this.setCountryRegExpr(props.getProperty("country.regExpr"));
+		this.setxTreamUrl(props.getProperty("xtream.url"));
+		this.setxTreamUser(props.getProperty("xtream.user"));
+		this.setxTreamPassword(props.getProperty("xtream.password"));
 		this.setPropertiesFile(new File(Constants.CONFIGPROPERTIES).getAbsolutePath());
 	}
 
@@ -357,6 +364,36 @@ public class DownloadProperties implements Runnable {
 
 	public void setPropertiesFile(String propertiesFile) {
 		this.propertiesFile = propertiesFile;
+	}
+
+
+	public String getxTreamUrl() {
+		return xTreamUrl;
+	}
+
+
+	public void setxTreamUrl(String xTreamUrl) {
+		this.xTreamUrl = xTreamUrl;
+	}
+
+
+	public String getxTreamUser() {
+		return xTreamUser;
+	}
+
+
+	public void setxTreamUser(String xTreamUser) {
+		this.xTreamUser = xTreamUser;
+	}
+
+
+	public String getxTreamPassword() {
+		return xTreamPassword;
+	}
+
+
+	public void setxTreamPassword(String xTreamPassword) {
+		this.xTreamPassword = xTreamPassword;
 	}
 
 

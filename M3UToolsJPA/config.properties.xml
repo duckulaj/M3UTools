@@ -23,4 +23,7 @@
 <entry key="moviedb.searchMovieURL">https://api.themoviedb.org/3/movie</entry>
 <entry key="stream.playlist">https://cf.its-cdn.me/xmltv.php?username=6c501c0bea66&amp;password=f72eb64ae0</entry>
 <entry key="includedCountries">EN,UK</entry>
+<entry key="xtream.url">http://cf.tvuhd.site</entry>
+<entry key="xtream.user">6c501c0bea66</entry>
+<entry key="xtream.password">f72eb64ae0</entry>
 </properties>
