@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FileUtilsForM3UToolsJPAService {
 
 	@Autowired
-	static FileDownloaderService fileDownloaderService;
+	FileDownloaderService fileDownloaderService;
 
 	private static final XmlMapper XML_MAPPER = new XmlMapper();
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

@@ -92,7 +92,7 @@ public class M3UService {
 	public void resetDatabase() throws M3UItemsNotFoundException, DownloadFailureException {
 
 		// completableFutureService.reloadDatabase();
-		xtreamService.GetXtreamData();
+		xtreamService.getXtreamData();
 				/*
 		 * It is possible that we will have selected TV Channels. Now that the M3UItem and M3UGroup has been rebuilt
 		 * we need to go through any existing channels and update M3UItem.selected and M3UItem.tvgChNo
