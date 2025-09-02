@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -22,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
+import com.hawkins.m3utoolsjpa.redis.M3UGroupRedisService;
 import com.hawkins.m3utoolsjpa.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,9 @@ public class XtreamCodes {
     private static final String LIVE_CATEGORIES = API_URL + "/player_api.php?username=" + USERNAME + "&password=" + PASSWORD + "&action=get_live_categories";
     private static final String MOVIE_CATEGORIES = API_URL + "/player_api.php?username=" + USERNAME + "&password=" + PASSWORD + "&action=get_vod_categories";
     private static final String SERIES_CATEGORIES = API_URL + "/player_api.php?username=" + USERNAME + "&password=" + PASSWORD + "&action=get_series_categories";
+
+@Autowired
+private M3UGroupRedisService m3UGroupRedisService;
 
     private static void writeJsonToFile(String json, String fileName) throws IOException {
         try {
@@ -199,7 +205,7 @@ public class XtreamCodes {
      * Converts live.json, movie.json, and series.json to M3U and appends all outputs into one M3U file.
      * The output file will contain all entries from the three sources.
      */
-    public static void convertAllJsonToSingleM3U(File liveJsonFile, File movieJsonFile, File seriesJsonFile, File m3uOutputFile) {
+    public void convertAllJsonToSingleM3U(File liveJsonFile, File movieJsonFile, File seriesJsonFile, File m3uOutputFile) {
         try {
             StringBuilder m3u = new StringBuilder();
             m3u.append("#EXTM3U\n");
@@ -225,7 +231,7 @@ public class XtreamCodes {
         }
     }
 
-    private static String getM3UStringFromJson(File jsonFile, String type) {
+    private String getM3UStringFromJson(File jsonFile, String type) {
         try {
             File tempFile = File.createTempFile("temp", ".m3u");
             tempFile.deleteOnExit();
@@ -241,7 +247,7 @@ public class XtreamCodes {
         }
     }
 
-    public static void convertLiveJsonToM3U(File liveJsonFile, File m3uOutputFile) {
+    public void convertLiveJsonToM3U(File liveJsonFile, File m3uOutputFile) {
         if (!liveJsonFile.exists()) {
             log.error("live.json file not found: {}", liveJsonFile.getAbsolutePath());
             return;
@@ -256,11 +262,14 @@ public class XtreamCodes {
             m3u.append("#EXTM3U\n");
             for (JsonNode channel : root) {
                 String name = channel.has("name") ? channel.get("name").asText() : "";
+                String stream_id = channel.has("stream_id") ? channel.get("stream_id").asText() : "";
                 String url = channel.has("stream_id") ? channel.get("stream_id").asText() : "";
                 String logo = channel.has("stream_icon") ? channel.get("stream_icon").asText() : "";
                 String group = channel.has("category_id") ? channel.get("category_id").asText() : "";
+                M3UGroup m3uGroup = m3UGroupRedisService.findById(Long.valueOf(group));
+                if (m3uGroup != null) group = m3uGroup.getName();
                 String streamType = channel.has("stream_type") ? channel.get("stream_type").asText() : "";
-                m3u.append("#EXTINF:-1 tvg-ID=\"\"");
+                m3u.append("#EXTINF:-1 tvg-ID=\"").append(stream_id).append("\"");
                 if (!logo.isEmpty()) m3u.append(" tvg-logo=\"").append(logo).append("\"");
                 if (!group.isEmpty()) m3u.append(" group-title=\"").append(group).append("\"");
                 if (!streamType.isEmpty()) m3u.append(" stream-type=\"").append(streamType).append("\"");
@@ -274,7 +283,7 @@ public class XtreamCodes {
         }
     }
 
-    public static void convertMovieJsonToM3U(File movieJsonFile, File m3uOutputFile) {
+    public void convertMovieJsonToM3U(File movieJsonFile, File m3uOutputFile) {
         if (!movieJsonFile.exists()) {
             log.error("movie.json file not found: {}", movieJsonFile.getAbsolutePath());
             return;
@@ -308,7 +317,7 @@ public class XtreamCodes {
         }
     }
 
-    public static void convertSeriesJsonToM3U(File seriesJsonFile, File m3uOutputFile) {
+    public void convertSeriesJsonToM3U(File seriesJsonFile, File m3uOutputFile) {
         if (!seriesJsonFile.exists()) {
             log.error("series.json file not found: {}", seriesJsonFile.getAbsolutePath());
             return;
@@ -366,9 +375,15 @@ public class XtreamCodes {
         return url.toString();
     }
 
-    public static Set<M3UGroup> getGroupsFromJson(String groupJson) {
+    public static Set<M3UGroup> getGroupsFromJson(String groupJson, String type) {
+        Set<M3UGroup> groups = new java.util.HashSet<>();
         try {
-            return OBJECT_MAPPER.readValue(groupJson, new TypeReference<Set<M3UGroup>>() {});
+            Set<LiveCategory> liveCategories =  OBJECT_MAPPER.readValue(groupJson, new TypeReference<Set<LiveCategory>>() {});
+            for (LiveCategory category : liveCategories) {
+                M3UGroup group = new M3UGroup(category.getCategory_name(), type, category.getCategory_id());
+                groups.add(group);
+            }
+            return groups;
         } catch (IOException e) {
             log.error("Failed to parse group JSON", e);
             return Set.of();

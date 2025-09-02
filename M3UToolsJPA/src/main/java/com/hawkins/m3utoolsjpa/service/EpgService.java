@@ -2,12 +2,8 @@ package com.hawkins.m3utoolsjpa.service;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -20,11 +16,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
@@ -36,7 +27,6 @@ import com.hawkins.m3utoolsjpa.epg.XmltvChannel;
 import com.hawkins.m3utoolsjpa.epg.XmltvDoc;
 import com.hawkins.m3utoolsjpa.epg.XmltvIcon;
 import com.hawkins.m3utoolsjpa.epg.XmltvProgramme;
-import com.hawkins.m3utoolsjpa.epg.XmltvText;
 import com.hawkins.m3utoolsjpa.epg.XmltvUtils;
 import com.hawkins.m3utoolsjpa.epg.XmltvVideo;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
@@ -172,50 +162,7 @@ public class EpgService {
 		return doc;
 	}
 
-	private static void writeJson(List<XmltvChannel> channels, XmltvDoc doc) {
-		JsonArray jsonChannels = new JsonArray();
-
-		for (XmltvChannel channel : channels) {
-			JsonObject thisChannel = new JsonObject();
-			thisChannel.addProperty("display_name", channel.getDisplayNames().get(0).getText());
-
-			JsonArray programmes = new JsonArray();
-
-			List<XmltvProgramme> foundByStream = doc.getProgrammesById(channel.getId());
-
-			if (foundByStream != null && !foundByStream.isEmpty()) {
-				for (XmltvProgramme programme : foundByStream) {
-					JsonObject thisProgramme = new JsonObject();
-					thisProgramme.addProperty("start", formatTime(programme.getStart()));
-					thisProgramme.addProperty("stop", formatTime(programme.getStop()));
-					thisProgramme.addProperty("title", programme.getTitle().map(XmltvText::getText).orElse(""));
-
-					programmes.add(thisProgramme);
-				}
-
-				thisChannel.add("programmes", programmes);
-				jsonChannels.add(thisChannel);
-			}
-		}
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		JsonElement jsonElement = JsonParser.parseString(jsonChannels.toString());
-		String prettyJson = gson.toJson(jsonElement);
-
-		log.info(prettyJson);
-		try (FileWriter fileWriter = new FileWriter(new File("./epg.json"))) {
-			fileWriter.write(prettyJson);
-		} catch (IOException e) {
-			log.error("Error writing JSON to file: {}", e.getMessage());
-		}
-	}
-
-	private static String formatTime(String datetimeString) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss X");
-		ZonedDateTime zonedDateTime = ZonedDateTime.parse(datetimeString, formatter);
-		LocalTime time = zonedDateTime.toLocalTime();
-		return time.format(DateTimeFormatter.ofPattern("HH:mm"));
-	}
+	
 
 	public List<Channel> getEPGJson() {
 

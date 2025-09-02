@@ -18,7 +18,6 @@ import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
 import com.hawkins.m3utoolsjpa.service.XtreamService;
-import com.hawkins.m3utoolsjpa.xtream.XtreamCodes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +34,7 @@ public class FileUtilsForM3UToolsJPA {
 	private static final String PASSWORD = dp.getxTreamPassword();
 	
 	@Autowired
-	static XtreamService xtreamService;
+	public static XtreamService xtreamService;
 
 	private FileUtilsForM3UToolsJPA() {
 	}
@@ -143,12 +142,12 @@ public class FileUtilsForM3UToolsJPA {
 
 			if (m3uFileOnDisk.exists()) FileUtilsForM3UToolsJPA.backupFile(m3uFileOnDisk.toString());
 
-			String streamChannels = dp.getStreamChannels();
+			
 			log.info("Retrieving {} from remote server", m3uFileOnDisk.toString());
 			try {
 				try {
 					if (dp.getxTreamUrl() != null && !dp.getxTreamUrl().isEmpty()) {
-						xtreamService = new XtreamService();
+						xtreamService.getXtreamData();
 						
 					} else {
 						FileDownloader.downloadFileInSegments(dp.getStreamChannels(), m3uFileOnDisk.toString(), dp.getBufferSize());

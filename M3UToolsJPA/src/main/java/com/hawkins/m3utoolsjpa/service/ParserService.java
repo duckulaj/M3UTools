@@ -39,6 +39,9 @@ public class ParserService {
 	@Autowired
 	ParserUtilsService parserUtilsService;
 	
+	@Autowired
+	XtreamParserUtilsService xtreamParserUtilsService;
+	
 	DownloadProperties dp = DownloadProperties.getInstance();
 	String[] includedCountries = dp.getIncludedCountries();
 	
@@ -49,7 +52,9 @@ public class ParserService {
 		
 		
 		
-		Set<M3UItem> m3uItems = parserUtilsService.parse();
+		// Set<M3UItem> m3uItems = parserUtilsService.parse();
+		
+		Set<M3UItem> m3uItems =  xtreamParserUtilsService.parse();
 		log.info("Number of M3UItems: {}", m3uItems.size());
 		
 		Set<M3UGroup> uniqueGroups = parserUtilsService.extractUniqueTvgGroups(m3uItems);
