@@ -16,7 +16,6 @@ import com.codahale.metrics.Counter;
 import com.hawkins.m3utoolsjpa.annotations.TrackExecutionTime;
 import com.hawkins.m3utoolsjpa.data.M3UItem;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
-import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
 import com.hawkins.m3utoolsjpa.regex.Patterns;
 import com.hawkins.m3utoolsjpa.regex.RegexUtils;
 import com.hawkins.m3utoolsjpa.utils.Constants;
@@ -30,15 +29,13 @@ public class M3UtoStrmService {
 
     @Autowired
     M3UService m3uService;
-    @Autowired
-    private M3UItemRedisService m3UItemRedisService;
-
+   
     private static final DownloadProperties dp = DownloadProperties.getInstance();
     private static final Pattern SEASON_PATTERN = Pattern.compile("[S]{1}[0-9]{2}", Pattern.CASE_INSENSITIVE);
 
     @TrackExecutionTime
     public void convertM3UtoStream() {
-        List<M3UItem> allItems = getAllM3UItemsFromCache();
+        List<M3UItem> allItems = m3uService.getM3UItems();
         List<M3UItem> movies = filterItems(allItems, ofType(Constants.MOVIE));
         log.info("{} Movies", movies.size());
         createMovieFolders(movies);
@@ -48,17 +45,6 @@ public class M3UtoStrmService {
         log.info("{} TV Shows", tvshows.size());
         createTVshowFolders(tvshows);
         log.info("Created TV Shows folders");
-    }
-
-    private List<M3UItem> getAllM3UItemsFromCache() {
-        // Now fetch all items from Redis cache
-        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
-        if (cachedItems != null && !cachedItems.isEmpty()) {
-            log.info("Reading from cache");
-            return cachedItems;
-        }
-        // Fallback to DB if cache is empty
-        return m3uService.getM3UItems();
     }
 
     public static Predicate<M3UItem> ofType(String type) {

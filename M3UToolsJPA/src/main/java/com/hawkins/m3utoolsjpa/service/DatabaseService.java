@@ -45,6 +45,7 @@ public class DatabaseService {
 	}
 	
 	@TrackExecutionTime
+	@Transactional
 	public void groupsSaveAllAndFlush(Set<M3UGroup> uniqueGroups) {
 		groupRepository.saveAllAndFlush(uniqueGroups);
 	}

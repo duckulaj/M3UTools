@@ -11,13 +11,8 @@ import com.hawkins.m3utoolsjpa.data.M3UGroup;
 import com.hawkins.m3utoolsjpa.data.M3UGroupRepository;
 import com.hawkins.m3utoolsjpa.data.M3UItemRepository;
 import com.hawkins.m3utoolsjpa.exception.DownloadFailureException;
-import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
-import com.hawkins.m3utoolsjpa.redis.M3UGroupRedisService;
-import com.hawkins.m3utoolsjpa.redis.M3UItemCacheInitializer;
-import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
 import com.hawkins.m3utoolsjpa.utils.Constants;
 import com.hawkins.m3utoolsjpa.xtream.XtreamCodes;
-import com.hawkins.m3utoolsjpa.xtream.XtreamCredentials;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,26 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class XtreamService {
 
-    
-
-    
-    private static final DownloadProperties dp = DownloadProperties.getInstance();
-    private static final XtreamCredentials xtreamCredentials = XtreamCredentials.getInstance();
-
     @Autowired
     M3UItemRepository m3UItemRepository;
     
     @Autowired
-    M3UItemRedisService m3UItemRedisService;
-    
-    @Autowired
-    M3UItemCacheInitializer m3UItemCacheInitializer;
-    
-    @Autowired
     M3UGroupRepository m3UGroupRepository;
-
-    @Autowired
-    M3UGroupRedisService m3UGroupRedisService;
 
     @Autowired
     DatabaseService databaseService;
@@ -70,9 +50,12 @@ public class XtreamService {
             String movieCategoriesJson = XtreamCodes.getCategoriesJson("movie");
             String seriesCategoriesJson = XtreamCodes.getCategoriesJson("series");
 
-            m3UItemRedisService.deleteAll();
+            // Write each categories JSON to file
+            writeJsonToFile(liveCategoriesJson, "./liveCategories.json");
+            writeJsonToFile(movieCategoriesJson, "./movieCategories.json");
+            writeJsonToFile(seriesCategoriesJson, "./seriesCategories.json");
+
             m3UItemRepository.deleteAll();
-            m3UGroupRedisService.deleteAll();
             m3UGroupRepository.deleteAll();
             
             // Process and save groups for each type
@@ -86,12 +69,6 @@ public class XtreamService {
 
         // Fetch Xtream items (side effect method)
         XtreamCodes.getXtreamCodesItems();
-
-        // Refresh Redis cache
-        
-        for (M3UGroup group : m3UGroupRepository.findAll()) {
-            m3UGroupRedisService.save(group);
-        }
 
         // Convert all JSON to a single M3U file
         xtreamCodes.convertAllJsonToSingleM3U(
@@ -115,10 +92,15 @@ public class XtreamService {
      * Helper method to parse groups from JSON, set their type, and save them.
      */
     private void saveGroupsWithType(String categoriesJson, String type) {
-        Set<M3UGroup> groups = XtreamCodes.getGroupsFromJson(categoriesJson, type);
-        for (M3UGroup group : groups) {
-            group.setType(type);
-        }
+        Set<M3UGroup> groups = xtreamCodes.getGroupsFromJson(categoriesJson, type);
+        
         databaseService.groupsSaveAllAndFlush(groups);
+    }
+
+    /**
+     * Helper method to write JSON string to a file
+     */
+    private void writeJsonToFile(String json, String filePath) throws IOException {
+        java.nio.file.Files.write(java.nio.file.Paths.get(filePath), json.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }

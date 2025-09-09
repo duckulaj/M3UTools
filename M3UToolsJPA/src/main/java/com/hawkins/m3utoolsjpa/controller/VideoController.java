@@ -55,6 +55,7 @@ public class VideoController {
 
 	@GetMapping(value ="stream", params = { "streamName" })
 	public ModelAndView stream(ModelMap model, @RequestParam String streamName) {
+		log.info("Received GET /stream request with streamName: {}", streamName);
 
 		URL url = null;
 
@@ -86,16 +87,16 @@ public class VideoController {
 	@GetMapping(value = "media")
 	@ResponseBody
 	public final ResponseEntity<InputStreamResource> retrieveResource(@RequestParam String streamUrl, @RequestHeader HttpHeaders headers) throws Exception {
-		
+		log.info("Received GET /media request with streamUrl: {} and headers: {}", streamUrl, headers);
 		// Retrieve the session ID
 	    String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
 	    
-		if (streamUrl.endsWith(".mkv")) {
-	        streamUrl = convertMkvToMp4(streamUrl, sessionId);
-	    }
 		
 		List<HttpRange> rangeList = headers.getRange();
 		long contentLength = NetUtils.getContentSizeFromUrl(streamUrl);
+		if (contentLength < 0) {
+			contentLength = 0;
+		}
 		int bufferSize = 1024 * 1024 * 4; // 4 MB buffer size
 
 		if (rangeList.isEmpty()) {
@@ -116,6 +117,9 @@ public class VideoController {
 			con.connect();
 
 			long contentLengthRange = end - start + 1;
+			if (contentLengthRange < 0) {
+				contentLengthRange = 0;
+			}
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			responseHeaders.set("Accept-Ranges", "bytes");
@@ -191,4 +195,3 @@ public class VideoController {
 
 
 }
-

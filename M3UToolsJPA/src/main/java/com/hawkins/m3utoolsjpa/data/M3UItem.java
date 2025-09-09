@@ -11,8 +11,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "M3UITEM", indexes = {@Index(name = "IDX_M3UGROUP_ID", columnList = "groupId" ), 
 		@Index(name = "IDX_M3UITEM_TVGID", columnList = "tvgId")}
 )
@@ -85,109 +87,5 @@ public class M3UItem {
 		this.selected = selected;
 
 	}
-
-	@Override
-	
-	public String toString() {
-		return "M3UItem [group=" + group + ", id=" + id + ", duration=" + duration + ", groupTitle=" + groupTitle
-				+ ", groupId=" + groupId + ", tvgId=" + tvgId + ", tvgName=" + tvgName + ", tvgChNo=" + tvgChNo
-				+ ", tvgLogo=" + tvgLogo + ", tvgShift=" + tvgShift + ", radio=" + radio + ", channelUri=" + channelUri
-				+ ", channelName=" + channelName + ", type=" + type + ", search=" + search + ", selected=" + selected
-				+ "]";
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getDuration() {
-		return duration;
-	}
-
-	public String getGroupTitle() {
-		return groupTitle;
-	}
-	
-	public Long getGroupId() {
-		return groupId;
-	}
-	
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
-	}
-
-	public String getTvgId() {
-		return tvgId;
-	}
-
-	public String getTvgName() {
-		return tvgName;
-	}
-	
-	public String getTvgChNo() {
-		return tvgChNo;
-	}
-
-	public void setTvgChNo(String tvgChNo) {
-		this.tvgChNo = tvgChNo;
-	}
-
-	public String getTvgLogo() {
-		return tvgLogo;
-	}
-
-	public String getTvgShift() {
-		return tvgShift;
-	}
-
-	public String getRadio() {
-		return radio;
-	}
-
-	public String getChannelUri() {
-		return channelUri;
-	}
-	
-	public void setChannelUri(String channelUri) {
-		this.channelUri = channelUri;
-	}
-
-	public String getChannelName() {
-		return channelName;
-	}
-
-	public String getType() {
-		return type;
-	}
-	
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getSearch() {
-		return search;
-	}
-	
-	public void setSearch(String search) {
-		this.search = search;
-	}
-
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
-	public void setChannelName(String channelName) {
-		this.channelName = channelName;
-	}
-
-	public void setTvgName(String tvgName) {
-		this.tvgName = tvgName;
-	}
-
-	
 
 }

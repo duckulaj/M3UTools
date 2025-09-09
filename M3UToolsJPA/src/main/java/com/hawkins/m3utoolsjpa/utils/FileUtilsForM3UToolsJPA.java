@@ -29,10 +29,6 @@ public class FileUtilsForM3UToolsJPA {
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	static DownloadProperties dp = DownloadProperties.getInstance();
 	
-	private static final String API_URL = dp.getxTreamUrl();
-	private static final String USERNAME = dp.getxTreamUser();
-	private static final String PASSWORD = dp.getxTreamPassword();
-	
 	@Autowired
 	public static XtreamService xtreamService;
 

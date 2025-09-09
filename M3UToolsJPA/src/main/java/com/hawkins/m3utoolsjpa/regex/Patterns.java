@@ -17,6 +17,7 @@ public class Patterns {
     public static final Pattern TVG_SHIFT_REGEX = Pattern.compile(".*tvg-shift=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
     public static final Pattern TVG_CHANNEL_NUMBER = Pattern.compile(".*tvg-chno=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
     public static final Pattern GROUP_TITLE_REGEX = Pattern.compile(".*group-title=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern CATEGORY_ID_REGEX = Pattern.compile(".*category-id=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
     public static final Pattern RADIO_REGEX = Pattern.compile(".*radio=\"(.?|.+?)\".*", Pattern.CASE_INSENSITIVE);
     public static final Pattern CHANNEL_NAME_REGEX = Pattern.compile(".*,(.+?)$", Pattern.CASE_INSENSITIVE);
 

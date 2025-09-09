@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
@@ -46,8 +45,6 @@ import com.hawkins.m3utoolsjpa.exception.M3UItemsNotFoundException;
 import com.hawkins.m3utoolsjpa.m3u.M3UGenre;
 import com.hawkins.m3utoolsjpa.m3u.M3UGroupSelected;
 import com.hawkins.m3utoolsjpa.properties.DownloadProperties;
-import com.hawkins.m3utoolsjpa.redis.M3UGroupRedisService;
-import com.hawkins.m3utoolsjpa.redis.M3UItemRedisService;
 import com.hawkins.m3utoolsjpa.search.MovieDb;
 import com.hawkins.m3utoolsjpa.search.Search;
 import com.hawkins.m3utoolsjpa.search.SearchFactory;
@@ -78,12 +75,6 @@ public class M3UService {
 	
 	@Autowired
 	PropertiesService propertiesService;
-	
-	@Autowired
-	private M3UGroupRedisService m3UGroupRedisService;
-	
-	@Autowired
-	private M3UItemRedisService m3UItemRedisService;
 	
 	@Autowired
 	private XtreamService xtreamService;
@@ -133,22 +124,14 @@ public class M3UService {
 	}
 
 	public List<M3UItem> getM3UItems() {
-        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
-        if (cachedItems != null && !cachedItems.isEmpty()) {
-            log.info("Reading from cache");
-            return cachedItems;
-        }
-        return IteratorUtils.toList(itemRepository.findAll(Sort.by(Sort.Direction.ASC, "tvgName")).iterator());
+        
+		return IteratorUtils.toList(itemRepository.findAll(Sort.by(Sort.Direction.ASC, "tvgName")).iterator());
 
 	}
 
 	public List<M3UGroup> getM3UGroups() {
-        List<M3UGroup> cachedGroups = m3UGroupRedisService.findAll();
-        if (cachedGroups != null && !cachedGroups.isEmpty()) {
-            log.info("Reading from cache");
-            return cachedGroups;
-        }
-        return IteratorUtils.toList(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
+        
+		return IteratorUtils.toList(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).iterator());
     }
 
 	public List<M3UGroup> getM3UGroupsByType(String type) {
@@ -158,22 +141,14 @@ public class M3UService {
 	}
 
 	public List<M3UItem> getM3UItemsByGroupTitle(String groupTitle) {
-        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
-        if (cachedItems != null && !cachedItems.isEmpty()) {
-            log.info("Reading from cache");
-            return cachedItems.stream().filter(item -> groupTitle.equals(item.getGroupTitle())).collect(Collectors.toList());
-        }
-        return IteratorUtils.toList(itemRepository.findByGroupTitle(groupTitle).iterator());
+        
+		return IteratorUtils.toList(itemRepository.findByGroupTitle(groupTitle).iterator());
 
 	}
 
 	public List<M3UItem> getM3UItemsByType(String type) {
-        List<M3UItem> cachedItems = m3UItemRedisService.findAll();
-        if (cachedItems != null && !cachedItems.isEmpty()) {
-            log.info("Reading from cache");
-            return cachedItems.stream().filter(item -> type.equals(item.getType())).collect(Collectors.toList());
-        }
-        return IteratorUtils.toList(itemRepository.findAllByType(type).iterator());
+        
+		return IteratorUtils.toList(itemRepository.findAllByType(type).iterator());
 
 	}
 

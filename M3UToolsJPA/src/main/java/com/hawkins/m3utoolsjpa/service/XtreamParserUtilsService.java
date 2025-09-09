@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class XtreamParserUtilsService {
 
 	@Autowired
 	private M3UGroupRepository m3UGroupRepository;
-	
+
 	/**
 	 * Extract unique tvg-groups from the parsed M3U file
 	 *
@@ -54,8 +55,9 @@ public class XtreamParserUtilsService {
 
 		for (M3UItem item : m3uItems) {
 			String groupTitle = item.getGroupTitle();
+			// Long groupId = item.getGroupId(); // no longer used for new entities
 			if (groupTitle != null && !groupTitle.isEmpty()) {
-				M3UGroup group = new M3UGroup(groupTitle, Utils.deriveGroupTypeByUrl(item.getChannelUri()), "");
+				M3UGroup group = new M3UGroup(groupTitle, Utils.deriveGroupTypeByUrl(item.getChannelUri()), item.getGroupId().toString());
 				if (!uniqueTvgGroups.contains(group)) {
 					uniqueTvgGroups.add(group);
 				}
@@ -99,7 +101,7 @@ public class XtreamParserUtilsService {
 		}
 
 	}
-	
+
 	@TrackExecutionTime
 	public Set<M3UItem> parse() throws DownloadFailureException {
 
@@ -109,7 +111,7 @@ public class XtreamParserUtilsService {
 		DownloadProperties dp = DownloadProperties.getInstance();
 		String[] includedCountries = dp.getIncludedCountries();
 		File m3uFileOnDisk = new File(Constants.M3U_FILE);
-		
+
 		StopWatch sw = new org.springframework.util.StopWatch();
 		sw.start();
 
@@ -132,7 +134,7 @@ public class XtreamParserUtilsService {
 			PatternMatcher patternMatcher = PatternMatcher.getInstance();
 			M3UItem entry = null;
 
-			
+
 
 			while ((line = buffer.readLine()) != null) {
 				lineNbr++;
@@ -140,18 +142,18 @@ public class XtreamParserUtilsService {
 					entry = extractExtInfo(patternMatcher, line, includedCountries);
 				} else {
 					if (entry != null) {
-						
-							String type = Utils.deriveGroupTypeByUrl(line);
-							entry.setType(type);
-							entry.setChannelUri(line);
-							String commonName = RegexUtils.removeCountryIdentifier(entry.getTvgName(), dp.getIncludedCountries());
-							
-							entry.setChannelName(commonName);
-							entry.setTvgName(commonName);
-							entry.setSearch(commonName);
-							entries.add(entry);
-							entry = null;
-						
+
+						String type = Utils.deriveGroupTypeByUrl(line);
+						entry.setType(type);
+						entry.setChannelUri(line);
+						String commonName = RegexUtils.removeCountryIdentifier(entry.getTvgName(), dp.getIncludedCountries());
+
+						entry.setChannelName(commonName);
+						entry.setTvgName(commonName);
+						entry.setSearch(commonName);
+						entries.add(entry);
+						entry = null;
+
 					}
 				}
 			}
@@ -159,14 +161,14 @@ public class XtreamParserUtilsService {
 			FileUtilsForM3UToolsJPA.restoreFile(m3uFileOnDisk.toString());
 			throw new ParsingException(lineNbr, "Cannot read file", e);
 		} 
-		
-		
+
+
 
 		sw.stop();
 		log.info("Total time in milliseconds for parsing : {}", sw.getTotalTimeMillis());
 		return entries;
 	}
-	
+
 	/*
 	 * If the m3uFile exists determine that the start of the file as #EXTM3U
 	 */
@@ -183,55 +185,70 @@ public class XtreamParserUtilsService {
 	}
 
 	private M3UItem extractExtInfo(PatternMatcher patternMatcher, String line, String[] includedCountries) {
-        DownloadProperties dp = DownloadProperties.getInstance();
+		DownloadProperties dp = DownloadProperties.getInstance();
 
-        String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
-        if (tvgName == null || tvgName.startsWith("#####") || tvgName.isEmpty()) return null;
+		String tvgName = patternMatcher.extract(line, Patterns.TVG_NAME_REGEX);
+		if (tvgName == null || tvgName.startsWith("#####") || tvgName.isEmpty()) return null;
 
-        String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
-        // if (groupTitle == null || !isIncludedCountry(includedCountries, groupTitle)) return null;
+		String groupTitle = patternMatcher.extract(line, Patterns.GROUP_TITLE_REGEX);
+		// if (groupTitle == null || !isIncludedCountry(includedCountries, groupTitle)) return null;
 
-        tvgName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr()));
-        // String channelName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX), dp.getCountryRegExpr()));
+		M3UGroup group = getGroupTypeFromGroupId(groupTitle);
+		
+		if (group ==null) {
+			return null;
+		}
+		String categoryId = group.getCategoryid() != null ? String.valueOf(group.getCategoryid()) : "0";
+		tvgName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(tvgName, dp.getCountryRegExpr()));
+		// String channelName = StringUtils.cleanTextContent(StringUtils.removeCountryIdentifierUsingRegExpr(patternMatcher.extract(line, Patterns.CHANNEL_NAME_REGEX), dp.getCountryRegExpr()));
 
-        return new M3UItem(
-            patternMatcher.extract(line, Patterns.DURATION_REGEX),
-            groupTitle,
-            -1L,
-            patternMatcher.extract(line, Patterns.TVG_ID_REGEX),
-            tvgName,
-            "",
-            patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX),
-            patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX),
-            patternMatcher.extract(line, Patterns.RADIO_REGEX),
-            "",
-            "",
-            "",
-            "",
-            false
-        );
-    }
-	
+		return new M3UItem(
+				patternMatcher.extract(line, Patterns.DURATION_REGEX),
+				group.getName(),
+				Long.valueOf(categoryId != null && !categoryId.isEmpty() ? categoryId : "0"),
+				patternMatcher.extract(line, Patterns.TVG_ID_REGEX),
+				tvgName,
+				"",
+				patternMatcher.extract(line, Patterns.TVG_LOGO_REGEX),
+				patternMatcher.extract(line, Patterns.TVG_SHIFT_REGEX),
+				patternMatcher.extract(line, Patterns.RADIO_REGEX),
+				"",
+				"",
+				"",
+				"",
+				false
+				);
+	}
+
 	@TrackExecutionTime
 	public Set<M3UItem> createM3UItemsListIfGroupExists(Set<M3UGroup> uniqueGroups, Set<M3UItem> m3uItems) {
-	    Set<M3UItem> filteredItems = new HashSet<>();
-	    Map<String, M3UGroup> groupMap = new HashMap<>();
+		Set<M3UItem> filteredItems = new HashSet<>();
+		Map<String, M3UGroup> groupMap = new HashMap<>();
 
-	    for (M3UGroup group : uniqueGroups) {
-	        groupMap.put(group.getName(), group);
-	    }
+		// Persist all unique groups and reload them to get their IDs
+		m3UGroupRepository.saveAllAndFlush(uniqueGroups);
+		// Reload all groups from DB by name
+		for (M3UGroup group : uniqueGroups) {
+			if (!groupMap.containsKey(group.getName())) {
 
-	    for (M3UItem item : m3uItems) {
-	        M3UGroup group = groupMap.get(item.getGroupTitle());
-	        if (group != null) {
-	            item.setGroupId(group.getId());
-	            filteredItems.add(item);
-	        }
-	    }
+				Optional<M3UGroup> persistedGroup = m3UGroupRepository.findById(group.getId());
+				if (persistedGroup.isPresent()) {
+					String groupName = persistedGroup.get().getName();
+					groupMap.put(groupName, persistedGroup.get());
+				}
+			}}
 
-	    return filteredItems;
+		for (M3UItem item : m3uItems) {
+			M3UGroup group = groupMap.get(item.getGroupTitle());
+			if (group != null) {
+				item.setGroupId(group.getId());
+				filteredItems.add(item);
+			}
+		}
+
+		return filteredItems;
 	}
-	
+
 	public boolean isIncludedCountry(String[] includedCountries, String country) {
 		for (String includedCountry : includedCountries) {
 			if (country.startsWith(includedCountry)) {
@@ -240,12 +257,12 @@ public class XtreamParserUtilsService {
 		}
 		return false;
 	}
-	
+
 	public M3UGroup getGroupTypeFromGroupId(String groupId) {
 		if (groupId == null || groupId.isEmpty()) {
 			return null;
 		} else {
-			return m3UGroupRepository.findById(Long.parseLong(groupId));
+			return m3UGroupRepository.findByCategoryid(groupId);
 		}
 	}
 
