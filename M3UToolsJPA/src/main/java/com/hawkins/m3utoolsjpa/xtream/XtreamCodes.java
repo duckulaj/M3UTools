@@ -454,13 +454,14 @@ public class XtreamCodes {
 		if (seasonsNode != null && seasonsNode.isArray()) {
 			for (JsonNode seasonNode : seasonsNode) {
 				String seasonNum = seasonNode.has("season_num") ? seasonNode.get("season_num").asText() : "";
-				java.util.List<Episode> episodes = new java.util.ArrayList<>();
 				JsonNode episodesNode = seasonNode.get("episodes");
-				if (episodesNode != null && episodesNode.isArray()) {
-					for (JsonNode epNode : episodesNode) {
-						Episode ep = OBJECT_MAPPER.treeToValue(epNode, Episode.class);
+				java.util.List<Episode> episodes = java.util.Collections.emptyList();
+				if (episodesNode != null && episodesNode.isArray() && episodesNode.size() > 0) {
+					// Bulk convert episodes array to List<Episode>
+					episodes = OBJECT_MAPPER.convertValue(episodesNode, new TypeReference<java.util.List<Episode>>() {});
+					// Set season for all episodes in this season
+					for (Episode ep : episodes) {
 						ep.setSeason(seasonNum);
-						episodes.add(ep);
 					}
 				}
 				episodesBySeason.put(seasonNum, episodes);
